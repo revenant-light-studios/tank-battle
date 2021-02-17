@@ -1,7 +1,9 @@
 using System;
 using ExtensionMethods;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UIElements;
+using Cursor = UnityEngine.Cursor;
 
 namespace Tanks
 {
@@ -9,40 +11,31 @@ namespace Tanks
     {
         public bool ExtraFuelTank;
         public bool RocketLauncher;
-        
         public float FlightDistance = 0.6f;
         public float HoverForce = 80000;
-        
         private float _deadZone = 0.1f;
-        
         public float ForwardAccel = 10000.0f;
         public float BackwardAccel = 2500.0f;
-        private float _thrust = 0;
 
+        private float _thrust = 0;
         public float TurnRate = 500f;
         private float _turn;
 
-        public Vector3 mouseWorldPosition;
-        public float mouseAngle;
-
         RaycastHit _raycastHit;
-        
         
         private Rigidbody _rigidbody;
         private GameObject _tankBase;
-        private Transform _turret;
+        private Turret _turret;
         private GameObject _extraFuelTank;
         private GameObject _rocketLauncher;
 
         private readonly GameObject[] _antyGravityEngines = new GameObject[4];
         
-        
-
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody>();
             _tankBase = transform.FirstOrDefault(t => t.name == "Body").gameObject;
-            _turret = transform.FirstOrDefault(t => t.name == "Turret");
+            _turret = transform.FirstOrDefault(t => t.name == "Turret").GetComponent<Turret>();
             _extraFuelTank = transform.FirstOrDefault(t => t.name == "ExtraFuelTank").gameObject;
             _rocketLauncher = transform.FirstOrDefault(t => t.name == "MissileThrower").gameObject;
         }
@@ -54,6 +47,9 @@ namespace Tanks
             _rigidbody.centerOfMass = Vector3.down;
             
             UpdateAntiGravityEngines();
+            
+            // TODO: Move this out of here
+            Cursor.visible = false;
         }
 
         private void UpdateAntiGravityEngines()
@@ -77,8 +73,7 @@ namespace Tanks
             _antyGravityEngines[3].transform.parent = this.transform;
             _antyGravityEngines[3].transform.position = new Vector3(transform.position.x + tankWidth * 0.5f, transform.position.y, transform.position.z + tankLength * 0.5f);
         }
-
-
+        
         private void Update()
         {
             // Thrusting
@@ -99,22 +94,6 @@ namespace Tanks
             if (Mathf.Abs(turn) > _deadZone)
             {
                 _turn = turn;
-            }
-            
-            // Turret pointing
-            // Vector3 mousePosition = Input.mousePosition;
-            // mousePosition.z = 100f;
-            // mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            int layerMask = 1 << LayerMask.NameToLayer("Ground");
-            if (Physics.Raycast(ray, out RaycastHit hit, layerMask))
-            {
-                mouseWorldPosition = hit.point;
-                Vector3 direction = mouseWorldPosition - transform.position;
-                Quaternion lookRotation = Quaternion.LookRotation(direction);
-                Quaternion quaternion = Quaternion.Euler(0f, lookRotation.eulerAngles.y, 0f); 
-                _turret.rotation = quaternion;
             }
         }
 
@@ -156,12 +135,6 @@ namespace Tanks
                             engine.transform.position);
                     }
                 }
-                
-                // float curAltitude = FloorDistance(engine.transform.position);
-                // float factor = Mathf.Pow(FlightDistance - curAltitude, 2f) / FlightDistance;
-                // Debug.Log($"Engine {i}: altitude {curAltitude}, factor {factor}");
-                
-                // _rigidbody.AddForceAtPosition(Vector3.up * (Time.fixedDeltaTime * factor * _force), engine.transform.position);
             }
         }
         
@@ -172,8 +145,6 @@ namespace Tanks
             if(_antyGravityEngines[1] != null) Gizmos.DrawSphere(_antyGravityEngines[1].transform.position, 0.2f);
             if(_antyGravityEngines[2] != null) Gizmos.DrawSphere(_antyGravityEngines[2].transform.position, 0.2f);
             if(_antyGravityEngines[3] != null) Gizmos.DrawSphere(_antyGravityEngines[3].transform.position, 0.21f);
-            Gizmos.color = Color.green;
-            Gizmos.DrawSphere(mouseWorldPosition, 0.21f);
         }
     }
 }
