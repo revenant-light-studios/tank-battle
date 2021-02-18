@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5692899117345103089
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5692899117345103091}
+  - component: {fileID: 5692899117345103090}
+  m_Layer: 0
+  m_Name: SoundManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5692899117345103091
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5692899117345103089}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.116847, y: 8.033632, z: -7.414816}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5692899117345103090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5692899117345103089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04b6ff6d744c1e94f8b1cd892550f3c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundPrefabArray:
+  - sound: 4
+    soundGameObject: {fileID: 7472326124011312191, guid: 7e0ffbebb2f08de43ae8507ab1d3ba22,
+      type: 3}
+  - sound: 5
+    soundGameObject: {fileID: 3591868295707477734, guid: adc470262ae9ee145813369d8cdb8b38,
+      type: 3}
+  - sound: 0
+    soundGameObject: {fileID: 1319130465735346560, guid: 3307394d5aa841a438478094f8d14b09,
+      type: 3}
+  - sound: 1
+    soundGameObject: {fileID: 341660985273237624, guid: 8ea2290e95b558743b8855265970f13e,
+      type: 3}
+  - sound: 2
+    soundGameObject: {fileID: 3115583461604995044, guid: 45bab4fd7d9b83449aaf7fe1f173bc2d,
+      type: 3}
+  - sound: 3
+    soundGameObject: {fileID: 6413979259132039962, guid: 5774f7a5bc95c824e90915a5d8884ae0,
+      type: 3}
