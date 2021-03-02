@@ -9,7 +9,6 @@ using Photon.Realtime;
 using TankBattle.Players;
 using UnityEngine;
 using UnityEngine.UI;
-using WebSocketSharp;
 
 namespace TankBattle.Navigation
 {
@@ -195,7 +194,7 @@ namespace TankBattle.Navigation
             element.name = player.UserId;
             
             RoomPlayerElement playerElement = element.GetComponent<RoomPlayerElement>();
-            playerElement.PlayerName = player.NickName.IsNullOrEmpty() ? "--anonimo--" : player.NickName;
+            playerElement.PlayerName = string.IsNullOrEmpty(player.NickName) ? "--anonimo--" : player.NickName;
             SetPlayerColor(player);
         }
 
