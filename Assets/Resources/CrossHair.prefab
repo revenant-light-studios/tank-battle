@@ -92,3 +92,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cedb5e1aadda40dfae9e7d28d6dea970, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SearchingSprite: {fileID: 21300000, guid: 5d55d5b1c46124bb2a34b12736ef81e1, type: 3}
+  AimSprite: {fileID: 21300000, guid: 78be9fef9641948329063366818eac9d, type: 3}

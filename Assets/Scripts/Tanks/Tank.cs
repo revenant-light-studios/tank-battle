@@ -33,9 +33,7 @@ namespace Tanks
 
         float FloorDistance(Vector3 position)
         {
-            RaycastHit raycastHit;
-
-            if (Physics.Raycast(position, -transform.up, out raycastHit))
+            if (Physics.Raycast(position, -transform.up, out RaycastHit raycastHit))
             {
                 return raycastHit.distance;
             }
