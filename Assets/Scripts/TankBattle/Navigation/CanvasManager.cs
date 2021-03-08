@@ -76,7 +76,7 @@ namespace TankBattle.Navigation
         private void StartGame()
         {
             Debug.Log("Start game");
-            PhotonNetwork.LoadLevel("GameScene");
+            PhotonNetwork.LoadLevel("TerrainScene");
         }
 
         private void ReturnToMainMenu(string screen)

@@ -31,12 +31,13 @@ namespace TankBattle.Terrain
 
             _meshFilter = GetComponent<MeshFilter>();
             _meshFilter.sharedMesh = TerrainMeshGenerator.GenerateTerrainMesh(heights, heightMultiplier, heightCurve).CreateMesh();
-
-            _meshCollider = GetComponent<MeshCollider>();
-            _meshCollider.sharedMesh = _meshFilter.sharedMesh;
+            _meshFilter.sharedMesh.RecalculateBounds();
             
             _renderer = GetComponent<PerlinNoiseRenderer>();
             _renderer.DrawNoiseMap(heights);
+            
+            _meshCollider = GetComponent<MeshCollider>();
+            _meshCollider.sharedMesh = _meshFilter.mesh;
         }
     }
 }
