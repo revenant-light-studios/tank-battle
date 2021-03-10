@@ -90,11 +90,12 @@ GameObject:
   m_Component:
   - component: {fileID: 1394657835483499039}
   - component: {fileID: 6851475258476538086}
+  - component: {fileID: 2751519101298133832}
   - component: {fileID: -2123007057018740721}
+  - component: {fileID: 4119116458498074648}
   - component: {fileID: 8533508333633328743}
   - component: {fileID: 4805087192327510034}
   - component: {fileID: 5656289977461324510}
-  - component: {fileID: 4119116458498074648}
   m_Layer: 0
   m_Name: tank
   m_TagString: Untagged
@@ -136,6 +137,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 2
+--- !u!114 &2751519101298133832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734168727806922917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: badf870dc6c34a2a88852559d7eb7184, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &-2123007057018740721
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,6 +168,21 @@ MonoBehaviour:
   ForwardAccel: 700000
   BackwardAccel: 500000
   TurnRate: 250000
+--- !u!114 &4119116458498074648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734168727806922917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 519cbe1d8c774ebcb198bb52b4acaf84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TankBullet: {fileID: 4408492439162259541, guid: f266dedbd028b4894b22077b98d77757,
+    type: 3}
+  _firingRate: 1
 --- !u!114 &8533508333633328743
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,21 +241,6 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
---- !u!114 &4119116458498074648
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1734168727806922917}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 519cbe1d8c774ebcb198bb52b4acaf84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TankBullet: {fileID: 4408492439162259541, guid: f266dedbd028b4894b22077b98d77757,
-    type: 3}
-  _firingRate: 1
 --- !u!1 &1865770749265858482
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,15 +2,14 @@ using ExtensionMethods;
 using TankBattle.Tanks.Bullets;
 using UnityEngine;
 
-namespace TankBattle.Tanks
+namespace TankBattle.Tanks.Guns
 {
-    public class TankGun : MonoBehaviour
+    public class TankGun : ATankGun
     {
-        private float _lastFired = 0f;
-        private bool _fired = false;
-        
         [SerializeField] public ATankBullet TankBullet;
         [SerializeField] private float _firingRate = 2f;
+
+        public override float FiringRate => _firingRate;
 
         private Transform _cannonTransform;
         private ParticleSystem _muzzleParticleSystem;
@@ -26,30 +25,7 @@ namespace TankBattle.Tanks
             _bullet.transform.localRotation = Quaternion.identity;
         }
 
-        private void Update()
-        {
-            if (Input.GetButton("Fire1"))
-            {
-                if(!_fired)
-                {
-                    _lastFired = _firingRate;
-                    _fired = true;
-                    Fire();
-                }
-            }
-            
-            if (_fired)
-            {
-                _lastFired -= Time.deltaTime;
-                
-                if (_lastFired <= 0f)
-                {
-                    _fired = false;
-                }
-            }
-        }
-
-        private void Fire()
+        public override void Fire()
         {
             _bullet?.Fire(_cannonTransform);
             _muzzleParticleSystem.Play();

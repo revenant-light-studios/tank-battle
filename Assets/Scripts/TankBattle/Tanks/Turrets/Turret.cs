@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace TankBattle.Tanks
+namespace TankBattle.Tanks.Turrets
 {
-    public class Turret : MonoBehaviour
+    public class Turret : ATankTurret
     {
         public CrossHair Crosshair;
         public float TurretRotationSpeed = 10f;
@@ -10,8 +10,14 @@ namespace TankBattle.Tanks
         [Header("Cannon settings")]
         public float CannonMinRange = 20f;
         public float CannonMaxRange = 200f;
-        
-        private Vector3 _mouseWorldPosition;
+
+        public override Vector3 MousePosition
+        {
+            set => _mousePosition = value;
+        }
+
+        private Vector3 _mousePosition;
+        private Vector3 _mouseHitPosition;
 
         private CrossHair _crossHair;
 
@@ -22,12 +28,12 @@ namespace TankBattle.Tanks
         private void Update()
         {
             // Turret pointing
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = Camera.main.ScreenPointToRay(_mousePosition);
             int layerMask = 1 << LayerMask.NameToLayer("Ground");
             if (Physics.Raycast(ray, out RaycastHit hit, layerMask))
             {
-                _mouseWorldPosition = hit.point;
-                Vector3 direction = _mouseWorldPosition - transform.position;
+                _mouseHitPosition = hit.point;
+                Vector3 direction = _mouseHitPosition - transform.position;
                 Quaternion lookRotation = Quaternion.LookRotation(direction) * Quaternion.Inverse(transform.parent.rotation);
 
                 float destinationAngle = lookRotation.eulerAngles.y;
@@ -52,7 +58,7 @@ namespace TankBattle.Tanks
                 transform.localRotation = quaternion;
 
                 // Hit point calculation
-                Vector3 hitPointVector = new Vector3(_mouseWorldPosition.x, 0.1f, _mouseWorldPosition.z) - transform.position;
+                Vector3 hitPointVector = new Vector3(_mouseHitPosition.x, 0.1f, _mouseHitPosition.z) - transform.position;
                 float distance = Mathf.Clamp(hitPointVector.magnitude, CannonMinRange, CannonMaxRange);
                 hitPointVector = transform.position + hitPointVector.normalized * distance; 
                 _crossHair.transform.position = new Vector3(hitPointVector.x, 0.1f, hitPointVector.z);

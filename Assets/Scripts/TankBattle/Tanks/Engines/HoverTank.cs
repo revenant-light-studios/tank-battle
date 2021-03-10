@@ -1,10 +1,11 @@
 using ExtensionMethods;
+using TankBattle.Tanks.Turrets;
 using UnityEngine;
 using Cursor = UnityEngine.Cursor;
 
-namespace TankBattle.Tanks
+namespace TankBattle.Tanks.Engines
 {
-    public class HoverTank : MonoBehaviour
+    public class HoverTank : ATankEngine
     {
         public bool ExtraFuelTank;
         public bool RocketLauncher;
@@ -70,30 +71,7 @@ namespace TankBattle.Tanks
             _antyGravityEngines[3].transform.parent = this.transform;
             _antyGravityEngines[3].transform.position = new Vector3(transform.position.x + tankWidth * 0.5f, transform.position.y, transform.position.z + tankLength * 0.5f);
         }
-        
-        private void Update()
-        {
-            // Thrusting
-            _thrust = 0f;
-            float forward = Input.GetAxis("Vertical");
-            if (forward > _deadZone)
-            {
-                _thrust = forward * ForwardAccel;
-            }
-            else if(forward < -_deadZone)
-            {
-                _thrust = forward * BackwardAccel;
-            }
 
-            // Turning
-            _turn = 0f;
-            float turn = Input.GetAxis("Horizontal");
-            if (Mathf.Abs(turn) > _deadZone)
-            {
-                _turn = turn;
-            }
-        }
-        
         private void FixedUpdate()
         {
             if (Mathf.Abs(_thrust) > 0f)
@@ -105,6 +83,9 @@ namespace TankBattle.Tanks
             {
                 _rigidbody.AddTorque(Vector3.up * (_turn * TurnRate));
             }
+
+            _thrust = 0f;
+            _turn = 0f;
 
             // Hovering
             for(int i=0; i < _antyGravityEngines.Length; i++)
@@ -141,6 +122,29 @@ namespace TankBattle.Tanks
             if(_antyGravityEngines[1] != null) Gizmos.DrawSphere(_antyGravityEngines[1].transform.position, 0.2f);
             if(_antyGravityEngines[2] != null) Gizmos.DrawSphere(_antyGravityEngines[2].transform.position, 0.2f);
             if(_antyGravityEngines[3] != null) Gizmos.DrawSphere(_antyGravityEngines[3].transform.position, 0.21f);
+        }
+        public override float InputHorizontalAxis
+        {
+            set {
+                if (Mathf.Abs(value) > _deadZone)
+                {
+                    _turn = value;
+                }
+            }
+        }
+        
+        public override float InputVerticalAxis
+        {
+            set {
+                if (value > _deadZone)
+                {
+                    _thrust = value * ForwardAccel;
+                }
+                else if(value < -_deadZone)
+                {
+                    _thrust = value * BackwardAccel;
+                }
+            }
         }
     }
 }
