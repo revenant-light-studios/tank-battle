@@ -1,8 +1,7 @@
-﻿using System;
-using ExtensionMethods;
+﻿using ExtensionMethods;
 using UnityEngine;
 
-namespace Tanks
+namespace TankBattle.Tanks
 {
     public class Tank : MonoBehaviour
     {

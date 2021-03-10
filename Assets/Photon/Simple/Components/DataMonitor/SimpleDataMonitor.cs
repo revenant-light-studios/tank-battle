@@ -3,11 +3,6 @@
 // <author>developer@exitgames.com</author>
 // ---------------------------------------------------------------------------------------------
 
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
-
 #if SNS_REPORTS && (UNITY_EDITOR || DEVELOPMENT_BUILD)
 
 namespace Photon.Pun.Simple

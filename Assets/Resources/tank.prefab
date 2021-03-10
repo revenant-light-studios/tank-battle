@@ -28,7 +28,8 @@ Transform:
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.00000006077021, y: -1.5, z: -0.79153717}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 6438751389128159682}
   m_Father: {fileID: 8854582191379169931}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -90,6 +91,10 @@ GameObject:
   - component: {fileID: 1394657835483499039}
   - component: {fileID: 6851475258476538086}
   - component: {fileID: -2123007057018740721}
+  - component: {fileID: 8533508333633328743}
+  - component: {fileID: 4805087192327510034}
+  - component: {fileID: 5656289977461324510}
+  - component: {fileID: 4119116458498074648}
   m_Layer: 0
   m_Name: tank
   m_TagString: Untagged
@@ -123,14 +128,14 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1734168727806922917}
   serializedVersion: 2
-  m_Mass: 3000
+  m_Mass: 1000
   m_Drag: 20
   m_AngularDrag: 10
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &-2123007057018740721
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,12 +149,85 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ExtraFuelTank: 0
-  RocketLauncher: 0
-  FlightDistance: 2
-  HoverForce: 80000
-  ForwardAccel: 10000
-  BackwardAccel: 2500
-  TurnRate: 500
+  RocketLauncher: 1
+  FlightDistance: 0.6
+  HoverForce: 8000
+  ForwardAccel: 700000
+  BackwardAccel: 500000
+  TurnRate: 250000
+--- !u!114 &8533508333633328743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734168727806922917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d487fac2f764257be5d3c3dcf76be1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _followTransform: {fileID: 8854582191379169931}
+  _distance: 8
+  _height: 4
+  _centerOffset: {x: 0, y: 5, z: 0}
+  _smoothSpeed: 6
+  _followOnStart: 1
+--- !u!114 &4805087192327510034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734168727806922917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  observableSearch: 2
+  Synchronization: 3
+  OwnershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 5656289977461324510}
+  - {fileID: 679092311070381576}
+  viewIdField: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &5656289977461324510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734168727806922917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
+--- !u!114 &4119116458498074648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734168727806922917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 519cbe1d8c774ebcb198bb52b4acaf84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TankBullet: {fileID: 4408492439162259541, guid: f266dedbd028b4894b22077b98d77757,
+    type: 3}
+  _firingRate: 1
 --- !u!1 &1865770749265858482
 GameObject:
   m_ObjectHideFlags: 0
@@ -162,6 +240,7 @@ GameObject:
   - component: {fileID: 3775748578637756588}
   - component: {fileID: 3000597856105636151}
   - component: {fileID: 1314467902453688885}
+  - component: {fileID: 679092311070381576}
   m_Layer: 0
   m_Name: Turret
   m_TagString: Untagged
@@ -243,10 +322,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9aa3ead879584ab2a02b012b395f6501, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Crosshair: {fileID: 0}
+  Crosshair: {fileID: 7709029295670614258, guid: e1fd8ab041bd24c71b1c96b86778faa5,
+    type: 3}
   TurretRotationSpeed: 3
   CannonMinRange: 20
   CannonMaxRange: 200
+--- !u!114 &679092311070381576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1865770749265858482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &2018038892871256476
 GameObject:
   m_ObjectHideFlags: 0
@@ -420,6 +516,37 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &3389944896452201870
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6438751389128159682}
+  m_Layer: 0
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6438751389128159682
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3389944896452201870}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.01, z: 5.657}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4443114703313224905}
+  m_Father: {fileID: 1333066262284826030}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7542414104320203242
 GameObject:
   m_ObjectHideFlags: 0
@@ -499,3 +626,78 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1001 &7771188156987557414
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 6438751389128159682}
+    m_Modifications:
+    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6230912562917084981, guid: 1372248abe59e47598018ad36e9a8ac8,
+        type: 3}
+      propertyPath: m_Name
+      value: TankMuzzleFlash
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1372248abe59e47598018ad36e9a8ac8, type: 3}
+--- !u!4 &4443114703313224905 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
+    type: 3}
+  m_PrefabInstance: {fileID: 7771188156987557414}
+  m_PrefabAsset: {fileID: 0}

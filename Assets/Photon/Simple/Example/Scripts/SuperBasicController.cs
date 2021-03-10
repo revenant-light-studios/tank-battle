@@ -2,8 +2,6 @@
 
 using UnityEngine;
 using Photon.Pun.Simple;
-using emotitron.Utilities;
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif

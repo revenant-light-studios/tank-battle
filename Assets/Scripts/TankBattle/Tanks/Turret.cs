@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Tanks
+namespace TankBattle.Tanks
 {
     public class Turret : MonoBehaviour
     {
@@ -12,7 +12,13 @@ namespace Tanks
         public float CannonMaxRange = 200f;
         
         private Vector3 _mouseWorldPosition;
-        
+
+        private CrossHair _crossHair;
+
+        private void Start()
+        {
+            _crossHair = Instantiate(Crosshair);
+        }
         private void Update()
         {
             // Turret pointing
@@ -49,10 +55,10 @@ namespace Tanks
                 Vector3 hitPointVector = new Vector3(_mouseWorldPosition.x, 0.1f, _mouseWorldPosition.z) - transform.position;
                 float distance = Mathf.Clamp(hitPointVector.magnitude, CannonMinRange, CannonMaxRange);
                 hitPointVector = transform.position + hitPointVector.normalized * distance; 
-                Crosshair.transform.position = new Vector3(hitPointVector.x, 0.1f, hitPointVector.z);
+                _crossHair.transform.position = new Vector3(hitPointVector.x, 0.1f, hitPointVector.z);
 
-                Vector3 cross = Vector3.Cross(transform.forward, Crosshair.transform.position);
-                Crosshair.TargetReached = (Mathf.Abs(cross.y) < 3f);
+                Vector3 cross = Vector3.Cross(transform.forward, _crossHair.transform.position);
+                _crossHair.TargetReached = (Mathf.Abs(cross.y) < 3f);
                 // Debug.Log($"{cross}");
             }
         }

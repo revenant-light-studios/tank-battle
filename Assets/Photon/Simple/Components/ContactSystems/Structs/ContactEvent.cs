@@ -3,8 +3,6 @@
 // <author>developer@exitgames.com</author>
 // ---------------------------------------------------------------------------------------------
 
-using emotitron.Utilities;
-using Photon.Compression;
 using UnityEngine;
 
 namespace Photon.Pun.Simple

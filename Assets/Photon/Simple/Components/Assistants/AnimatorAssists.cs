@@ -8,8 +8,6 @@
 
 using UnityEngine;
 
-using Photon.Pun;
-
 namespace Photon.Pun.Simple.Assists
 {
     public static class AnimatorAssists

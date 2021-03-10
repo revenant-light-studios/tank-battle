@@ -7,7 +7,6 @@
 #if PUN_2_OR_NEWER
 
 using UnityEngine;
-using Photon.Pun;
 
 namespace Photon.Pun.Simple.Assists
 {

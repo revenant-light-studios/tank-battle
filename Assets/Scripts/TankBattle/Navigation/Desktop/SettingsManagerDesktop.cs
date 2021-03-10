@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using ExtensionMethods;
-using System.Collections;
 using TankBattle.Navigation;
 
 namespace HightTide.UI

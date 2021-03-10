@@ -10,7 +10,6 @@ using UnityEngine;
 using UnityEditor;
 using Photon.Utilities;
 using System.Collections.Generic;
-using Photon.Pun;
 
 namespace Photon.Pun.Simple.Assists
 {

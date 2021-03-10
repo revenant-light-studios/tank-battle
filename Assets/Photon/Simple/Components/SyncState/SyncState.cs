@@ -8,8 +8,6 @@ using Photon.Utilities;
 using UnityEngine;
 
 using Photon.Compression;
-using Photon.Realtime;
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif

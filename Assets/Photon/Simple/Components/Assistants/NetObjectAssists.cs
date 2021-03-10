@@ -8,11 +8,8 @@
 
 using UnityEngine;
 using UnityEditor;
-using emotitron.Utilities.Networking;
 using System.Collections.Generic;
 using System;
-
-using Photon.Pun;
 
 namespace Photon.Pun.Simple.Assists
 {

@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-namespace Tanks
+namespace TankBattle.Tanks
 {
     public class CrossHair : MonoBehaviour
     {
@@ -34,14 +33,11 @@ namespace Tanks
                 }
             }
         }
-
-        private void Awake()
-        {
-            _crossHairMaterial = GetComponent<MeshRenderer>().material;
-        }
-
+        
         private void Start()
         {
+            _crossHairMaterial = GetComponent<MeshRenderer>().material;
+            
             if (SearchingSprite == null)
             {
                 SearchingSprite = Resources.Load<Sprite>("Sprites/CrosshairSearch");

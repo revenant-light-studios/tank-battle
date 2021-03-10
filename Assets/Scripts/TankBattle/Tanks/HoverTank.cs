@@ -1,11 +1,8 @@
-using System;
 using ExtensionMethods;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.UIElements;
 using Cursor = UnityEngine.Cursor;
 
-namespace Tanks
+namespace TankBattle.Tanks
 {
     public class HoverTank : MonoBehaviour
     {
@@ -96,8 +93,7 @@ namespace Tanks
                 _turn = turn;
             }
         }
-
-
+        
         private void FixedUpdate()
         {
             if (Mathf.Abs(_thrust) > 0f)

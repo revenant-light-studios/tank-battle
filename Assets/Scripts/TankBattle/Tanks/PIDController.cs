@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Tanks
+namespace TankBattle.Tanks
 {
     [System.Serializable]
     public class PIDController {
