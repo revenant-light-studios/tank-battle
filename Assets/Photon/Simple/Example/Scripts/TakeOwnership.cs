@@ -1,10 +1,6 @@
-﻿
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 #if PUN_2_OR_NEWER
-using Photon.Pun;
 #endif
 
 namespace Photon.Pun.Example

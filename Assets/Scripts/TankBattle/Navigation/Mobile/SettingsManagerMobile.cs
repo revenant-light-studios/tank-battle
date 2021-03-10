@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using TankBattle.Navigation;
-using UnityEngine;
+﻿using TankBattle.Navigation;
 
 namespace HightTide.UI
 {

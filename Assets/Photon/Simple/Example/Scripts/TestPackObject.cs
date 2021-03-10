@@ -1,8 +1,5 @@
 ﻿using UnityEngine;
 using Photon.Pun.Simple;
-using System.Collections.Generic;
-
-using Photon.Pun;
 using Photon.Compression;
 
 namespace emotitron

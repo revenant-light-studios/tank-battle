@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using emotitron.Utilities.Networking;
-
+﻿using UnityEngine;
 #if PUN_2_OR_NEWER
 using Photon.Pun;
 #endif

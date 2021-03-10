@@ -6,11 +6,7 @@
 #if UNITY_EDITOR
 #if PUN_2_OR_NEWER
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
-using Photon.Pun;
 
 namespace Photon.Pun.Simple.Assists
 {

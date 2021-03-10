@@ -1,8 +1,6 @@
-using System;
 using ExtensionMethods;
 using TankBattle.Tanks.Bullets;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace TankBattle.Tanks
 {

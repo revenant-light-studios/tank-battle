@@ -4,8 +4,6 @@
 // ---------------------------------------------------------------------------------------------
 
 using UnityEngine;
-using emotitron.Utilities;
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif

@@ -3,7 +3,6 @@
 // <author>developer@exitgames.com</author>
 // ---------------------------------------------------------------------------------------------
 using Photon.Compression;
-using Photon.Realtime;
 using UnityEngine;
 
 #if UNITY_EDITOR

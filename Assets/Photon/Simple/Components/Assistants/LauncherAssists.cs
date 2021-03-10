@@ -6,7 +6,6 @@
 #if UNITY_EDITOR
 
 #if PUN_2_OR_NEWER
-using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 #endif
 

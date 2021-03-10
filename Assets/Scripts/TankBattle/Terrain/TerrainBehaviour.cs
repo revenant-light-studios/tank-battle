@@ -1,4 +1,3 @@
-using System;
 using TankBattle.Terrain.Noise;
 using UnityEngine;
 

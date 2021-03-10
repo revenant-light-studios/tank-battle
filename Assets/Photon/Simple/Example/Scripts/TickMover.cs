@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Photon.Pun.Simple;
-using UnityEngine.UI;
 
 public class TickMover : MonoBehaviour, IOnPostSimulate
 {

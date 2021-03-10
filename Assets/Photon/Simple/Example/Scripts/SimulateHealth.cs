@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using emotitron.Utilities;
-using emotitron.Utilities.Networking;
+﻿using UnityEngine;
 
 namespace Photon.Pun.Simple
 {
