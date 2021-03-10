@@ -7,6 +7,10 @@ namespace TankBattle.Tanks
     /// </summary>
     public class CameraFollow : MonoBehaviour
     {
+        [Tooltip("Transform to follow")]
+        [SerializeField]
+        private Transform _followTransform;
+        
         [Tooltip("Distance from the camera to the target")]
         [SerializeField]
         private float _distance;
@@ -34,6 +38,11 @@ namespace TankBattle.Tanks
         
         private void Start()
         {
+            if (_followTransform == null)
+            {
+                _followTransform = transform;
+            }
+            
             if (_followOnStart)
             {
                 StartFollowing();
@@ -58,7 +67,6 @@ namespace TankBattle.Tanks
             _cameraTransform = Camera.main.transform;
             _isFollowing = true;
             
-                        
             Cut();
         }
         
@@ -67,8 +75,8 @@ namespace TankBattle.Tanks
             _cameraOffset.z = -_distance;
             _cameraOffset.y = _height;
 
-            _cameraTransform.position = Vector3.Lerp(_cameraTransform.position, transform.position + transform.TransformVector(_cameraOffset), _smoothSpeed * Time.deltaTime);
-            _cameraTransform.LookAt(transform.position + _centerOffset);
+            _cameraTransform.position = Vector3.Lerp(_cameraTransform.position, _followTransform.position + _followTransform.TransformVector(_cameraOffset), _smoothSpeed * Time.deltaTime);
+            _cameraTransform.LookAt(_followTransform.position + _centerOffset);
         }
 
         private void Cut()
@@ -76,8 +84,8 @@ namespace TankBattle.Tanks
             _cameraOffset.z = -_distance;
             _cameraOffset.y = _height;
 
-            _cameraTransform.position = transform.position + transform.TransformVector(_cameraOffset);
-            _cameraTransform.LookAt(transform.position + _centerOffset);
+            _cameraTransform.position = _followTransform.position + _followTransform.TransformVector(_cameraOffset);
+            _cameraTransform.LookAt(_followTransform.position + _centerOffset);
         }
 
     }

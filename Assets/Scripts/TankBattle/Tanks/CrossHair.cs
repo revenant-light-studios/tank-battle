@@ -33,14 +33,11 @@ namespace TankBattle.Tanks
                 }
             }
         }
-
-        private void Awake()
-        {
-            _crossHairMaterial = GetComponent<MeshRenderer>().material;
-        }
-
+        
         private void Start()
         {
+            _crossHairMaterial = GetComponent<MeshRenderer>().material;
+            
             if (SearchingSprite == null)
             {
                 SearchingSprite = Resources.Load<Sprite>("Sprites/CrosshairSearch");
