@@ -62,7 +62,7 @@ namespace TankBattle.Tanks
             }
         }
 
-        private void StartFollowing()
+        public void StartFollowing()
         {
             _cameraTransform = Camera.main.transform;
             _isFollowing = true;

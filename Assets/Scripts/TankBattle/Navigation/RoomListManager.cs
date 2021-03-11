@@ -37,12 +37,7 @@ namespace TankBattle.Navigation
             _joinButton.onClick.AddListener(JoinRoomWithSecret);
             _returnButton.onClick.AddListener(ReturnMainMenu);
         }
-
-        public override void OnEnable()
-        {
-            base.OnEnable(); 
-        }
-
+        
         public override void OnDisable()
         {
             base.OnDisable();

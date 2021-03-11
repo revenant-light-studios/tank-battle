@@ -29,6 +29,7 @@ namespace TankBattle.Tanks.Turrets
         {
             // Turret pointing
             Ray ray = Camera.main.ScreenPointToRay(_mousePosition);
+            
             int layerMask = 1 << LayerMask.NameToLayer("Ground");
             if (Physics.Raycast(ray, out RaycastHit hit, layerMask))
             {

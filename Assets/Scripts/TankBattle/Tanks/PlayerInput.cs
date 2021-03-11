@@ -1,5 +1,6 @@
 using System;
 using Photon.Pun;
+using TankBattle.Navigation;
 using TankBattle.Tanks.Engines;
 using TankBattle.Tanks.Guns;
 using TankBattle.Tanks.Turrets;
@@ -27,12 +28,11 @@ namespace TankBattle.Tanks
 
         private void Update()
         {
-            if(_photonView.IsMine || !PhotonNetwork.IsConnected)
-            {
-                EngineInput();
-                TurretInput();
-                GunInput();
-            }
+            if (!_photonView.IsMine && PhotonNetwork.IsConnected) return;
+            
+            EngineInput();
+            TurretInput();
+            GunInput();
         }
 
         /// <summary>

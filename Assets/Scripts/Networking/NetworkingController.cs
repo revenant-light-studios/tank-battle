@@ -14,6 +14,8 @@ namespace Networking
         
         public override void OnConnectedToMaster()
         {
+            PhotonNetwork.AutomaticallySyncScene = true;
+
             if (!PhotonNetwork.InLobby)
             {
                 PhotonNetwork.JoinLobby();
