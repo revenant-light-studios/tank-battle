@@ -4,13 +4,13 @@ using ExtensionMethods;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace HightTide.UI
+namespace TankBattle.Navigation2
 {
     public class DisplayCredits : MonoBehaviour
     {
         private Vector2 _startPos;
         private Vector2 _endPos;
-        private RectTransform _candleLogo;
+        private RectTransform _logo;
         private RectTransform _transform;
         private float _time = 15f;
         bool load = false;
@@ -22,14 +22,14 @@ namespace HightTide.UI
 
         private void InitCredits()
         {
-            _candleLogo = transform.FirstOrDefault(t => t.name == "CandleLogo").GetComponent<RectTransform>();
+            //_logo = transform.FirstOrDefault(t => t.name == "CandleLogo").GetComponent<RectTransform>();
             _transform = transform.GetComponent<RectTransform>();
             LayoutRebuilder.ForceRebuildLayoutImmediate(_transform);
             _startPos = _transform.anchoredPosition;
             float height = _transform.rect.height * _transform.localScale.y;
             float windowHeight = GetComponentInParent<Canvas>().GetComponent<RectTransform>().rect.height;
             Debug.Log($"height:{windowHeight}");
-            _endPos = new Vector2(_startPos.x, _startPos.y + height + (windowHeight * 0.5f - _candleLogo.rect.height * 0.5f * transform.localScale.y));
+            _endPos = new Vector2(_startPos.x, _startPos.y + height + (windowHeight /* * 0.5f - _logo.rect.height * 0.5f * transform.localScale.y*/));
             load = true;
             StartCredits();
         }

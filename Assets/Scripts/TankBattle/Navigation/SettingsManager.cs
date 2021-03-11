@@ -1,70 +1,90 @@
-using ExtensionMethods;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.EventSystems;
 using UnityEngine;
+using ExtensionMethods;
 using UnityEngine.UI;
+using System;
 
-namespace TankBattle.Navigation
+namespace TankBattle.Navigation2
 {
     public class SettingsManager : MonoBehaviour
     {
-        protected CustomSettings _customSettings;
-
-        public InputField _nickname { get; private set; }
+        private CustomSettings _customSettings;
+        private NavigationsButtons _navBtns;
         public Slider _globalSound { get; private set; }
         public Slider _musicSound { get; private set; }
         public Slider _effectsSound { get; private set; }
-        public Toggle _isDaltonic { get; private set; }
-        
-        private Button _returnBtn;
+        public Button _shootBtn { get; private set; }
 
-        public delegate void OnReturnMainMenuDelegate();
-        public OnReturnMainMenuDelegate OnReturnMainMenu;
+        private Event _keyEvent;
+        private bool _waitingForKey = false;
+        private string _pressedButton;
+
+        //Navigation
+        public delegate void OnGoMenuDelegate();
+        public OnGoMenuDelegate OnGoMenu;
+
+        public delegate void OnGoCreditsDelegate();
+        public OnGoCreditsDelegate OnGoCredits;
 
         private void Awake()
         {
             _customSettings = FindObjectOfType<CustomSettings>();
 
-            Transform nicknameTransform = transform.FirstOrDefault(t => t.name == "Nickname").transform;
-            _nickname = nicknameTransform.FirstOrDefault(t => t.name == "NicknameInput").GetComponent<InputField>();
+            _navBtns = FindObjectOfType<NavigationsButtons>();
 
             Transform soundTransform = transform.FirstOrDefault(t => t.name == "Sound").transform;
-            _globalSound = soundTransform.FirstOrDefault(t => t.name == "GlobalSound").GetComponentInChildren<Slider>();
-            _musicSound = soundTransform.FirstOrDefault(t => t.name == "MusicSound").GetComponentInChildren<Slider>();
-            _effectsSound = soundTransform.FirstOrDefault(t => t.name == "EffectsSound").GetComponentInChildren<Slider>();
+            _globalSound = soundTransform.FirstOrDefault(t => t.name == "GlobalVolume").GetComponentInChildren<Slider>();
+            _musicSound = soundTransform.FirstOrDefault(t => t.name == "MusicVolume").GetComponentInChildren<Slider>();
+            _effectsSound = soundTransform.FirstOrDefault(t => t.name == "EffectsVolume").GetComponentInChildren<Slider>();
 
-            Transform accesibilityTransform = transform.FirstOrDefault(t => t.name == "Accesibility").transform;
-            _isDaltonic = accesibilityTransform.FirstOrDefault(t => t.name == "Daltonic").GetComponent<Toggle>();
+            Transform controllersTransform = transform.FirstOrDefault(t => t.name == "Controllers").transform;
+            _shootBtn = controllersTransform.FirstOrDefault(t => t.name == "ShootBtn").GetComponent<Button>();
 
-            _returnBtn = transform.FirstOrDefault(t => t.name == "ReturnBtn").GetComponent<Button>();
+            _navBtns.OnMenu += () => OnGoMenu?.Invoke();
+            _navBtns.OnCredits += () => OnGoCredits?.Invoke();
+           
+
+            _shootBtn.onClick.AddListener(KeyChange);
+        }
+        // Start is called before the first frame update
+        void Start()
+        {
+            _navBtns.SelectNavButton(NavigationsButtons.navWindows.Settings);
 
             //init values
-            _nickname.text = _customSettings.nickname;
-
+            _shootBtn.GetComponentInChildren<Text>().text = _customSettings.shootBtn.ToString();
+           
             _globalSound.value = _customSettings.globalVolume;
             _musicSound.value = _customSettings.musicVolume;
             _effectsSound.value = _customSettings.effectsVolume;
 
-            _isDaltonic.isOn = _customSettings.isDaltonic;
-
-           
             //callbacks
-            _returnBtn.onClick.AddListener(ReturnMainMenu);
-
-            _nickname.onValueChanged.AddListener(NameChange);
             _globalSound.onValueChanged.AddListener(GlobalVolumeChange);
             _musicSound.onValueChanged.AddListener(MusicVolumeChange);
             _effectsSound.onValueChanged.AddListener(EffectsVolumeChange);
-            _isDaltonic.onValueChanged.AddListener(DaltonicChange);
         }
-
-        private void DaltonicChange(bool isDaltonic)
+        private void Update()
         {
-            _customSettings.isDaltonic = isDaltonic;
-        }
-
-        private void NameChange(string name)
-        {
-            //put name in photon player
-            Debug.Log(name);
+            if (_waitingForKey)
+            {
+                foreach (KeyCode vKey in Enum.GetValues(typeof(KeyCode)))
+                {
+                    if (Input.GetKey(vKey))
+                    {
+                        switch (_pressedButton)
+                        {
+                            case "ShootBtn":
+                                //_customSettings.shootBtn = vKey;
+                                _shootBtn.GetComponentInChildren<Text>().text = vKey.ToString();
+                                break;
+                        }
+                        _waitingForKey = false;
+                        _shootBtn.interactable = true;
+                    }
+                }
+            }
         }
 
         private void GlobalVolumeChange(float volume)
@@ -81,10 +101,14 @@ namespace TankBattle.Navigation
         {
             _customSettings.effectsVolume = volume;
         }
-
-        public void ReturnMainMenu()
+        private void KeyChange()
         {
-            OnReturnMainMenu?.Invoke();
+            _waitingForKey = true;
+            if(EventSystem.current.currentSelectedGameObject != null)
+            {
+                _pressedButton = EventSystem.current.currentSelectedGameObject.name;
+                _shootBtn.interactable = false;
+            }           
         }
     }
 }

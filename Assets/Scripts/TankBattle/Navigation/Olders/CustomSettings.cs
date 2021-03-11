@@ -1,21 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace TankBattle.Navigation2
+namespace TankBattle.Navigation
 {
     public class CustomSettings : MonoBehaviour
     {
-        private KeyCode _shootBtn = KeyCode.Mouse0;
-
-        public KeyCode shootBtn
-        {
-            get { return _shootBtn; }
-            set { _shootBtn = value; }
-        }
-
-        private float _globalVolume = 1f;
-        public float globalVolume
+        private float _globalVolume = 1;
+        public float globalVolume 
         {
             get { return _globalVolume; }
             set
@@ -24,8 +14,7 @@ namespace TankBattle.Navigation2
                 OnChangeVolume?.Invoke();
             }
         }
-
-        private float _musicVolume = 1f;
+        private float _musicVolume = 0.3f;
         public float musicVolume
         {
             get { return _musicVolume; }
@@ -35,8 +24,7 @@ namespace TankBattle.Navigation2
                 OnChangeVolume?.Invoke();
             }
         }
-
-        private float _effectsVolume = 1f;
+        private float _effectsVolume = 1;
         public float effectsVolume
         {
             get { return _effectsVolume; }
@@ -47,12 +35,21 @@ namespace TankBattle.Navigation2
             }
         }
 
+        public string nickname = "User";
+        public KeyCode stats = KeyCode.E;
+        public KeyCode photo = KeyCode.R;
+        public KeyCode finishTurn = KeyCode.T;
+        public bool isDaltonic = false;
+
         public delegate void OnChangeVolumeDelegate();
         public OnChangeVolumeDelegate OnChangeVolume;
-        // Start is called before the first frame update
-        void Start()
+
+        private void Start()
         {
             DontDestroyOnLoad(gameObject);
         }
+
+
     }
 }
+
