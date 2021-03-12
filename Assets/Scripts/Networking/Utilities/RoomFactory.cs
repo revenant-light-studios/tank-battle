@@ -33,7 +33,7 @@ namespace Networking.Utilities
         public RoomOptions CreateRoomProperties(string key)
         {
             int randomSeed = Guid.NewGuid().GetHashCode();
-            Debug.Log($"Random seed generated: {randomSeed}");
+            // Debug.Log($"Random seed generated: {randomSeed}");
             
             RoomOptions roomOptions = new RoomOptions();
             roomOptions.MaxPlayers = _maxNumberOfPlayers;

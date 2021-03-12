@@ -29,7 +29,7 @@ namespace TankBattle.Audio
 
         private void VolumeChange()
         {
-            Debug.Log("New Volume");
+            // Debug.Log("New Volume");
             if(_currentTheme != null)
             {
                 _currentTheme.GetComponent<AudioSource>().volume = _customSettings.musicVolume * _customSettings.globalVolume;
@@ -63,7 +63,7 @@ namespace TankBattle.Audio
                     return soundPrefab.soundGameObject;
                 }
             }
-            Debug.LogError("Sound " + sound + " is not found!");
+            // Debug.LogError("Sound " + sound + " is not found!");
             return null;
         }
 

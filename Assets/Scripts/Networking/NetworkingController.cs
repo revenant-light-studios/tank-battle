@@ -24,7 +24,7 @@ namespace Networking
 
         public override void OnDisconnected(DisconnectCause cause)
         {
-            Debug.Log("Disconnected from server");
+            // Debug.Log("Disconnected from server");
         }
 
         public override void OnCreatedRoom()
@@ -41,7 +41,7 @@ namespace Networking
 
         public override void OnLeftRoom()
         {
-            Debug.Log("Local player left room");
+            // Debug.Log("Local player left room");
         }
 
         public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)

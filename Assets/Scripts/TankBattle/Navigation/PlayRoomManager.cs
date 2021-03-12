@@ -63,7 +63,7 @@ namespace TankBattle.Navigation
                 GenerateSpawnPoints(1);
                 Vector3 position = _spawnPoints[0];
                 Instantiate(_tankPrefab, position, Quaternion.identity);
-                Debug.Log($"Instantiated tank at position {position}");
+                // Debug.Log($"Instantiated tank at position {position}");
             }
         }
 
@@ -93,7 +93,7 @@ namespace TankBattle.Navigation
                     float randomRadius = generator.Next((int)(xCenter * 0.5), (int)(xCenter * 0.9));
                     x = xCenter + Mathf.Cos(randomAngle) * randomRadius;
                     z = zCenter + Mathf.Sin(randomAngle) * randomRadius;
-                    Debug.Log($"Checking if valid spawn point at ({x},{z})");
+                    // Debug.Log($"Checking if valid spawn point at ({x},{z})");
                 } while (_terrain.GetHeight((int)x, (int)z) > 0.0f || !IsFreeSpot(x, z));
 
                 _spawnPoints[i] = new Vector3(x, 0.2f, z);

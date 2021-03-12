@@ -27,7 +27,7 @@ namespace HightTide.UI
             _startPos = _transform.anchoredPosition;
             float height = _transform.rect.height * _transform.localScale.y;
             float windowHeight = GetComponentInParent<Canvas>().GetComponent<RectTransform>().rect.height;
-            Debug.Log($"height:{windowHeight}");
+            // Debug.Log($"height:{windowHeight}");
             _endPos = new Vector2(_startPos.x, _startPos.y + height + (windowHeight * 0.5f - _candleLogo.rect.height * 0.5f * transform.localScale.y));
             load = true;
             StartCredits();
@@ -50,14 +50,14 @@ namespace HightTide.UI
 
             if (load)
             {
-                Debug.Log($"Going from {_startPos} to {_endPos}");
+                // Debug.Log($"Going from {_startPos} to {_endPos}");
                 StartCoroutine(Display(_time, _startPos, _endPos));
             }
         }
 
         public void RestartPositions()
         {
-            Debug.Log($"Going from {_endPos} to {_startPos}");
+            // Debug.Log($"Going from {_endPos} to {_startPos}");
             _transform.anchoredPosition = _startPos;
         }
     }

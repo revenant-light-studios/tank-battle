@@ -64,7 +64,7 @@ namespace TankBattle.Navigation
         private void NameChange(string name)
         {
             //put name in photon player
-            Debug.Log(name);
+            // Debug.Log(name);
         }
 
         private void GlobalVolumeChange(float volume)

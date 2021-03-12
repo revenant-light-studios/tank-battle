@@ -9,7 +9,7 @@ namespace TankBattle.Tanks.Bullets
         
         private void OnTriggerEnter(Collider other)
         {
-            Debug.Log($"Hit {other.name}");
+            // Debug.Log($"Hit {other.name}");
             Destroy(gameObject);
         }
         public override void Fire(Transform parent)
@@ -19,7 +19,7 @@ namespace TankBattle.Tanks.Bullets
             bullet.transform.rotation = parent.rotation;
             bullet.transform.position = parent.position + parent.forward * 4f;
             _rigidBody.AddForce(parent.forward.normalized * _force, ForceMode.Impulse);
-            Debug.Log("Fire");
+            // Debug.Log("Fire");
         }
     }
 }

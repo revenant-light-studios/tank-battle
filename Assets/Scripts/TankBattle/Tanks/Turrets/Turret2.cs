@@ -32,7 +32,7 @@ namespace TankBattle.Tanks.Turrets
          
             float _halfScreenWidth = Screen.width * 0.5f;
             float displacement = (_mousePosition.x - _halfScreenWidth) / _halfScreenWidth;
-            Debug.Log($"Mouse position: {_mousePosition}, displacement {displacement}");
+            // Debug.Log($"Mouse position: {_mousePosition}, displacement {displacement}");
 
             if (Mathf.Abs(displacement) > _deadZone)
             {

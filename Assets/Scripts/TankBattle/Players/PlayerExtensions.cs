@@ -19,7 +19,7 @@ namespace TankBattle.Players
                     return color;
                 }
                 
-                Debug.Log($"Unable to parse color #{colorString}");
+                // Debug.Log($"Unable to parse color #{colorString}");
             }
 
             return Color.black;

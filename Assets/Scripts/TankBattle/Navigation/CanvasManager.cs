@@ -73,7 +73,6 @@ namespace TankBattle.Navigation
         [PunRPC]
         private void StartGame()
         {
-            Debug.Log("Start game");
             PhotonNetwork.LoadLevel("GamePlay");
         }
 
