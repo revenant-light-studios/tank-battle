@@ -6,5 +6,6 @@ namespace TankBattle.Tanks.Engines
     {
         public abstract float InputHorizontalAxis { set; }
         public abstract float InputVerticalAxis { set; }
+        public abstract void UpdateTank();
     }
 }

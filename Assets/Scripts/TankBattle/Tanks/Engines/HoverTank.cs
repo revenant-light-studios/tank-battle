@@ -72,8 +72,8 @@ namespace TankBattle.Tanks.Engines
             _antyGravityEngines[3].transform.parent = this.transform;
             _antyGravityEngines[3].transform.position = new Vector3(transform.position.x + tankWidth * 0.5f, transform.position.y, transform.position.z + tankLength * 0.5f);
         }
-        
-        private void FixedUpdate()
+
+        public override void UpdateTank()
         {
             if (Mathf.Abs(_thrust) > 0f)
             {

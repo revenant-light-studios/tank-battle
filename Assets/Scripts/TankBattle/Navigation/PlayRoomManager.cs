@@ -43,6 +43,8 @@ namespace TankBattle.Navigation
         }
         private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
+            Cursor.lockState = CursorLockMode.Confined;
+            
             _randomSeed = (PhotonNetwork.InRoom) ? (int)PhotonNetwork.CurrentRoom.CustomProperties[RoomOptionsKeys.Seed] : Guid.NewGuid().GetHashCode();
             _randomGenerator = new System.Random(_randomSeed);
             

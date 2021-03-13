@@ -20,12 +20,11 @@ namespace TankBattle.Tanks.Turrets
 
         private Vector3 _mousePosition;
 
-
-        private void Start()
+        private void Awake()
         {
             _turretRotation = Vector3.zero;
         }
-        private void Update()
+        public override void UpdateTurret()
         {
             if (_mousePosition.x < 0 || _mousePosition.x > Screen.width) 
                 return;

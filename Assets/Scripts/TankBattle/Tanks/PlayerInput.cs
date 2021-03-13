@@ -1,6 +1,4 @@
-using System;
 using Photon.Pun;
-using TankBattle.Navigation;
 using TankBattle.Tanks.Engines;
 using TankBattle.Tanks.Guns;
 using TankBattle.Tanks.Turrets;
@@ -42,6 +40,7 @@ namespace TankBattle.Tanks
         {
             _engine.InputVerticalAxis = Input.GetAxis("Vertical");
             _engine.InputHorizontalAxis = Input.GetAxis("Horizontal");
+            _engine.UpdateTank();
         }
 
         /// <summary>
@@ -50,6 +49,7 @@ namespace TankBattle.Tanks
         private void TurretInput()
         {
             _turret.MousePosition = Input.mousePosition;
+            _turret.UpdateTurret();
         }
 
         /// <summary>

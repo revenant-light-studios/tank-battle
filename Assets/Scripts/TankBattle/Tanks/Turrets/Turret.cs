@@ -25,7 +25,7 @@ namespace TankBattle.Tanks.Turrets
         {
             _crossHair = Instantiate(Crosshair);
         }
-        private void Update()
+        public override void UpdateTurret()
         {
             // Turret pointing
             Ray ray = Camera.main.ScreenPointToRay(_mousePosition);
