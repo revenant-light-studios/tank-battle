@@ -1,4 +1,6 @@
+using System;
 using Photon.Pun;
+using TankBattle.Tanks.Guns;
 using UnityEngine;
 
 namespace TankBattle.Tanks
@@ -8,12 +10,14 @@ namespace TankBattle.Tanks
         private PhotonView _photonView;
         private CameraFollow _cameraFollow;
         private PlayerInput _playerInput;
+        private ATankGun _tankGun;
 
         private void Awake()
         {
             _photonView = GetComponent<PhotonView>();
             _cameraFollow = GetComponent<CameraFollow>();
             _playerInput = GetComponent<PlayerInput>();
+            _tankGun = GetComponent<TankGun>();
         }
 
         private void Start()

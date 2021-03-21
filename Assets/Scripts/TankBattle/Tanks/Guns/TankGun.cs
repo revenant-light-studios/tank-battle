@@ -9,7 +9,6 @@ namespace TankBattle.Tanks.Guns
 {
     public class TankGun : ATankGun
     {
-        [SerializeField] public ATankBullet TankBullet;
         [SerializeField] private float _firingRate = 2f;
 
         public override float FiringRate => _firingRate;
@@ -20,8 +19,10 @@ namespace TankBattle.Tanks.Guns
 
         private PhotonView _photonView;
         private Image _crossHairImage;
-        
-        private void Start()
+
+        private AudioSource _gunAudio;
+
+        private void Awake()
         {
             _cannonTransform = transform.FirstOrDefault(t => t.name == "FirePoint");
             _muzzleParticleSystem = transform.FirstOrDefault(t => t.name == "TankMuzzleFlash").GetComponent<ParticleSystem>();
@@ -31,6 +32,8 @@ namespace TankBattle.Tanks.Guns
 
             Canvas canvas = FindObjectOfType<Canvas>();
             _crossHairImage = canvas.transform.FirstOrDefault(t => t.name == "Crosshair").GetComponent<Image>();
+
+            _gunAudio = GetComponent<AudioSource>();
         }
 
         private void Update()
@@ -47,8 +50,22 @@ namespace TankBattle.Tanks.Guns
 
         public override void Fire()
         {
+            if(PhotonNetwork.IsConnected)
+            {
+                _photonView.RPC("NetworkFire", RpcTarget.All);
+            }
+            else
+            {
+                NetworkFire();
+            }
+        }
+
+        [PunRPC]
+        void NetworkFire()
+        {
             _bullet?.Fire(_cannonTransform);
             _muzzleParticleSystem.Play();
+            _gunAudio.PlayOneShot(_gunAudio.clip);
         }
     }
 }

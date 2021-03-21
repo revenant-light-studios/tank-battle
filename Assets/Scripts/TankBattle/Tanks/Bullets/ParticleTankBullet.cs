@@ -1,3 +1,4 @@
+using System;
 using ExtensionMethods;
 using UnityEngine;
 
@@ -9,12 +10,18 @@ namespace TankBattle.Tanks.Bullets
 
         private void Start()
         {
-            _particleSystem = transform.FirstOrDefault(t => t.name == "Particle System").GetComponent<ParticleSystem>();
+            _particleSystem = GetComponent<ParticleSystem>();
         }
 
         public override void Fire(Transform parent)
         {
             _particleSystem.Play();
+        }
+
+        private void OnParticleCollision(GameObject other)
+        {
+            OnBulletHit?.Invoke(other);
+            Debug.Log($"Bullet hit {other.name}");
         }
     }
 }
