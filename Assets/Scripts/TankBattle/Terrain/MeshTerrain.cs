@@ -1,3 +1,5 @@
+using Networking.Utilities;
+using Photon.Pun;
 using TankBattle.Terrain.Noise;
 using UnityEngine;
 
@@ -18,18 +20,25 @@ namespace TankBattle.Terrain
         private MeshCollider _meshCollider;
         private PerlinNoiseRenderer _renderer;
 
-        private void Start()
-        {
-            Generate();
-        }
+        private MeshData _meshData;
+        
+        public MeshData TerrainMeshData => _meshData;
+        public PerlinNoiseParameters TerrainParameters => _parameters;
 
-        public void Generate()
+        public void Generate(int seed = -1)
         {
+            if(seed != -1)
+            {
+                _parameters.seed = seed;
+            }
+            
+            Debug.Log($"Generating terrain with seed {_parameters.seed}");
             _heightMapGenerator = new PerlinHeightMapGenerator(_parameters);
             float[,] heights = _heightMapGenerator.GenerateTerrainHeightMap();
 
+            _meshData = TerrainMeshGenerator.GenerateTerrainMesh(heights, heightMultiplier, heightCurve);
             _meshFilter = GetComponent<MeshFilter>();
-            _meshFilter.sharedMesh = TerrainMeshGenerator.GenerateTerrainMesh(heights, heightMultiplier, heightCurve).CreateMesh();
+            _meshFilter.sharedMesh = _meshData.CreateMesh();
             _meshFilter.sharedMesh.RecalculateBounds();
             
             _renderer = GetComponent<PerlinNoiseRenderer>();
@@ -37,6 +46,21 @@ namespace TankBattle.Terrain
             
             _meshCollider = GetComponent<MeshCollider>();
             _meshCollider.sharedMesh = _meshFilter.mesh;
+        }
+
+        public Vector3 getEmptyRandomSpot()
+        {
+            Vector3 emptyRandomSpot = Vector3.zero;
+            
+            
+            
+            return emptyRandomSpot;
+        }
+
+        public float GetHeight(int x, int z)
+        {
+            Vector3 vertex = _meshData.vertices[x + z * _parameters.zSize];
+            return vertex.y;
         }
     }
 }

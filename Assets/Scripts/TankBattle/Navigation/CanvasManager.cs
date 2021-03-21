@@ -39,9 +39,7 @@ namespace TankBattle.Navigation
                 _mainMenu = _mobile.transform.FirstOrDefault(t => t.name == "MainMenu").GetComponent<MainMenuManager>();
                 _settings = _mobile.transform.FirstOrDefault(t => t.name == "Settings").GetComponent<SettingsManager>();
             }
-
-           
-
+            
             _room.OnStartGame += () => photonView.RPC("StartGame", RpcTarget.AllBuffered);
             _credits.OnReturnMainMenu += () => ReturnToMainMenu("credits");
             _roomList.OnReturnMainMenu += () => ReturnToMainMenu("roomList");
@@ -75,8 +73,7 @@ namespace TankBattle.Navigation
         [PunRPC]
         private void StartGame()
         {
-            Debug.Log("Start game");
-            PhotonNetwork.LoadLevel("TerrainScene");
+            PhotonNetwork.LoadLevel("GamePlay");
         }
 
         private void ReturnToMainMenu(string screen)

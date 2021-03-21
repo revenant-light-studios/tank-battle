@@ -51,8 +51,6 @@ namespace TankBattle.Navigation
             _startBtn.onClick.AddListener(StartClick);
             _loadBtn.onClick.AddListener(LoadClick);
             _returnBtn.onClick.AddListener(BackClick);
-
-            _playerColorList = Resources.Load<PlayerColorList>("PlayerColors");
         }
         
         public override void OnEnable()
@@ -67,6 +65,7 @@ namespace TankBattle.Navigation
 
         private void SetPlayerColor()
         {
+            _playerColorList = Resources.Load<PlayerColorList>("PlayerColors");
             int index = PhotonNetwork.LocalPlayer.ActorNumber - 1;
             Color color = _playerColorList.Colors[index];
             PhotonNetwork.LocalPlayer.SetColor(color);

@@ -37,12 +37,7 @@ namespace TankBattle.Navigation
             _joinButton.onClick.AddListener(JoinRoomWithSecret);
             _returnButton.onClick.AddListener(ReturnMainMenu);
         }
-
-        public override void OnEnable()
-        {
-            base.OnEnable(); 
-        }
-
+        
         public override void OnDisable()
         {
             base.OnDisable();
@@ -93,7 +88,7 @@ namespace TankBattle.Navigation
 
             if (listElement == null && !info.RemovedFromList)
             { 
-                Debug.Log($"Room {info.Name} not found in list");
+                // Debug.Log($"Room {info.Name} not found in list");
                 GameObject gameObject = Instantiate(roomListChildPrefab, _roomList.transform); 
                 element = gameObject.GetComponent<RoomListElement>();
                 element.name = info.Name;
