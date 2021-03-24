@@ -12,7 +12,7 @@ namespace Networking.Utilities
         private static RoomFactory roomFactoryInstance;
 
         private readonly int _roomNameLength = 7;
-        private readonly byte _maxNumberOfPlayers = 8;
+        private readonly byte _maxNumberOfPlayers = 20;
         private readonly char[] _roomNameValidChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
 
         public static RoomFactory Instance
@@ -30,14 +30,14 @@ namespace Networking.Utilities
 
         private RoomFactory() {}
 
-        public RoomOptions CreateRoomProperties(string key)
+        public RoomOptions CreateRoomProperties(string key, bool isPublic)
         {
             int randomSeed = Guid.NewGuid().GetHashCode();
             Debug.Log($"Random seed generated: {randomSeed}");
             
             RoomOptions roomOptions = new RoomOptions();
             roomOptions.MaxPlayers = _maxNumberOfPlayers;
-            roomOptions.IsVisible = false;
+            roomOptions.IsVisible = isPublic;
             roomOptions.PublishUserId = true;
             roomOptions.CustomRoomProperties = new Hashtable()
             {

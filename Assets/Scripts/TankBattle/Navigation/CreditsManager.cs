@@ -20,6 +20,7 @@ namespace TankBattle.Navigation2
 
         private void Awake()
         {
+            _creditsMove = transform.FirstOrDefault(t => t.name == "DisplayCredits").GetComponent<DisplayCredits>();
             _navBtns = FindObjectOfType<NavigationsButtons>();
 
             _navBtns.OnMenu += () => OnGoMenu?.Invoke();

@@ -6,19 +6,21 @@ using UnityEngine;
 namespace TankBattle.Navigation2
 {
     [RequireComponent(typeof(PhotonView))]
-    public class CanvasManager : MonoBehaviour
+    public class CanvasManager : MonoBehaviourPunCallbacks
     {
         enum navScreen
         {
             MainMenu,
             Credits,
-            Settings
+            Settings,
+            WaitingRoom
         }
         private bool _isDesktop = true;
 
         private CreditsManager _credits;
         private MainMenuManager _mainMenu;
         private SettingsManager _settings;
+        private WaitingRoomManager _waiting;
 
         private GameObject _desktop;
         private GameObject _mobile;
@@ -33,14 +35,17 @@ namespace TankBattle.Navigation2
                 _mainMenu = _desktop.transform.FirstOrDefault(t => t.name == "MainMenu").GetComponent<MainMenuManager>();
                 _credits = _desktop.transform.FirstOrDefault(t => t.name == "Credits").GetComponent<CreditsManager>();
                 _settings = _desktop.transform.FirstOrDefault(t => t.name == "Settings").GetComponent<SettingsManager>();
+                _waiting = _desktop.transform.FirstOrDefault(t => t.name == "WaitingRoom").GetComponent<WaitingRoomManager>();
             }
 
-            _credits.OnGoMenu += () => Navigate(navScreen.MainMenu);
+            _credits.OnGoMenu += () => SelectMenu();
             _credits.OnGoSettings += () => Navigate(navScreen.Settings);
             _settings.OnGoCredits += () => Navigate(navScreen.Credits);
-            _settings.OnGoMenu += () => Navigate(navScreen.MainMenu);
+            _settings.OnGoMenu += () => SelectMenu();
             _mainMenu.OnGoCredits += () => Navigate(navScreen.Credits);
             _mainMenu.OnGoSettings += () => Navigate(navScreen.Settings);
+            _waiting.OnGoCredits += () => Navigate(navScreen.Credits);
+            _waiting.OnGoSettings += () => Navigate(navScreen.Settings);
         }
 
         void Start()
@@ -50,10 +55,33 @@ namespace TankBattle.Navigation2
             _mainMenu.gameObject.SetActive(true);
         }
 
-        // Update is called once per frame
-        void Update()
+        public override void OnJoinedRoom()
         {
+            Navigate(navScreen.WaitingRoom);
+        }
 
+        public override void OnLeftRoom()
+        {
+            Navigate(navScreen.MainMenu);
+        }
+
+        [PunRPC]
+        private void StartGame()
+        {
+            Debug.Log("Start game");
+            PhotonNetwork.LoadLevel("GameScene");
+        }
+
+        void SelectMenu()
+        {
+            if (PhotonNetwork.InRoom)
+            {
+                Navigate(navScreen.WaitingRoom);
+            }
+            else
+            {
+                Navigate(navScreen.MainMenu);
+            }
         }
 
         void Navigate(navScreen next)
@@ -72,6 +100,10 @@ namespace TankBattle.Navigation2
                 case navScreen.Settings:
                     _settings.gameObject.SetActive(true);
                     break;
+
+                case navScreen.WaitingRoom:
+                    _waiting.gameObject.SetActive(true);
+                    break;
             }
         }
 
@@ -80,6 +112,7 @@ namespace TankBattle.Navigation2
             _mainMenu.gameObject.SetActive(false);
             _credits.gameObject.SetActive(false);
             _settings.gameObject.SetActive(false);
+            _waiting.gameObject.SetActive(false);
         }
     }
 }

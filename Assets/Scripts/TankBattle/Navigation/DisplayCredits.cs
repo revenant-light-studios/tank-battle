@@ -48,7 +48,6 @@ namespace TankBattle.Navigation2
 
         public void StartCredits()
         {
-
             if (load)
             {
                 Debug.Log($"Going from {_startPos} to {_endPos}");

@@ -73,7 +73,7 @@ namespace TankBattle.Navigation
                 return;
             
             string roomKey = RoomFactory.Instance.GenerateRoomKey();
-            RoomOptions options = RoomFactory.Instance.CreateRoomProperties(roomKey);
+            RoomOptions options = RoomFactory.Instance.CreateRoomProperties(roomKey,false);
             PhotonNetwork.CreateRoom(roomKey, options);
         }
         
