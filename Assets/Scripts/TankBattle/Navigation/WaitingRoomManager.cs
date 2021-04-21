@@ -102,14 +102,14 @@ namespace TankBattle.Navigation2
         [PunRPC]
         private void UpdateCountDown(int time)
         {
-            _timeToStartText.text = time + " segundos...";
+            _timeToStartText.text = time + "\nsegundos...";
         }
 
         public override void OnEnable()
         {
             base.OnEnable();
             _roomKey.text = "KEY: " + PhotonNetwork.CurrentRoom.Name;
-            _timeToStartText.text = _timeToStart + "segundos...";
+            _timeToStartText.text = _timeToStart + "\nsegundos...";
 
             if (PhotonNetwork.CurrentRoom.IsVisible)
             {

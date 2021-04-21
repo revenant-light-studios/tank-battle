@@ -15,7 +15,7 @@ namespace TankBattle.Navigation2
             Settings,
             WaitingRoom
         }
-        private bool _isDesktop = true;
+        private bool _isDesktop = false;
 
         private CreditsManager _credits;
         private MainMenuManager _mainMenu;
@@ -37,7 +37,13 @@ namespace TankBattle.Navigation2
                 _settings = _desktop.transform.FirstOrDefault(t => t.name == "Settings").GetComponent<SettingsManager>();
                 _waiting = _desktop.transform.FirstOrDefault(t => t.name == "WaitingRoom").GetComponent<WaitingRoomManager>();
             }
-
+            else
+            {
+                _mainMenu = _mobile.transform.FirstOrDefault(t => t.name == "MainMenu").GetComponent<MainMenuManager>();
+                _credits = _mobile.transform.FirstOrDefault(t => t.name == "Credits").GetComponent<CreditsManager>();
+                _settings = _mobile.transform.FirstOrDefault(t => t.name == "Settings").GetComponent<SettingsManager>();
+                _waiting = _mobile.transform.FirstOrDefault(t => t.name == "WaitingRoom").GetComponent<WaitingRoomManager>();
+            }
             _credits.OnGoMenu += () => SelectMenu();
             _credits.OnGoSettings += () => Navigate(navScreen.Settings);
             _settings.OnGoCredits += () => Navigate(navScreen.Credits);
