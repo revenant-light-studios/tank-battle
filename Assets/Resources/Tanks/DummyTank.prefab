@@ -105,6 +105,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1394657835483499039}
   - component: {fileID: 7529465136336352049}
+  - component: {fileID: 8543197212866114171}
   m_Layer: 0
   m_Name: DummyTank
   m_TagString: Untagged
@@ -146,6 +147,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 2
+--- !u!114 &8543197212866114171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734168727806922917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bb74c00335141e183e2402a6447f1e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TotalShield: 100
+  TotalArmor: 1000
 --- !u!1 &1865770749265858482
 GameObject:
   m_ObjectHideFlags: 0

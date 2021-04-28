@@ -8,5 +8,8 @@ namespace TankBattle.Tanks.Guns
         [SerializeField] public ATankBullet TankBullet;
         public abstract float FiringRate { get; }
         public abstract void Fire();
+        
+        public delegate void OnTankHitDelegate(TankValues other);
+        public OnTankHitDelegate OnTankHit;
     }
 }

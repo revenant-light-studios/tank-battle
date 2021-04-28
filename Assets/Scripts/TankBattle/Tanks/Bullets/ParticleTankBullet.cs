@@ -16,7 +16,7 @@ namespace TankBattle.Tanks.Bullets
         public override void Fire(Transform parent)
         {
             _particleSystem.Play();
-        }
+        }   
 
         private void OnParticleCollision(GameObject other)
         {

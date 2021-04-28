@@ -109,6 +109,7 @@ GameObject:
   - component: {fileID: 2751519101298133832}
   - component: {fileID: -2123007057018740721}
   - component: {fileID: 4119116458498074648}
+  - component: {fileID: 8380127123188987194}
   - component: {fileID: 8533508333633328743}
   - component: {fileID: 4805087192327510034}
   - component: {fileID: 5656289977461324510}
@@ -212,6 +213,20 @@ MonoBehaviour:
   TankBullet: {fileID: 2577449839175722021, guid: 30265f97304d04e33965040e041d0735,
     type: 3}
   _firingRate: 1
+--- !u!114 &8380127123188987194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734168727806922917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bb74c00335141e183e2402a6447f1e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TotalShield: 100
+  TotalArmor: 1000
 --- !u!114 &8533508333633328743
 MonoBehaviour:
   m_ObjectHideFlags: 0
