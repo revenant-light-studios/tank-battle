@@ -29,18 +29,30 @@ namespace TankBattle.Tanks.Guns
             _photonView = GetComponent<PhotonView>();
             
             _bullet = Instantiate(TankBullet, _cannonTransform);
+            _bullet.OnBulletHit = OnBulletHit;
+                
+            _gunAudio = GetComponent<AudioSource>();
 
             Canvas canvas = FindObjectOfType<Canvas>();
-            _crossHairImage = canvas.transform.FirstOrDefault(t => t.name == "Crosshair").GetComponent<Image>();
-
-            _gunAudio = GetComponent<AudioSource>();
+            if (canvas)
+            {
+                _crossHairImage = canvas.transform.FirstOrDefault(t => t.name == "Crosshair").GetComponent<Image>();    
+            }
+        }
+        private void OnBulletHit(GameObject other)
+        {
+            TankValues tankValues = other.GetComponent<TankValues>();
+            if (tankValues != null)
+            {
+                OnTankHit?.Invoke(tankValues);
+            }
         }
 
         private void Update()
         {
             if (_photonView.IsMine || !PhotonNetwork.IsConnected)
             {
-                if (Physics.Raycast(_cannonTransform.position, _cannonTransform.forward, out RaycastHit hit))
+                if (_crossHairImage != null && Physics.Raycast(_cannonTransform.position, _cannonTransform.forward, out RaycastHit hit))
                 {
                     Vector3 position = Camera.main.WorldToScreenPoint(hit.point);
                     _crossHairImage.transform.position = position;
@@ -65,7 +77,7 @@ namespace TankBattle.Tanks.Guns
         {
             _bullet?.Fire(_cannonTransform);
             _muzzleParticleSystem.Play();
-            _gunAudio.PlayOneShot(_gunAudio.clip);
+            _gunAudio?.PlayOneShot(_gunAudio.clip);
         }
     }
 }
