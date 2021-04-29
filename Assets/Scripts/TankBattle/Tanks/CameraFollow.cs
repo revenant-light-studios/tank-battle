@@ -64,8 +64,13 @@ namespace TankBattle.Tanks
 
         public void StartFollowing()
         {
-            _cameraTransform = Camera.main.transform;
-            _isFollowing = true;
+            // _cameraTransform = Camera.main.transform;
+            _cameraTransform = GameObject.Find("Camera Position")?.transform;
+
+            if (_cameraTransform)
+            {
+                _isFollowing = true;    
+            }
             
             Cut();
         }
