@@ -30,8 +30,11 @@ namespace TankBattle.Tanks
 
         private PhotonView _photonView;
 
+        private ForceField.ForceField _forceField;
+
         private void Start()
         {
+            _forceField = GetComponentInChildren<ForceField.ForceField>();
             _photonView = GetComponent<PhotonView>();
             
             _shieldAmount = TotalShield;
@@ -57,11 +60,18 @@ namespace TankBattle.Tanks
             
             if (_shieldAmount > 0f)
             {
+                _forceField.ForceFieldHit();
                 _shieldAmount -= TotalShield * .1f;
+
+                if (_shieldAmount <= 0f)
+                {
+                    _forceField.enabled = false;
+                }
             }
             else if(_armorAmount > 0f)
             {
-                _armorAmount -= TotalArmor * 0.05f;    
+                _armorAmount -= TotalArmor * 0.05f;
+                OnTankWasHit?.Invoke(this);
             }
             else
             {
@@ -73,12 +83,10 @@ namespace TankBattle.Tanks
                 {
                     DestroyTank();    
                 }
-                
             }
             
             Debug.LogFormat("Shield: {0}, Armor: {1}", _shieldAmount, _armorAmount);
             
-            OnTankWasHit?.Invoke(this);
             OnValuesChanged?.Invoke(this);
         }
 

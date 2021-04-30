@@ -98,13 +98,14 @@ namespace TankBattle.Navigation
                     // Debug.Log($"Checking if valid spawn point at ({x},{z})");
                 } while (_terrain.GetHeight((int)x, (int)z) > 0.0f || !IsFreeSpot(x, z));
 
-                _spawnPoints[i] = new Vector3(x, 5f, z);
+                // TODO: Spawn point y depends on height?
+                _spawnPoints[i] = new Vector3(x, 1f, z);
             }
         }
 
         private bool IsFreeSpot(float x, float z)
         {
-            Vector3 center = new Vector3(x, 5f, z);
+            Vector3 center = new Vector3(x, 1f, z);
             Vector3 extents = new Vector3(10f, 0.2f, 10f);
             Collider[] hits = Physics.OverlapBox(center, extents, Quaternion.identity);
             return hits.Length == 0;
