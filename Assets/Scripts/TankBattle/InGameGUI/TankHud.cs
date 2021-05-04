@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using ExitGames.Client.Photon.StructWrapping;
 using ExtensionMethods;
 using Photon.Pun;
+using TankBattle.Global;
 using TankBattle.Tanks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,7 +17,6 @@ namespace TankBattle.InGameGUI
         private ValueBar _shieldBar;
         
         private TankValues _tankValues;
-
         private HitImage _hitImage;
 
         private void Awake()

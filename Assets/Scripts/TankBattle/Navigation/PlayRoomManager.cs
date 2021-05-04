@@ -2,9 +2,12 @@ using System;
 using System.IO;
 using ExtensionMethods;
 using Networking.Utilities;
+using Photon.Compression;
 using Photon.Pun;
 using Photon.Realtime;
 using TankBattle.Tanks;
+using TankBattle.Tanks.Engines;
+using TankBattle.Tanks.Guns;
 using TankBattle.Terrain;
 using UnityEditor;
 using UnityEngine;
@@ -22,6 +25,8 @@ namespace TankBattle.Navigation
         private Vector3[] _spawnPoints;
 
         [SerializeField] private GameObject _tankPrefab;
+        [SerializeField] private int _numberOfDummies;
+        [SerializeField] private bool _spawnDummies;
 
         public System.Random RandomGenerator
         {
@@ -54,18 +59,26 @@ namespace TankBattle.Navigation
             _terrain = FindObjectOfType<MeshTerrain>();
             _terrain.Generate(_randomSeed);
             _debugSeedText.text = $"Terrain random seed: {_terrain.TerrainParameters.seed}";
+
+            int numberOfDummySpawnPoints = _spawnDummies ? _numberOfDummies : 0; 
             
             if (PhotonNetwork.IsConnected)
             {
-                GenerateSpawnPoints(PhotonNetwork.CurrentRoom.PlayerCount);
+                
+                GenerateSpawnPoints(PhotonNetwork.CurrentRoom.PlayerCount + numberOfDummySpawnPoints);
                 InstantiatePlayers();
             }
             else
             {
-                GenerateSpawnPoints(1);
+                GenerateSpawnPoints(1 + numberOfDummySpawnPoints);
                 Vector3 position = _spawnPoints[0];
                 Instantiate(_tankPrefab, position, Quaternion.identity);
                 // Debug.Log($"Instantiated tank at position {position}");
+            }
+
+            if (_spawnDummies)
+            {
+                SpawnDummyTanks(_numberOfDummies);
             }
         }
 
@@ -86,6 +99,7 @@ namespace TankBattle.Navigation
 
             for (int i = 0; i < _spawnPoints.Length; i++)
             {
+                int maxProbes = 1000;
                 float x;
                 float z;
                 
@@ -93,22 +107,38 @@ namespace TankBattle.Navigation
                 {
                     float randomAngle = generator.Next(i * sectors, i * sectors + sectors) * Mathf.Deg2Rad;
                     float randomRadius = generator.Next((int)(xCenter * 0.5), (int)(xCenter * 0.9));
-                    x = xCenter + Mathf.Cos(randomAngle) * randomRadius;
-                    z = zCenter + Mathf.Sin(randomAngle) * randomRadius;
-                    // Debug.Log($"Checking if valid spawn point at ({x},{z})");
-                } while (_terrain.GetHeight((int)x, (int)z) > 0.0f || !IsFreeSpot(x, z));
+                    x = Mathf.Cos(randomAngle) * randomRadius;
+                    z = Mathf.Sin(randomAngle) * randomRadius;
+                    Debug.Log($"Trying spawnpoint {i} at angle: {randomAngle * Mathf.Rad2Deg}, radius: {randomRadius}");
+                } while (!IsFreeSpot(x, z, xCenter, zCenter) && --maxProbes > 0);
 
                 // TODO: Spawn point y depends on height?
-                _spawnPoints[i] = new Vector3(x, 1f, z);
+                Debug.Log($"Spawning {i} at ({x},1f,{z})");
+                _spawnPoints[i] = new Vector3(x * 2, 1f, z * 2);
             }
         }
 
-        private bool IsFreeSpot(float x, float z)
+        private bool IsFreeSpot(float x, float z, int xCenter, int zCenter)
         {
-            Vector3 center = new Vector3(x, 1f, z);
-            Vector3 extents = new Vector3(10f, 0.2f, 10f);
+            Vector3 center = new Vector3(x * 2, 1f, z * 2);
+            Vector3 extents = new Vector3(15f, 0.2f, 15f);
             Collider[] hits = Physics.OverlapBox(center, extents, Quaternion.identity);
-            return hits.Length == 0;
+            return hits.Length == 0 && _terrain.GetHeight((int)x + xCenter, (int)z + zCenter) <= 0.0f;
+        }
+
+        private void SpawnDummyTanks(int numberOfTanks)
+        {
+            for (int i = 0; i < numberOfTanks; i++)
+            {
+                Vector3 position = _spawnPoints[_spawnPoints.Length - 1 - i];
+                GameObject dummyTank = Instantiate(_tankPrefab, position, Quaternion.identity);
+                dummyTank.name = $"Dummy{i}";
+                
+                dummyTank.GetComponent<TankManager>().IsDummy = true;
+                // dummyTank.GetComponent<PlayerInput>().enabled = false;
+                // dummyTank.GetComponent<CameraFollow>().enabled = false;
+                // dummyTank.GetComponent<TankGun>().enabled = false;
+            }
         }
     }
 }
