@@ -29,6 +29,7 @@ namespace TankBattle.Tanks.Guns
             _photonView = GetComponent<PhotonView>();
             
             _bullet = Instantiate(TankBullet, _cannonTransform);
+            // _bullet = transform.FirstOrDefault(t => t.name=="ParticleTankBullet")?.GetComponent<ParticleTankBullet>();
             _bullet.OnBulletHit = OnBulletHit;
                 
             _gunAudio = GetComponent<AudioSource>();
@@ -62,7 +63,7 @@ namespace TankBattle.Tanks.Guns
 
         public override void Fire()
         {
-            if(PhotonNetwork.IsConnected)
+            if(PhotonNetwork.IsConnected && _photonView.IsMine)
             {
                 _photonView.RPC("NetworkFire", RpcTarget.All);
             }
