@@ -30,14 +30,14 @@ namespace Networking.Utilities
 
         private RoomFactory() {}
 
-        public RoomOptions CreateRoomProperties(string key)
+        public RoomOptions CreateRoomProperties(string key, bool isVisible)
         {
             int randomSeed = Guid.NewGuid().GetHashCode();
             // Debug.Log($"Random seed generated: {randomSeed}");
             
             RoomOptions roomOptions = new RoomOptions();
             roomOptions.MaxPlayers = _maxNumberOfPlayers;
-            roomOptions.IsVisible = false;
+            roomOptions.IsVisible = isVisible;
             roomOptions.PublishUserId = true;
             roomOptions.CustomRoomProperties = new Hashtable()
             {

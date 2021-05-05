@@ -1,71 +1,57 @@
-using ExtensionMethods;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.EventSystems;
 using UnityEngine;
+using ExtensionMethods;
 using UnityEngine.UI;
+using System;
 
 namespace TankBattle.Navigation
 {
     public class SettingsManager : MonoBehaviour
     {
         protected CustomSettings _customSettings;
-
-        public InputField _nickname { get; private set; }
+        protected NavigationsButtons _navBtns;
         public Slider _globalSound { get; private set; }
         public Slider _musicSound { get; private set; }
         public Slider _effectsSound { get; private set; }
-        public Toggle _isDaltonic { get; private set; }
         
-        private Button _returnBtn;
+        //Navigation
+        public delegate void OnGoMenuDelegate();
+        public OnGoMenuDelegate OnGoMenu;
 
-        public delegate void OnReturnMainMenuDelegate();
-        public OnReturnMainMenuDelegate OnReturnMainMenu;
+        public delegate void OnGoCreditsDelegate();
+        public OnGoCreditsDelegate OnGoCredits;
 
-        private void Awake()
+        public virtual void Awake()
         {
             _customSettings = FindObjectOfType<CustomSettings>();
 
-            Transform nicknameTransform = transform.FirstOrDefault(t => t.name == "Nickname").transform;
-            _nickname = nicknameTransform.FirstOrDefault(t => t.name == "NicknameInput").GetComponent<InputField>();
+            _navBtns = FindObjectOfType<NavigationsButtons>();
 
             Transform soundTransform = transform.FirstOrDefault(t => t.name == "Sound").transform;
-            _globalSound = soundTransform.FirstOrDefault(t => t.name == "GlobalSound").GetComponentInChildren<Slider>();
-            _musicSound = soundTransform.FirstOrDefault(t => t.name == "MusicSound").GetComponentInChildren<Slider>();
-            _effectsSound = soundTransform.FirstOrDefault(t => t.name == "EffectsSound").GetComponentInChildren<Slider>();
+            _globalSound = soundTransform.FirstOrDefault(t => t.name == "GlobalVolume").GetComponentInChildren<Slider>();
+            _musicSound = soundTransform.FirstOrDefault(t => t.name == "MusicVolume").GetComponentInChildren<Slider>();
+            _effectsSound = soundTransform.FirstOrDefault(t => t.name == "EffectsVolume").GetComponentInChildren<Slider>();
 
-            Transform accesibilityTransform = transform.FirstOrDefault(t => t.name == "Accesibility").transform;
-            _isDaltonic = accesibilityTransform.FirstOrDefault(t => t.name == "Daltonic").GetComponent<Toggle>();
+            _navBtns.OnMenu += () => OnGoMenu?.Invoke();
+            _navBtns.OnCredits += () => OnGoCredits?.Invoke();
+        }
+        // Start is called before the first frame update
+        public virtual void Start()
+        {
+            _navBtns.SelectNavButton(NavigationsButtons.navWindows.Settings);
 
-            _returnBtn = transform.FirstOrDefault(t => t.name == "ReturnBtn").GetComponent<Button>();
-
-            //init values
-            _nickname.text = _customSettings.nickname;
-
+           
             _globalSound.value = _customSettings.globalVolume;
             _musicSound.value = _customSettings.musicVolume;
             _effectsSound.value = _customSettings.effectsVolume;
 
-            _isDaltonic.isOn = _customSettings.isDaltonic;
-
-           
             //callbacks
-            _returnBtn.onClick.AddListener(ReturnMainMenu);
-
-            _nickname.onValueChanged.AddListener(NameChange);
             _globalSound.onValueChanged.AddListener(GlobalVolumeChange);
             _musicSound.onValueChanged.AddListener(MusicVolumeChange);
             _effectsSound.onValueChanged.AddListener(EffectsVolumeChange);
-            _isDaltonic.onValueChanged.AddListener(DaltonicChange);
-        }
-
-        private void DaltonicChange(bool isDaltonic)
-        {
-            _customSettings.isDaltonic = isDaltonic;
-        }
-
-        private void NameChange(string name)
-        {
-            //put name in photon player
-            // Debug.Log(name);
-        }
+        }       
 
         private void GlobalVolumeChange(float volume)
         {
@@ -81,10 +67,6 @@ namespace TankBattle.Navigation
         {
             _customSettings.effectsVolume = volume;
         }
-
-        public void ReturnMainMenu()
-        {
-            OnReturnMainMenu?.Invoke();
-        }
+        
     }
 }
