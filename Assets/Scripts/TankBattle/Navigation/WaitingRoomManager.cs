@@ -113,7 +113,7 @@ namespace TankBattle.Navigation
             {
                 _roomKey.gameObject.SetActive(false);
                 _startBtn.gameObject.SetActive(false);
-                _timeToStartText.gameObject.SetActive(true);
+                _timeToStartText.gameObject.SetActive(_startCountdown);
             }
             else
             {
