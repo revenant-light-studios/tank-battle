@@ -16,7 +16,7 @@ namespace TankBattle.Navigation
     {
         [SerializeField] private GameObject _playerElemPrefab;
         private PhotonView _pView;
-        private float MAX_TIME_TO_START = 30f;
+        private float MAX_TIME_TO_START = 5.0f;
         private float _timeToStart;
         private bool _startCountdown = false;
 
@@ -68,12 +68,17 @@ namespace TankBattle.Navigation
         }
         private void Start()
         {
+            PhotonNetwork.AutomaticallySyncScene = true;
             _navBtns.SelectNavButton(NavigationsButtons.navWindows.Menu);
 
         }
 
         private void Update()
         {
+            if (PhotonNetwork.LevelLoadingProgress > 0 && PhotonNetwork.LevelLoadingProgress < 1)
+            {
+                Debug.Log(PhotonNetwork.LevelLoadingProgress);
+            }
             //StartContdown();
             if (PhotonNetwork.IsMasterClient)
             {
@@ -88,9 +93,9 @@ namespace TankBattle.Navigation
                     }
                     else
                     {
+                        _startCountdown = false;
                         StartGame();
                     }
-                    
                 }
                 
             }
@@ -108,17 +113,16 @@ namespace TankBattle.Navigation
             base.OnEnable();
             _roomKey.text = "KEY: " + PhotonNetwork.CurrentRoom.Name;
             _timeToStartText.text = _timeToStart + "\nsegundos...";
+            _timeToStartText.gameObject.SetActive(false);
 
             if (PhotonNetwork.CurrentRoom.IsVisible)
             {
                 _roomKey.gameObject.SetActive(false);
                 _startBtn.gameObject.SetActive(false);
-                _timeToStartText.gameObject.SetActive(_startCountdown);
             }
             else
             {
                 _roomKey.gameObject.SetActive(true);
-                _timeToStartText.gameObject.SetActive(false);
                 _startBtn.gameObject.SetActive(true);
                 if (!PhotonNetwork.IsMasterClient)
                 {
@@ -157,10 +161,7 @@ namespace TankBattle.Navigation
 
         private void StartGame()
         {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                OnStartGame?.Invoke();
-            }
+            OnStartGame?.Invoke();
         }
 
         private void InitPlayersList()
@@ -174,15 +175,21 @@ namespace TankBattle.Navigation
         private void GetNumPlayers()
         {
             int nPlayers = PhotonNetwork.CurrentRoom.Players.Count;
-            if (nPlayers == 1)
+            if (PhotonNetwork.CurrentRoom.IsVisible)
             {
-                _startCountdown = false;
-                _timeToStart = 30;
-                _timeToStartText.text = _timeToStart + " segundos..."; 
-            }
-            else if(nPlayers > 1)
-            {
-                _startCountdown = true;
+                if (nPlayers == 1)
+                {
+                    _timeToStartText.gameObject.SetActive(false);
+                    _startCountdown = false;
+                    _timeToStart = MAX_TIME_TO_START;
+                    _timeToStartText.text = _timeToStart + " segundos...";
+                }
+                else if (nPlayers > 1)
+                {
+
+                    _timeToStartText.gameObject.SetActive(true);
+                    _startCountdown = true;
+                }
             }
             _numPlayersText.text = nPlayers + "/20 JUGADORES";
         }

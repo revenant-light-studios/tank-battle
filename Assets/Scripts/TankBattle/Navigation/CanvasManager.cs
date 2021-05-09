@@ -75,7 +75,10 @@ namespace TankBattle.Navigation
         private void StartGame()
         {
             Debug.Log("Start game");
-            PhotonNetwork.LoadLevel("GamePlay");
+            if (PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.LoadLevel("GamePlay");
+            }
         }
 
         void SelectMenu()
