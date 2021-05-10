@@ -1,6 +1,7 @@
 ﻿using ExtensionMethods;
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 
 namespace TankBattle.Navigation
@@ -15,6 +16,8 @@ namespace TankBattle.Navigation
             Settings,
             WaitingRoom
         }
+        
+        [SerializeField, FormerlySerializedAs("IsDesktop")]
         private bool _isDesktop = false;
 
         private CreditsManager _credits;

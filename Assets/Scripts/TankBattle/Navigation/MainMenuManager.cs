@@ -48,7 +48,7 @@ namespace TankBattle.Navigation
             _playBtn = transform.FirstOrDefault(t => t.name == "PlayBtn").GetComponent<Button>();
             _openJoinBtn = transform.FirstOrDefault(t => t.name == "OpenJoinBtn").GetComponent<Button>();
             _modeBtn = transform.FirstOrDefault(t => t.name == "ModeBtn").GetComponent<Button>();
-            _navBtns = FindObjectOfType<NavigationsButtons>();
+            _navBtns = transform.FirstOrDefault(t => t.name == "NavigationBtns").GetComponent<NavigationsButtons>();
             _joinPanel = transform.FirstOrDefault(t => t.name == "JoinPanel").transform;
             _joinBtn = _joinPanel.FirstOrDefault(t => t.name == "JoinBtn").GetComponent<Button>();
             _closeJoinPanel = _joinPanel.FirstOrDefault(t => t.name == "ExitJoinPanel").GetComponent<Button>();

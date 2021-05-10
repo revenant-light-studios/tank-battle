@@ -36,7 +36,7 @@ namespace TankBattle.Tanks.Engines
             _tankBase = transform.FirstOrDefault(t => t.name == "Body").gameObject;
             _turret = transform.FirstOrDefault(t => t.name == "Turret").GetComponent<Turret>();
             _extraFuelTank = transform.FirstOrDefault(t => t.name == "ExtraFuelTank").gameObject;
-            _rocketLauncher = transform.FirstOrDefault(t => t.name == "MissileThrower").gameObject;
+            _rocketLauncher = transform.FirstOrDefault(t => t.name == "MissileLauncher").gameObject;
         }
 
         private void Start()

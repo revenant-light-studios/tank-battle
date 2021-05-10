@@ -23,7 +23,6 @@ namespace TankBattle.Tanks
         [SerializeField]
         private Vector3 _centerOffset;
         
-        
         [Tooltip("The Smoothing for the camera to follow the target")]
         [SerializeField]
         private float _smoothSpeed = 0.125f;
@@ -35,6 +34,8 @@ namespace TankBattle.Tanks
         private bool _isFollowing;
         private Transform _cameraTransform;
         Vector3 _cameraOffset = Vector3.zero;
+        
+        public Transform CameraTransform { get; private set; }
         
         private void Start()
         {
@@ -64,8 +65,13 @@ namespace TankBattle.Tanks
 
         public void StartFollowing()
         {
-            _cameraTransform = Camera.main.transform;
-            _isFollowing = true;
+            // _cameraTransform = Camera.main.transform;
+            _cameraTransform = GameObject.Find("Camera Position")?.transform;
+
+            if (_cameraTransform)
+            {
+                _isFollowing = true;    
+            }
             
             Cut();
         }

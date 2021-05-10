@@ -1,4 +1,6 @@
 using System;
+using ExtensionMethods;
+using Photon.Pun;
 using TankBattle.Tanks.Bullets;
 using TankBattle.Tanks.Guns;
 using TMPro;
@@ -23,8 +25,18 @@ namespace TankBattle.Tanks
         public delegate void OnValuesChangedDelegate(TankValues values);
         public OnValuesChangedDelegate OnValuesChanged;
 
+        public delegate void OnTankWasHitDelegate(TankValues values);
+        public OnTankWasHitDelegate OnTankWasHit;
+
+        private PhotonView _photonView;
+
+        private ForceField.ForceField _forceField;
+
         private void Start()
         {
+            _forceField = GetComponentInChildren<ForceField.ForceField>();
+            _photonView = GetComponent<PhotonView>();
+            
             _shieldAmount = TotalShield;
             _armorAmount = TotalArmor;
 
@@ -43,26 +55,61 @@ namespace TankBattle.Tanks
 
         public void WasHit()
         {
+            // This only happens for me
+            if (!_photonView.IsMine && PhotonNetwork.IsConnected) return;
+            
             if (_shieldAmount > 0f)
             {
+                _forceField.ForceFieldHit();
                 _shieldAmount -= TotalShield * .1f;
+
+                if (_shieldAmount <= 0f)
+                {
+                    _forceField.enabled = false;
+                }
             }
             else if(_armorAmount > 0f)
             {
-                _armorAmount -= TotalArmor * 0.05f;    
+                _armorAmount -= TotalArmor * 0.05f;
+                OnTankWasHit?.Invoke(this);
             }
             else
             {
-                // I'm dead
+                if (PhotonNetwork.IsConnected && _photonView.IsMine)
+                {
+                    _photonView.RPC("DestroyTank", RpcTarget.All);
+                }
+                else
+                {
+                    DestroyTank();    
+                }
             }
             
             Debug.LogFormat("Shield: {0}, Armor: {1}", _shieldAmount, _armorAmount);
+            
             OnValuesChanged?.Invoke(this);
         }
 
         private void HitOther()
         {
+            if (!_photonView.IsMine && PhotonNetwork.IsConnected) return;
+            
             _totalHits += 1;
+        }
+
+        [PunRPC]
+        private void DestroyTank()
+        {
+            ParticleSystem explosion = transform.FirstOrDefault(t => t.name == "Explosion")?.GetComponent<ParticleSystem>();
+            if (explosion)
+            {
+                transform.FirstOrDefault(t => t.name == "Turret")?.gameObject.SetActive(false);
+                transform.FirstOrDefault(t => t.name == "Body")?.gameObject.SetActive(false);
+                transform.FirstOrDefault(t => t.name == "ExtraFuelTank")?.gameObject.SetActive(false);
+                transform.FirstOrDefault(t => t.name == "MissileThrower")?.gameObject.SetActive(false);
+                explosion.Play();
+                Destroy(gameObject, explosion.main.duration);
+            }
         }
     }
 }

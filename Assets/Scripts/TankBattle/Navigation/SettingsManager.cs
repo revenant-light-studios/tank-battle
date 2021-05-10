@@ -26,8 +26,8 @@ namespace TankBattle.Navigation
         public virtual void Awake()
         {
             _customSettings = FindObjectOfType<CustomSettings>();
-
-            _navBtns = FindObjectOfType<NavigationsButtons>();
+            
+            _navBtns = transform.FirstOrDefault(t => t.name == "NavigationBtns").GetComponent<NavigationsButtons>();
 
             Transform soundTransform = transform.FirstOrDefault(t => t.name == "Sound").transform;
             _globalSound = soundTransform.FirstOrDefault(t => t.name == "GlobalVolume").GetComponentInChildren<Slider>();

@@ -7,6 +7,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using TankBattle.Players;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace TankBattle.Navigation
@@ -16,7 +17,16 @@ namespace TankBattle.Navigation
     {
         [SerializeField] private GameObject _playerElemPrefab;
         private PhotonView _pView;
-        private float MAX_TIME_TO_START = 5.0f;
+        
+        [SerializeField, FormerlySerializedAs("MaxWaitTime")]
+        private float _maxWaitTime = 15.0f;
+
+        [SerializeField, FormerlySerializedAs("MinNumberOfPlayer")]
+        private int _minNumberOfPlayers = 1;
+
+        [SerializeField, FormerlySerializedAs("MaxNumberOfPlayers")]
+        private int _maxNumberOfPlayers = 20;
+        
         private float _timeToStart;
         private bool _startCountdown = false;
 
@@ -46,12 +56,13 @@ namespace TankBattle.Navigation
         private void Awake()
         {
             _pView = PhotonView.Get(this);
-            _timeToStart = MAX_TIME_TO_START;
+            _timeToStart = _maxWaitTime;
 
 
             Transform playerList = transform.FirstOrDefault(t=>t.name== "PlayerList");
             _playersList = playerList.FirstOrDefault(t => t.name == "Content");
-            _navBtns = FindObjectOfType<NavigationsButtons>();
+            
+            _navBtns = transform.FirstOrDefault(t => t.name == "NavigationBtns").GetComponent<NavigationsButtons>();
             _leaveRoomBtn = transform.FirstOrDefault(t => t.name == "LeaveBtn").GetComponent<Button>();
             _startBtn = transform.FirstOrDefault(t => t.name == "StartBtn").GetComponent<Button>();
             _timeToStartText = transform.FirstOrDefault(t => t.name == "TimeToStartText").GetComponent<Text>();
@@ -130,7 +141,7 @@ namespace TankBattle.Navigation
                 }
             }
             InitPlayersList();
-            GetNumPlayers();
+            CheckNumPlayers();
         }
         public override void OnDisable()
         {
@@ -150,13 +161,13 @@ namespace TankBattle.Navigation
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
             AddPlayerToList(newPlayer);
-            GetNumPlayers();
+            CheckNumPlayers();
         }
 
         public override void OnPlayerLeftRoom(Player otherPlayer)
         {
             RemovePlayerFromList(otherPlayer);
-            GetNumPlayers();
+            CheckNumPlayers();
         }
 
         private void StartGame()
@@ -172,26 +183,32 @@ namespace TankBattle.Navigation
             }
         }
 
-        private void GetNumPlayers()
+        private void CheckNumPlayers()
         {
             int nPlayers = PhotonNetwork.CurrentRoom.Players.Count;
+            
             if (PhotonNetwork.CurrentRoom.IsVisible)
             {
-                if (nPlayers == 1)
+                if (nPlayers < _minNumberOfPlayers)
                 {
                     _timeToStartText.gameObject.SetActive(false);
                     _startCountdown = false;
-                    _timeToStart = MAX_TIME_TO_START;
+                    _timeToStart = _maxWaitTime;
                     _timeToStartText.text = _timeToStart + " segundos...";
                 }
-                else if (nPlayers > 1)
+                else
                 {
-
                     _timeToStartText.gameObject.SetActive(true);
                     _startCountdown = true;
                 }
+
+                if (nPlayers == _maxNumberOfPlayers)
+                {
+                    StartGame();
+                }
             }
-            _numPlayersText.text = nPlayers + "/20 JUGADORES";
+            
+            _numPlayersText.text = $"{nPlayers}/{_maxNumberOfPlayers} Jugadores en linea";
         }
 
         private void ClearPlayersList()
