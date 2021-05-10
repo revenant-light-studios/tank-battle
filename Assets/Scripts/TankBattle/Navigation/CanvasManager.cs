@@ -1,19 +1,29 @@
 ﻿using ExtensionMethods;
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.Serialization;
+
 
 namespace TankBattle.Navigation
 {
     [RequireComponent(typeof(PhotonView))]
     public class CanvasManager : MonoBehaviourPunCallbacks
     {
-        private bool _isDesktop = true;
+        enum navScreen
+        {
+            MainMenu,
+            Credits,
+            Settings,
+            WaitingRoom
+        }
+        
+        [SerializeField, FormerlySerializedAs("IsDesktop")]
+        private bool _isDesktop = false;
 
-        private RoomListManager _roomList;
-        private RoomManager _room;
         private CreditsManager _credits;
         private MainMenuManager _mainMenu;
         private SettingsManager _settings;
+        private WaitingRoomManager _waiting;
 
         private GameObject _desktop;
         private GameObject _mobile;
@@ -25,90 +35,96 @@ namespace TankBattle.Navigation
 
             if (_isDesktop)
             {
-                _roomList = _desktop.transform.FirstOrDefault(t => t.name == "RoomList").GetComponent<RoomListManager>();
-                _room = _desktop.transform.FirstOrDefault(t => t.name == "Room").GetComponent<RoomManager>();
-                _credits = _desktop.transform.FirstOrDefault(t => t.name == "Credits").GetComponent<CreditsManager>();
                 _mainMenu = _desktop.transform.FirstOrDefault(t => t.name == "MainMenu").GetComponent<MainMenuManager>();
+                _credits = _desktop.transform.FirstOrDefault(t => t.name == "Credits").GetComponent<CreditsManager>();
                 _settings = _desktop.transform.FirstOrDefault(t => t.name == "Settings").GetComponent<SettingsManager>();
+                _waiting = _desktop.transform.FirstOrDefault(t => t.name == "WaitingRoom").GetComponent<WaitingRoomManager>();
             }
             else
             {
-                _roomList = _mobile.transform.FirstOrDefault(t => t.name == "RoomList").GetComponent<RoomListManager>();
-                _room = _mobile.transform.FirstOrDefault(t => t.name == "Room").GetComponent<RoomManager>();
-                _credits = _mobile.transform.FirstOrDefault(t => t.name == "Credits").GetComponent<CreditsManager>();
                 _mainMenu = _mobile.transform.FirstOrDefault(t => t.name == "MainMenu").GetComponent<MainMenuManager>();
+                _credits = _mobile.transform.FirstOrDefault(t => t.name == "Credits").GetComponent<CreditsManager>();
                 _settings = _mobile.transform.FirstOrDefault(t => t.name == "Settings").GetComponent<SettingsManager>();
+                _waiting = _mobile.transform.FirstOrDefault(t => t.name == "WaitingRoom").GetComponent<WaitingRoomManager>();
             }
             
-            _room.OnStartGame += () => photonView.RPC("StartGame", RpcTarget.AllBuffered);
-            _credits.OnReturnMainMenu += () => ReturnToMainMenu("credits");
-            _roomList.OnReturnMainMenu += () => ReturnToMainMenu("roomList");
-            _settings.OnReturnMainMenu += () => ReturnToMainMenu("settings");
-            _mainMenu.OnPlay += () => LeaveMainMenu("play");
-            _mainMenu.OnCredits += () => LeaveMainMenu("credits");
-            _mainMenu.OnSettings += () => LeaveMainMenu("settings");            
+            _credits.OnGoMenu += () => SelectMenu();
+            _credits.OnGoSettings += () => Navigate(navScreen.Settings);
+            _settings.OnGoCredits += () => Navigate(navScreen.Credits);
+            _settings.OnGoMenu += () => SelectMenu();
+            _mainMenu.OnGoCredits += () => Navigate(navScreen.Credits);
+            _mainMenu.OnGoSettings += () => Navigate(navScreen.Settings);
+            _waiting.OnGoCredits += () => Navigate(navScreen.Credits);
+            _waiting.OnGoSettings += () => Navigate(navScreen.Settings);
+            _waiting.OnStartGame += () => StartGame();
         }
-        
-        private void Start()
+
+        void Start()
         {
-            _roomList.gameObject.SetActive(false);
-            _room.gameObject.SetActive(false);
-            _credits.gameObject.SetActive(false);
-            _settings.gameObject.SetActive(false);
             _mainMenu.gameObject.SetActive(true);
         }
 
         public override void OnJoinedRoom()
         {
-            _roomList.gameObject.SetActive(false);
-            _room.gameObject.SetActive(true);
+            Navigate(navScreen.WaitingRoom);
         }
 
         public override void OnLeftRoom()
         {
-            _roomList.gameObject.SetActive(true);
-            _room.gameObject.SetActive(false);
+            Navigate(navScreen.MainMenu);
         }
 
         [PunRPC]
         private void StartGame()
         {
-            PhotonNetwork.LoadLevel("GamePlay");
-        }
-
-        private void ReturnToMainMenu(string screen)
-        {
-            switch (screen)
+            Debug.Log("Start game");
+            if (PhotonNetwork.IsMasterClient)
             {
-                case "credits":
-                    _credits.gameObject.SetActive(false);
-                    break;
-                case "settings":
-                    _settings.gameObject.SetActive(false);
-                    break;
-                case "roomList":
-                    _roomList.gameObject.SetActive(false);
-                    break;
+                PhotonNetwork.LoadLevel("GamePlay");
             }
-
-            _mainMenu.gameObject.SetActive(true);
         }
 
-        private void LeaveMainMenu(string screen)
+        void SelectMenu()
         {
-            switch (screen)
+            if (PhotonNetwork.InRoom)
             {
-                case "play":
-                    _roomList.gameObject.SetActive(true);
+                Navigate(navScreen.WaitingRoom);
+            }
+            else
+            {
+                Navigate(navScreen.MainMenu);
+            }
+        }
+
+        void Navigate(navScreen next)
+        {
+            HideAllCanvas();
+            switch (next)
+            {
+                case navScreen.MainMenu:
+                    _mainMenu.gameObject.SetActive(true);
                     break;
-                case "credits":
+
+                case navScreen.Credits:
                     _credits.gameObject.SetActive(true);
                     break;
-                case "settings":
+
+                case navScreen.Settings:
                     _settings.gameObject.SetActive(true);
                     break;
+
+                case navScreen.WaitingRoom:
+                    _waiting.gameObject.SetActive(true);
+                    break;
             }
+        }
+
+        void HideAllCanvas()
+        {
             _mainMenu.gameObject.SetActive(false);
+            _credits.gameObject.SetActive(false);
+            _settings.gameObject.SetActive(false);
+            _waiting.gameObject.SetActive(false);
         }
     }
 }

@@ -42,7 +42,7 @@ namespace TankBattle.Tanks
 
         private void Start()
         {
-            if (_photonView.IsMine || (!PhotonNetwork.IsConnected && !IsDummy))
+            if ((_photonView.IsMine || !PhotonNetwork.IsConnected) && !IsDummy)
             {
                 _cameraFollow.StartFollowing();
                 _playerInput.enabled = true;

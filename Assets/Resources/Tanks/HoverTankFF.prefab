@@ -170,6 +170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89762ad74d314fccb11595d192b04d49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsDummy: 0
 --- !u!114 &2751519101298133832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -396,15 +397,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7e73d2895684d98b27786f00ae7aec1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _visibleRenderers:
-  - {fileID: 6721135836327575399}
-  - {fileID: 228279441033712780}
-  - {fileID: 651273238228260918}
-  _bounds:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
   IsVisibleInCamera: 0
-  trackerImage: {fileID: 0}
 --- !u!1 &1865770749265858482
 GameObject:
   m_ObjectHideFlags: 0

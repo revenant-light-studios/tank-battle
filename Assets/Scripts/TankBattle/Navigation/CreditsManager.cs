@@ -1,5 +1,6 @@
-﻿using ExtensionMethods;
-using HightTide.UI;
+﻿using System.Collections;
+using System.Collections.Generic;
+using ExtensionMethods;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,33 +8,38 @@ namespace TankBattle.Navigation
 {
     public class CreditsManager : MonoBehaviour
     {
-        private Button _returnBtn;
+        private NavigationsButtons _navBtns;
         private DisplayCredits _creditsMove;
 
-        public delegate void OnReturnMainMenuDelegate();
-        public OnReturnMainMenuDelegate OnReturnMainMenu;
+        //Navigation
+        public delegate void OnGoMenuDelegate();
+        public OnGoMenuDelegate OnGoMenu;
+
+        public delegate void OnGoSettingsDelegate();
+        public OnGoSettingsDelegate OnGoSettings;
 
         private void Awake()
         {
             _creditsMove = transform.FirstOrDefault(t => t.name == "DisplayCredits").GetComponent<DisplayCredits>();
-            _returnBtn = transform.FirstOrDefault(t => t.name == "ReturnBtn").GetComponent<Button>();
+            _navBtns = transform.FirstOrDefault(t => t.name == "NavigationBtns").GetComponent<NavigationsButtons>();
 
-            _returnBtn.onClick.AddListener(ReturnMainMenu);
+            _navBtns.OnMenu += () => OnGoMenu?.Invoke();
+            _navBtns.OnSettings += () => OnGoSettings?.Invoke();
         }
-        public void ReturnMainMenu()
+        // Start is called before the first frame update
+        void Start()
         {
-            OnReturnMainMenu?.Invoke();
+            _navBtns.SelectNavButton(NavigationsButtons.navWindows.Credits);
         }
-
         private void OnEnable()
         {
-            // Debug.Log("Start Credits");
+            Debug.Log("Start Credits");
             _creditsMove?.StartCredits();
         }
 
         private void OnDisable()
         {
-            // Debug.Log("Finish Credits");
+            Debug.Log("Finish Credits");
             _creditsMove?.RestartPositions();
         }
     }
