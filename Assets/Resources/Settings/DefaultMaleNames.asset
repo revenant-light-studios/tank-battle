@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1f66e4a60244fa986c556f3894fad26, type: 3}
+  m_Name: DefaultMaleNames
+  m_EditorClassIdentifier: 
+  Names:
+  - Herakles
+  - Nelson
+  - Sinuhe
+  - Jasveer
+  - Mandek
+  - Parsafal
+  - Ghazi
+  - Kovalan
+  - Kiran
+  - Achilles
+  - Antarah
+  - Leor
+  - Sohrab
+  - Pravit
+  - Pharrell
+  - Aardburzin
+  - Anwar
+  - Lakshman
+  - Bakavata
+  - Amarveer

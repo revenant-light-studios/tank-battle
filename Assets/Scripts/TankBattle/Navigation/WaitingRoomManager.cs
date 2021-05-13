@@ -5,6 +5,7 @@ using ExtensionMethods;
 using Networking.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
+using TankBattle.Global;
 using TankBattle.Players;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -17,14 +18,12 @@ namespace TankBattle.Navigation
     {
         [SerializeField] private GameObject _playerElemPrefab;
         private PhotonView _pView;
+
+        [SerializeField, FormerlySerializedAs("GameSettings")]
+        private GameSettings _settings;
         
-        [SerializeField, FormerlySerializedAs("MaxWaitTime")]
         private float _maxWaitTime = 15.0f;
-
-        [SerializeField, FormerlySerializedAs("MinNumberOfPlayer")]
-        private int _minNumberOfPlayers = 1;
-
-        [SerializeField, FormerlySerializedAs("MaxNumberOfPlayers")]
+        private int _minNumberOfPlayers = 2;
         private int _maxNumberOfPlayers = 20;
         
         private float _timeToStart;
@@ -56,9 +55,16 @@ namespace TankBattle.Navigation
         private void Awake()
         {
             _pView = PhotonView.Get(this);
+
+            if (_settings != null)
+            {
+                _maxWaitTime = _settings.startWaitTime;
+                _minNumberOfPlayers = _settings.minimumNumberOfPlayers;
+                _maxNumberOfPlayers = _settings.maximumNumberOfPlayers;
+            }
+            
             _timeToStart = _maxWaitTime;
-
-
+            
             Transform playerList = transform.FirstOrDefault(t=>t.name== "PlayerList");
             _playersList = playerList.FirstOrDefault(t => t.name == "Content");
             
@@ -74,14 +80,11 @@ namespace TankBattle.Navigation
 
             _navBtns.OnSettings += () => OnGoSettings?.Invoke();
             _navBtns.OnCredits += () => OnGoCredits?.Invoke();
-
-            
         }
         private void Start()
         {
             PhotonNetwork.AutomaticallySyncScene = true;
             _navBtns.SelectNavButton(NavigationsButtons.navWindows.Menu);
-
         }
 
         private void Update()

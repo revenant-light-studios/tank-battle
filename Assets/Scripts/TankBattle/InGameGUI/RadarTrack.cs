@@ -73,9 +73,9 @@ namespace TankBattle.InGameGUI
             if(_shieldBar) _shieldBar.GetComponent<RectTransform>().sizeDelta = _maxShield * new Vector2(1f, value);
         }
 
-        public void SetName(string name)
+        public void SetName(string objName)
         {
-            if (_name) _name.text = name;
+            if (_name) _name.text = objName;
         }
     }
 }

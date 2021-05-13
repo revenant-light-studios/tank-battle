@@ -76,7 +76,7 @@ namespace TankBattle.Tanks
 
         private void Update()
         {
-            if (_photonView.IsMine || (!PhotonNetwork.IsConnected && !IsDummy))
+            if ((_photonView.IsMine || !PhotonNetwork.IsConnected) && !IsDummy)
             {
                 Plane[] planes = GeometryUtility.CalculateFrustumPlanes(_camera);
                 List<DetectableObject> objects = new List<DetectableObject>(Radar.Instance.DetectableObjects);
@@ -101,6 +101,7 @@ namespace TankBattle.Tanks
 
                             if (Physics.Raycast(_detectableObject.Bounds.center, direction, out RaycastHit hit))
                             {
+                                /*
                                 if (hit.transform.gameObject == gameObject)
                                 {
                                     Debug.LogFormat("Hitting myself {0}", transform.name);
@@ -109,11 +110,16 @@ namespace TankBattle.Tanks
                                 {
                                     tracked = true;
                                 }
+                                */
+                                if (hit.transform.gameObject == dObj.gameObject)
+                                {
+                                    tracked = true;
+                                }
                             }
 
                             if (tracked)
                             {
-                                dObj.ShowTrackerImage(_tankHud.transform);
+                                dObj.ShowTrackerImage(_tankHud.transform, dObj.gameObject);
                                 dObj.UpdateTrackerImage(_camera);
                             }
                             else
