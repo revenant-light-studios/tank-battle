@@ -29,7 +29,6 @@ namespace TankBattle.Tanks.Guns
             _photonView = GetComponent<PhotonView>();
             
             _bullet = Instantiate(TankBullet, _cannonTransform);
-            // _bullet = transform.FirstOrDefault(t => t.name=="ParticleTankBullet")?.GetComponent<ParticleTankBullet>();
             _bullet.OnBulletHit = OnBulletHit;
                 
             _gunAudio = GetComponent<AudioSource>();

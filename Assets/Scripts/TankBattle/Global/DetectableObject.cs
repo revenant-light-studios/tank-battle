@@ -9,7 +9,9 @@ namespace TankBattle.Global
     {
         private const string TANK_HULL_TAG = "TankHULL";
         private List<Renderer> _visibleRenderers = new List<Renderer>();
+        
         private RadarTrack _radarTrack;
+        public RadarTrack RadarTrack { get => _radarTrack; }
 
         public Bounds Bounds
         {
@@ -50,11 +52,12 @@ namespace TankBattle.Global
             }
         }
 
-        public void ShowTrackerImage(Transform canvas)
+        public void ShowTrackerImage(Transform canvas, GameObject trackedTank)
         {
             if (_radarTrack == null)
             {
                 GameObject go = Instantiate(Resources.Load<GameObject>("Tanks/Hud/RadarTracker"), canvas);
+                go.name = $"RadarTrack-{trackedTank.name}";
                 _radarTrack = go.GetComponent<RadarTrack>();
                 _radarTrack.SetName(gameObject.name);
             }

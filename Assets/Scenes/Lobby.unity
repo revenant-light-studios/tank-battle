@@ -1814,6 +1814,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4565713015244464089, guid: 13067ef3d677a1e40893573e2e8517d4,
         type: 3}
+      propertyPath: _settings
+      value: 
+      objectReference: {fileID: 11400000, guid: 4ab308bc1dd0d491b87aa3e2bb32d7fd,
+        type: 2}
+    - target: {fileID: 4565713015244464089, guid: 13067ef3d677a1e40893573e2e8517d4,
+        type: 3}
       propertyPath: _minNumberOfPlayers
       value: 1
       objectReference: {fileID: 0}
@@ -1983,8 +1989,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3343206921372086293, guid: a1000018b72e68044b176f1dd2fc995b,
         type: 3}
+      propertyPath: _settings
+      value: 
+      objectReference: {fileID: 11400000, guid: 4ab308bc1dd0d491b87aa3e2bb32d7fd,
+        type: 2}
+    - target: {fileID: 3343206921372086293, guid: a1000018b72e68044b176f1dd2fc995b,
+        type: 3}
+      propertyPath: _maxWaitTime
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3343206921372086293, guid: a1000018b72e68044b176f1dd2fc995b,
+        type: 3}
       propertyPath: _minNumberOfPlayers
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4547984605212993160, guid: a1000018b72e68044b176f1dd2fc995b,
         type: 3}
