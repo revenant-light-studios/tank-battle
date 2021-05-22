@@ -1,9 +1,11 @@
 using System;
 using ExtensionMethods;
 using Photon.Pun;
+using TankBattle.Players;
 using TankBattle.Tanks.Bullets;
 using TankBattle.Tanks.Guns;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 namespace TankBattle.Tanks
@@ -56,8 +58,6 @@ namespace TankBattle.Tanks
         public void WasHit()
         {
             // This only happens for me
-            if (!_photonView.IsMine && PhotonNetwork.IsConnected) return;
-            
             if (_shieldAmount > 0f)
             {
                 _forceField.ForceFieldHit();
@@ -93,7 +93,6 @@ namespace TankBattle.Tanks
         private void HitOther()
         {
             if (!_photonView.IsMine && PhotonNetwork.IsConnected) return;
-            
             _totalHits += 1;
         }
 
@@ -112,4 +111,30 @@ namespace TankBattle.Tanks
             }
         }
     }
+    
+    #region Inspector Editor
+    #if UNITY_EDITOR
+    [CustomEditor(typeof(TankValues))]
+    public class TankValuesEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            DrawDefaultInspector();
+
+            TankValues tankValues = (TankValues)target;
+            GUIStyle style = new GUIStyle(GUI.skin.textField);
+            GUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField("Shield", $"{tankValues.ShieldAmount}", EditorStyles.textField);
+            EditorGUILayout.LabelField("Armor", $"{tankValues.ArmorAmount}", style);
+            GUILayout.EndVertical();
+            
+            if (GUILayout.Button("Take hit"))
+            {
+                TankValues values = (TankValues)target;
+                values.WasHit();
+            }
+        }
+    }
+    #endif
+    #endregion
 }
