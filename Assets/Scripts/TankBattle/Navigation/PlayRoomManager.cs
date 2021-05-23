@@ -12,12 +12,24 @@ using TankBattle.Terrain;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace TankBattle.Navigation
 {
     public class PlayRoomManager : MonoBehaviourPunCallbacks
     {
+        private GameObject _MobileUI;
+        private GameObject _DesktopUI;
+        
+        [SerializeField, FormerlySerializedAs("IsDesktop")]
+        private bool _isDesktop = false;
+
+        public bool IsDesktop
+        {
+            get { return _isDesktop; }
+        }
+
         private MeshTerrain _terrain;
         private int _randomSeed;
         private System.Random _randomGenerator;
@@ -46,6 +58,25 @@ namespace TankBattle.Navigation
             base.OnDisable();
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
+
+        private void Awake()
+        {
+            _DesktopUI = GameObject.Find("UserUI");
+            _MobileUI = GameObject.Find("UserUIMobile");
+        }
+
+        private void Start()
+        {
+            if (_isDesktop)
+            {
+                _MobileUI.SetActive(false);
+            }
+            else
+            {
+                _DesktopUI.SetActive(false);
+            }
+        }
+
         private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
             Cursor.lockState = CursorLockMode.Confined;

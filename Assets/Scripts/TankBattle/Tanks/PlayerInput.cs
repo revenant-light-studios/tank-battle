@@ -3,79 +3,61 @@ using TankBattle.Tanks.Engines;
 using TankBattle.Tanks.Guns;
 using TankBattle.Tanks.Turrets;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace TankBattle.Tanks
 {
     public class PlayerInput : MonoBehaviour
     {
-        private PhotonView _photonView;
-        private ATankEngine _engine;
-        private ATankGun _gun;
-        private ATankTurret _turret;
+        protected PhotonView _photonView;
+        protected ATankEngine _engine;
+        protected ATankGun _gun;
+        //private ATankTurret _turret;
+        protected TurretMovement _turret;
 
-        private float _lastFired = 0f;
-        private bool _fired = false;
+        protected float _lastFired = 0f;
+        protected bool _fired = false;
 
-        private void Start()
+        protected void Start()
         {
             _photonView = GetComponent<PhotonView>();
             _gun = GetComponentInChildren<ATankGun>();
             _engine = GetComponentInChildren<ATankEngine>();
-            _turret = GetComponentInChildren<ATankTurret>();
+            _turret = GetComponentInChildren<TurretMovement>();
         }
 
-        private void Update()
+        protected void Update()
         {
             if (!_photonView.IsMine && PhotonNetwork.IsConnected) return;
             
             EngineInput();
-            TurretInput();
+            //TurretInput();
             GunInput();
         }
 
         /// <summary>
         /// Engine input management
         /// </summary>
-        private void EngineInput()
+        protected virtual void EngineInput()
         {
-            _engine.InputVerticalAxis = Input.GetAxis("Vertical");
-            _engine.InputHorizontalAxis = Input.GetAxis("Horizontal");
-            _engine.UpdateTank();
+
         }
 
         /// <summary>
         /// Turret input management
         /// </summary>
-        private void TurretInput()
+        /*private void TurretInput()
         {
             _turret.MousePosition = Input.mousePosition;
             _turret.UpdateTurret();
-        }
+        }*/
 
         /// <summary>
         /// Gun input management
         /// </summary>
-        private void GunInput()
+        protected virtual void GunInput()
         {
-            if (Input.GetButton("Fire1"))
-            {
-                if(!_fired)
-                {
-                    _lastFired = _gun.FiringRate;
-                    _fired = true;
-                    _gun.Fire();
-                }
-            }
             
-            if (_fired)
-            {
-                _lastFired -= Time.deltaTime;
-                
-                if (_lastFired <= 0f)
-                {
-                    _fired = false;
-                }
-            }
         }
     }
 }

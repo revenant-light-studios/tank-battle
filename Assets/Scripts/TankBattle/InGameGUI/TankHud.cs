@@ -13,13 +13,13 @@ namespace TankBattle.InGameGUI
 {
     public class TankHud : MonoBehaviour
     {
-        private ValueBar _lifeBar;
-        private ValueBar _shieldBar;
-        
-        private TankValues _tankValues;
-        private HitImage _hitImage;
+        protected ValueBar _lifeBar;
+        protected ValueBar _shieldBar;
 
-        private void Awake()
+        protected TankValues _tankValues;
+        protected HitImage _hitImage;
+
+        protected void Awake()
         {
             _hitImage = transform.FirstOrDefault(t => t.name == "HitImage")?.GetComponent<HitImage>();
             _lifeBar = transform.FirstOrDefault(t => t.name == "LifeBar")?.GetComponent<ValueBar>();
@@ -36,11 +36,11 @@ namespace TankBattle.InGameGUI
                 Debug.LogFormat("Tank {0} registered with hud", tank.name);
             }
         }
-        private void OnTankWasHit(TankValues values)
+        protected void OnTankWasHit(TankValues values)
         { 
             _hitImage?.HitFlash();
         }
-        private void OnTankValuesChanged(TankValues values)
+        protected void OnTankValuesChanged(TankValues values)
         {
             if(_lifeBar) _lifeBar.CurrentValue = values.ArmorAmount / values.TotalArmor;
             if(_shieldBar) _shieldBar.CurrentValue = values.ShieldAmount / values.TotalShield;

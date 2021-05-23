@@ -6,45 +6,64 @@ using Photon.Pun;
 using TankBattle.Global;
 using TankBattle.InGameGUI;
 using TankBattle.Tanks.Guns;
+using TankBattle.Navigation;
 using UnityEngine;
+using Cinemachine;
+using UnityEngine.Serialization;
 
 namespace TankBattle.Tanks
 {
     [RequireComponent(typeof(PhotonView)), 
-     RequireComponent(typeof(CameraFollow)), 
+     RequireComponent(typeof(CameraMovement)), 
      RequireComponent(typeof(PlayerInput)), 
      RequireComponent(typeof(DetectableObject))]
     public class TankManager : MonoBehaviour
     {
         private PhotonView _photonView;
-        private CameraFollow _cameraFollow;
+        private CameraMovement _cameraMovement;
+        //private CameraFollow _cameraFollow;
         private PlayerInput _playerInput;
         private TankHud _tankHud;
         private DetectableObject _detectableObject;
+        
 
         public bool IsDummy = false;
 
         private void Awake()
         {
             _photonView = GetComponent<PhotonView>();
-            _cameraFollow = GetComponent<CameraFollow>();
-            _playerInput = GetComponent<PlayerInput>();
-            _detectableObject = GetComponent<DetectableObject>();
+            _cameraMovement = GetComponent<CameraMovement>();
+            //_cameraFollow = GetComponent<CameraFollow>();
             
+            _detectableObject = GetComponent<DetectableObject>();
+
             GameObject userUI = GameObject.Find("UserUI");
-            if (userUI)
+            GameObject userUIMobile = GameObject.Find("UserUIMobile");
+
+            bool _isDesktop = GameObject.Find("GameManager").GetComponent<PlayRoomManager>().IsDesktop;
+            Debug.Log("ISDesktop: " + _isDesktop);
+
+            if (_isDesktop)
             {
                 _tankHud = userUI.transform.GetComponentInChildren<TankHud>();
+                _playerInput = GetComponent<PlayerInputDesktop>();
             }
-            
+            else
+            {
+                _tankHud = userUIMobile.transform.GetComponentInChildren<TankHudMobile>();
+                _playerInput = GetComponent<PlayerInputMobile>();
+            }
+
             InitEnemyTracker();
         }
 
         private void Start()
         {
+
             if ((_photonView.IsMine || !PhotonNetwork.IsConnected) && !IsDummy)
             {
-                _cameraFollow.StartFollowing();
+                //_cameraFollow.StartFollowing();
+                _cameraMovement.StartFollowing();
                 _playerInput.enabled = true;
                 _tankHud.RegisterTank(gameObject);
             }
@@ -53,7 +72,7 @@ namespace TankBattle.Tanks
                 Radar.Instance.AddDetectableObject(_detectableObject);
                 
                 _playerInput.enabled = false;
-                _cameraFollow.enabled = false;
+                //_cameraFollow.enabled = false;
 
                 if (IsDummy)
                 {
@@ -78,6 +97,7 @@ namespace TankBattle.Tanks
         {
             if (_photonView.IsMine || (!PhotonNetwork.IsConnected && !IsDummy))
             {
+
                 Plane[] planes = GeometryUtility.CalculateFrustumPlanes(_camera);
                 List<DetectableObject> objects = new List<DetectableObject>(Radar.Instance.DetectableObjects);
                 
