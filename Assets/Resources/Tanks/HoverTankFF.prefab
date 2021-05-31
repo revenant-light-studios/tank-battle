@@ -86,6 +86,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: badf870dc6c34a2a88852559d7eb7184, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _axisStateX:
+    Value: 0
+    m_SpeedMode: 0
+    m_MaxSpeed: 100
+    m_AccelTime: 0.02
+    m_DecelTime: 0.02
+    m_InputAxisName: Mouse X
+    m_InputAxisValue: 0
+    m_InvertInput: 0
+    m_MinValue: -180
+    m_MaxValue: 180
+    m_Wrap: 1
+    m_Recentering:
+      m_enabled: 0
+      m_WaitTime: 0
+      m_RecenteringTime: 0
+      m_LegacyHeadingDefinition: 0
+      m_LegacyVelocityFilterStrength: 0
+  _axisStateY:
+    Value: 30
+    m_SpeedMode: 0
+    m_MaxSpeed: 0.02
+    m_AccelTime: 0.02
+    m_DecelTime: 0
+    m_InputAxisName: Mouse Y
+    m_InputAxisValue: 0
+    m_InvertInput: 0
+    m_MinValue: -3
+    m_MaxValue: 3
+    m_Wrap: 0
+    m_Recentering:
+      m_enabled: 0
+      m_WaitTime: 0
+      m_RecenteringTime: 0
+      m_LegacyHeadingDefinition: 0
+      m_LegacyVelocityFilterStrength: 0
 --- !u!114 &-2123007057018740721
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -315,7 +351,7 @@ GameObject:
   - component: {fileID: 1396721371896984463}
   m_Layer: 0
   m_Name: Body
-  m_TagString: Untagged
+  m_TagString: TankHULL
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5508,7 +5544,7 @@ GameObject:
   - component: {fileID: 2494103118731691807}
   m_Layer: 0
   m_Name: Turret
-  m_TagString: Untagged
+  m_TagString: TankHULL
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5588,8 +5624,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Crosshair: {fileID: 0}
-  _turretRotationSpeed: 50
-  _deadZone: 0.1
 --- !u!114 &7584427002095993701
 MonoBehaviour:
   m_ObjectHideFlags: 0

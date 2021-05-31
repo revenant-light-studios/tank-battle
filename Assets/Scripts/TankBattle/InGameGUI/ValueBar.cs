@@ -55,7 +55,7 @@ namespace TankBattle.InGameGUI
         {
             if (_rectTransform != null)
             {
-                Debug.LogFormat("Value bar {0} value set to {1}", name, _currentValue);
+                // Debug.LogFormat("Value bar {0} value set to {1}", name, _currentValue);
                 _rectTransform.sizeDelta = _startSize * new Vector2(1f, _currentValue);    
             }
         }

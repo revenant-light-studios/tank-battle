@@ -33,13 +33,13 @@ namespace TankBattle.Navigation
         }
         private void OnEnable()
         {
-            Debug.Log("Start Credits");
+            // Debug.Log("Start Credits");
             _creditsMove?.StartCredits();
         }
 
         private void OnDisable()
         {
-            Debug.Log("Finish Credits");
+            // Debug.Log("Finish Credits");
             _creditsMove?.RestartPositions();
         }
     }

@@ -64,19 +64,19 @@ namespace TankBattle.Navigation
 
         void OpenCredits()
         {
-            Debug.Log("Credits");
+            // Debug.Log("Credits");
             OnCredits?.Invoke();
         }
 
         void OpenMenu()
         {
-            Debug.Log("Menu");
+            // Debug.Log("Menu");
             OnMenu?.Invoke();
         }
 
         void OpenSettings()
         {
-            Debug.Log("Settings");
+            // Debug.Log("Settings");
             OnSettings?.Invoke();
         }
     }
