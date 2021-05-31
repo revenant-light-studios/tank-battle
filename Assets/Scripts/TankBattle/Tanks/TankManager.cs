@@ -1,25 +1,25 @@
-using System;
 using System.Collections.Generic;
-using System.Xml.Schema;
 using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Global;
 using TankBattle.InGameGUI;
+using TankBattle.Tanks.Camera;
 using TankBattle.Tanks.Guns;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace TankBattle.Tanks
 {
     [RequireComponent(typeof(PhotonView)), 
-     RequireComponent(typeof(CameraFollow)), 
+     RequireComponent(typeof(ATankCamera)), 
      RequireComponent(typeof(PlayerInput)), 
      RequireComponent(typeof(DetectableObject))]
     public class TankManager : MonoBehaviour
     {
         private PhotonView _photonView;
-        private CameraFollow _cameraFollow;
+        private ATankCamera _cameraFollow;
         private PlayerInput _playerInput;
-        private TankHud _tankHud;
+        private ATankHud _tankHud;
         private DetectableObject _detectableObject;
 
         public bool IsDummy = false;
@@ -27,26 +27,17 @@ namespace TankBattle.Tanks
         private void Awake()
         {
             _photonView = GetComponent<PhotonView>();
-            _cameraFollow = GetComponent<CameraFollow>();
+            _cameraFollow = GetComponent<ATankCamera>();
             _playerInput = GetComponent<PlayerInput>();
             _detectableObject = GetComponent<DetectableObject>();
-            
-            GameObject userUI = GameObject.Find("UserUI");
-            if (userUI)
-            {
-                _tankHud = userUI.transform.GetComponentInChildren<TankHud>();
-            }
-            
-            InitEnemyTracker();
         }
 
         private void Start()
         {
             if ((_photonView.IsMine || !PhotonNetwork.IsConnected) && !IsDummy)
             {
-                _cameraFollow.StartFollowing();
-                _playerInput.enabled = true;
-                _tankHud.RegisterTank(gameObject);
+                InitLocalTank();
+                InitEnemyTracker();
             }
             else
             {
@@ -65,12 +56,36 @@ namespace TankBattle.Tanks
 
         private Transform _launchPointTransform;
         private Transform _cameraTransform;
-        private Camera _camera;
+        private UnityEngine.Camera _camera;
+
+        private void InitLocalTank()
+        {
+            GameObject userUI = GameObject.FindGameObjectWithTag("UserGameUI");
+            if (userUI)
+            {
+                _tankHud = userUI.transform.GetComponentInChildren<ATankHud>();
+                _tankHud.RegisterTank(gameObject);
+
+            }
+
+            _cameraFollow.StartFollowing();
+            _playerInput.enabled = true;
+                
+            if (_tankHud is TankHudMobile)
+            {
+                TankHudMobile tankHudMobile = (TankHudMobile)_tankHud;
+                _playerInput.InitInput(tankHudMobile.MovementJoystick, tankHudMobile.AimJoystick);    
+            }
+            else
+            {
+                _playerInput.InitInput(null, null);
+            }
+        }
 
         private void InitEnemyTracker()
         {
             _cameraTransform = GameObject.Find("Camera Position")?.transform;
-            _camera = _cameraTransform.FirstOrDefault(t => t.name == "Main Camera").GetComponent<Camera>();
+            _camera = _cameraTransform.FirstOrDefault(t => t.name == "Main Camera").GetComponent<UnityEngine.Camera>();
             _launchPointTransform = transform.FirstOrDefault(t => t.name == "FirePoint");
         }
 
@@ -91,7 +106,7 @@ namespace TankBattle.Tanks
                         {
                             if (!dObj.IsVisibleInCamera)
                             {
-                                // Debug.LogFormat("DetectableObject {0} entered camera", Radar.Instance.DetectableObjects[i].name);   
+                                // Debug.LogFormat("DetectableObject {0} entered camera", dObj.name);   
                             }
                             
                             dObj.IsVisibleInCamera = true;
@@ -101,18 +116,9 @@ namespace TankBattle.Tanks
 
                             if (Physics.Raycast(_detectableObject.Bounds.center, direction, out RaycastHit hit))
                             {
-                                /*
-                                if (hit.transform.gameObject == gameObject)
-                                {
-                                    Debug.LogFormat("Hitting myself {0}", transform.name);
-                                }
-                                else if (hit.transform.tag == "Tank" && hit.transform.gameObject == dObj.gameObject)
-                                {
-                                    tracked = true;
-                                }
-                                */
                                 if (hit.transform.gameObject == dObj.gameObject)
                                 {
+                                    // Debug.Log($"{dObj.name} tracked");
                                     tracked = true;
                                 }
                             }

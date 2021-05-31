@@ -32,7 +32,7 @@ namespace TankBattle.Terrain
                 _parameters.seed = seed;
             }
             
-            Debug.Log($"Generating terrain with seed {_parameters.seed}");
+            // Debug.Log($"Generating terrain with seed {_parameters.seed}");
             _heightMapGenerator = new PerlinHeightMapGenerator(_parameters);
             float[,] heights = _heightMapGenerator.GenerateTerrainHeightMap();
 

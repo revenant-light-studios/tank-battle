@@ -1,17 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using ExitGames.Client.Photon.StructWrapping;
 using ExtensionMethods;
-using Photon.Pun;
-using TankBattle.Global;
 using TankBattle.Tanks;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace TankBattle.InGameGUI
 {
-    public class TankHud : MonoBehaviour
+    public class TankHud : ATankHud
     {
         private ValueBar _lifeBar;
         private ValueBar _shieldBar;
@@ -26,7 +19,7 @@ namespace TankBattle.InGameGUI
             _shieldBar = transform.FirstOrDefault(t => t.name == "ShieldBar")?.GetComponent<ValueBar>();
         }
         
-        public void RegisterTank(GameObject tank)
+        public override void RegisterTank(GameObject tank)
         {
             _tankValues = tank.GetComponent<TankValues>();
             if (_tankValues != null)

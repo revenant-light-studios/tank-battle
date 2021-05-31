@@ -92,13 +92,13 @@ namespace TankBattle.Navigation
             if (_modes[_modeSelected] == "PUBLIC")
             {
                 OnPlayPublic?.Invoke();
-                Debug.Log("Public");
+                // Debug.Log("Public");
                 PhotonNetwork.JoinRandomRoom();
             }
             else
             {
                 OnPlayPrivate?.Invoke();
-                Debug.Log("Private");
+                // Debug.Log("Private");
                 CreateRoom(false);
             }
             

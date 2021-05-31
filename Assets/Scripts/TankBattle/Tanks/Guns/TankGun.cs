@@ -54,7 +54,7 @@ namespace TankBattle.Tanks.Guns
             {
                 if (_crossHairImage != null && Physics.Raycast(_cannonTransform.position, _cannonTransform.forward, out RaycastHit hit))
                 {
-                    Vector3 position = Camera.main.WorldToScreenPoint(hit.point);
+                    Vector3 position = UnityEngine.Camera.main.WorldToScreenPoint(hit.point);
                     _crossHairImage.transform.position = position;
                 }
             }

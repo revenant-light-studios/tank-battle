@@ -6,12 +6,14 @@ namespace TankBattle.Navigation.UIElements
 {
     public class TankMiniatureBaseController : MonoBehaviour
     {
-        private Transform _dummyTank;
+        [SerializeField] private Transform _dummyTank;
         [SerializeField] private float _rotationSpeed;
 
         private void Awake()
         {
-            _dummyTank = transform.FirstOrDefault(t => t.name == "DummyTank");
+            if(!_dummyTank) {
+                _dummyTank = transform.FirstOrDefault(t => t.name == "DummyTank");
+            }
         }
 
         private void Update()

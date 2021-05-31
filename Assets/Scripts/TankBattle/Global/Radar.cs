@@ -29,7 +29,7 @@ namespace TankBattle.Global
             lock (DetectableObjects)
             {
                 DetectableObjects.Add(_detectableObject);
-                Debug.LogFormat($"Detectable {_detectableObject.name} added to DetectableObjects");
+                // Debug.LogFormat($"Detectable {_detectableObject.name} added to DetectableObjects");
             }
         }
 
@@ -38,7 +38,7 @@ namespace TankBattle.Global
             lock (DetectableObjects)
             {
                 DetectableObjects.Remove(_detectableObject);    
-                Debug.LogFormat($"Detectable {_detectableObject.name} removed from DetectableObjects");
+                // Debug.LogFormat($"Detectable {_detectableObject.name} removed from DetectableObjects");
             }
         }
     }

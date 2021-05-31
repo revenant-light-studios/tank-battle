@@ -51,8 +51,8 @@ namespace TankBattle.Tanks
                 otherValues.WasHit();
                 HitOther();
                 
-                Debug.LogFormat("{0} hit {4} tank. {0} hits: {1}, {4} shield: {2}, {4} armor: {3}", 
-                    name, _totalHits, otherValues._shieldAmount, otherValues._armorAmount, otherValues.transform.name);
+                // Debug.LogFormat("{0} hit {4} tank. {0} hits: {1}, {4} shield: {2}, {4} armor: {3}", 
+                //     name, _totalHits, otherValues._shieldAmount, otherValues._armorAmount, otherValues.transform.name);
         }
 
         public void WasHit()
@@ -85,7 +85,7 @@ namespace TankBattle.Tanks
                 }
             }
             
-            Debug.LogFormat("Shield: {0}, Armor: {1}", _shieldAmount, _armorAmount);
+            // Debug.LogFormat("Shield: {0}, Armor: {1}", _shieldAmount, _armorAmount);
             
             OnValuesChanged?.Invoke(this);
         }

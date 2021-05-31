@@ -64,7 +64,6 @@ namespace TankBattle.Navigation
             
             if (PhotonNetwork.IsConnected)
             {
-                
                 GenerateSpawnPoints(PhotonNetwork.CurrentRoom.PlayerCount + numberOfDummySpawnPoints);
                 InstantiatePlayers();
             }
@@ -109,11 +108,11 @@ namespace TankBattle.Navigation
                     float randomRadius = generator.Next((int)(xCenter * 0.5), (int)(xCenter * 0.9));
                     x = Mathf.Cos(randomAngle) * randomRadius;
                     z = Mathf.Sin(randomAngle) * randomRadius;
-                    Debug.Log($"Trying spawnpoint {i} at angle: {randomAngle * Mathf.Rad2Deg}, radius: {randomRadius}");
+                    // Debug.Log($"Trying spawnpoint {i} at angle: {randomAngle * Mathf.Rad2Deg}, radius: {randomRadius}");
                 } while (!IsFreeSpot(x, z, xCenter, zCenter) && --maxProbes > 0);
 
                 // TODO: Spawn point y depends on height?
-                Debug.Log($"Spawning {i} at ({x},1f,{z})");
+                // Debug.Log($"Spawning {i} at ({x},1f,{z})");
                 _spawnPoints[i] = new Vector3(x * 2, 1f, z * 2);
             }
         }

@@ -13,7 +13,7 @@ namespace TankBattle.Terrain.Noise
             float halfWidth = 0.5f * width;
             float halfHeight = 0.5f * height;
 
-            Debug.Log($"Generating perlin noise map with {seed}");
+            // Debug.Log($"Generating perlin noise map with {seed}");
             System.Random perlinRandom = new System.Random(seed != 0 ? seed : Guid.NewGuid().GetHashCode());
             Vector2[] octaveOffsets = new Vector2[octaves];
 
