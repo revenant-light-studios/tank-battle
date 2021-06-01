@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using ExtensionMethods;
 using UnityEngine;
@@ -8,12 +9,18 @@ namespace TankBattle.Navigation
 {
     public class DisplayCredits : MonoBehaviour
     {
+        private Transform _creditsContainer;
         private Vector2 _startPos;
         private Vector2 _endPos;
         private RectTransform _logo;
         private RectTransform _transform;
         private float _time = 15f;
         bool load = false;
+
+        private void Awake()
+        {
+            _creditsContainer = transform.FirstOrDefault(t => t.name == "CreditsContainer");
+        }
 
         private void Start()
         {
@@ -22,13 +29,13 @@ namespace TankBattle.Navigation
 
         private void InitCredits()
         {
-            //_logo = transform.FirstOrDefault(t => t.name == "CandleLogo").GetComponent<RectTransform>();
-            _transform = transform.GetComponent<RectTransform>();
+            _transform = _creditsContainer.GetComponent<RectTransform>();
             LayoutRebuilder.ForceRebuildLayoutImmediate(_transform);
+
+            VerticalLayoutGroup layout = _transform.GetComponent<VerticalLayoutGroup>();
             _startPos = _transform.anchoredPosition;
-            float height = _transform.rect.height * _transform.localScale.y;
+            float height = layout.preferredHeight * _transform.localScale.y;
             float windowHeight = GetComponentInParent<Canvas>().GetComponent<RectTransform>().rect.height;
-            // Debug.Log($"height:{windowHeight}");
             _endPos = new Vector2(_startPos.x, _startPos.y + height + (windowHeight /* * 0.5f - _logo.rect.height * 0.5f * transform.localScale.y*/));
             load = true;
             StartCredits();

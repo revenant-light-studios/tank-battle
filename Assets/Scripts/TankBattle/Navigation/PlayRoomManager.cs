@@ -133,10 +133,6 @@ namespace TankBattle.Navigation
                 GameObject dummyTank = Instantiate(_tankPrefab, position, Quaternion.identity);
                 dummyTank.name = $"Dummy{i}";
                 dummyTank.GetComponent<TankManager>().IsDummy = true;
-                
-                // dummyTank.GetComponent<PlayerInput>().enabled = false;
-                // dummyTank.GetComponent<CameraFollow>().enabled = false;
-                // dummyTank.GetComponent<TankGun>().enabled = false;
             }
         }
     }

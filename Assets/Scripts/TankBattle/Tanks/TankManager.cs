@@ -6,7 +6,6 @@ using TankBattle.InGameGUI;
 using TankBattle.Tanks.Camera;
 using TankBattle.Tanks.Guns;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace TankBattle.Tanks
 {

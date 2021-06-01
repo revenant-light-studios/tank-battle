@@ -1,4 +1,5 @@
-﻿using ExtensionMethods;
+﻿using System.Runtime.InteropServices;
+using ExtensionMethods;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -16,10 +17,10 @@ namespace TankBattle.Navigation
             Settings,
             WaitingRoom
         }
-        
-        [SerializeField, FormerlySerializedAs("IsDesktop")]
-        private bool _isDesktop = false;
 
+        [SerializeField, FormerlySerializedAs("ForceMobile")]
+        private bool _forceMobile = false;
+        
         private CreditsManager _credits;
         private MainMenuManager _mainMenu;
         private SettingsManager _settings;
@@ -27,14 +28,29 @@ namespace TankBattle.Navigation
 
         private GameObject _desktop;
         private GameObject _mobile;
+            
+#if !UNITY_EDITOR && UNITY_WEBGL
+        [DllImport("__Internal")]
+        private static extern bool IsMobile();
+#endif
+
+        public bool IsDesktop()
+        {
+#if !UNITY_EDITOR && UNITY_WEBGL
+            return !IsMobile();
+#endif
+            return !_forceMobile;
+        }
 
         private void Awake()
         {
             _desktop = transform.FirstOrDefault(t => t.name == "Desktop").gameObject;
             _mobile = transform.FirstOrDefault(t => t.name == "Mobile").gameObject;
 
-            if (_isDesktop)
+            if (IsDesktop())
             {
+                _desktop.SetActive(true);
+                _mobile.SetActive(false);
                 _mainMenu = _desktop.transform.FirstOrDefault(t => t.name == "MainMenu").GetComponent<MainMenuManager>();
                 _credits = _desktop.transform.FirstOrDefault(t => t.name == "Credits").GetComponent<CreditsManager>();
                 _settings = _desktop.transform.FirstOrDefault(t => t.name == "Settings").GetComponent<SettingsManager>();
@@ -42,6 +58,8 @@ namespace TankBattle.Navigation
             }
             else
             {
+                _desktop.SetActive(false);
+                _mobile.SetActive(true);
                 _mainMenu = _mobile.transform.FirstOrDefault(t => t.name == "MainMenu").GetComponent<MainMenuManager>();
                 _credits = _mobile.transform.FirstOrDefault(t => t.name == "Credits").GetComponent<CreditsManager>();
                 _settings = _mobile.transform.FirstOrDefault(t => t.name == "Settings").GetComponent<SettingsManager>();
