@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace TankBattle.Navigation
 {
@@ -46,6 +45,23 @@ namespace TankBattle.Navigation
                 OnChangeVolume?.Invoke();
             }
         }
+        
+        [SerializeField, FormerlySerializedAs("ForceMobile")]
+        private bool _forceMobile = false;
+
+#if !UNITY_EDITOR && UNITY_WEBGL
+        [DllImport("__Internal")]
+        private static extern bool IsMobile();
+#endif
+
+        public bool IsDesktop()
+        {
+#if !UNITY_EDITOR && UNITY_WEBGL
+            return !IsMobile();
+#endif
+            return !_forceMobile;
+        }
+
 
         public delegate void OnChangeVolumeDelegate();
         public OnChangeVolumeDelegate OnChangeVolume;

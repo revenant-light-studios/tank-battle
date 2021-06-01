@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using ExtensionMethods;
+﻿using ExtensionMethods;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -18,9 +17,7 @@ namespace TankBattle.Navigation
             WaitingRoom
         }
 
-        [SerializeField, FormerlySerializedAs("ForceMobile")]
-        private bool _forceMobile = false;
-        
+
         private CreditsManager _credits;
         private MainMenuManager _mainMenu;
         private SettingsManager _settings;
@@ -28,26 +25,17 @@ namespace TankBattle.Navigation
 
         private GameObject _desktop;
         private GameObject _mobile;
-            
-#if !UNITY_EDITOR && UNITY_WEBGL
-        [DllImport("__Internal")]
-        private static extern bool IsMobile();
-#endif
 
-        public bool IsDesktop()
-        {
-#if !UNITY_EDITOR && UNITY_WEBGL
-            return !IsMobile();
-#endif
-            return !_forceMobile;
-        }
-
+        private CustomSettings _globalSettings;
+        
         private void Awake()
         {
+            _globalSettings = FindObjectOfType<CustomSettings>();
+            
             _desktop = transform.FirstOrDefault(t => t.name == "Desktop").gameObject;
             _mobile = transform.FirstOrDefault(t => t.name == "Mobile").gameObject;
 
-            if (IsDesktop())
+            if (_globalSettings.IsDesktop())
             {
                 _desktop.SetActive(true);
                 _mobile.SetActive(false);
