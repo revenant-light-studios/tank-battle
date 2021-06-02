@@ -48,21 +48,7 @@ namespace TankBattle.Navigation
         
         [SerializeField, FormerlySerializedAs("ForceMobile")]
         private bool _forceMobile = false;
-
-#if !UNITY_EDITOR && UNITY_WEBGL
-        [DllImport("__Internal")]
-        private static extern bool IsMobile();
-#endif
-
-        public bool IsDesktop()
-        {
-#if !UNITY_EDITOR && UNITY_WEBGL
-            return !IsMobile();
-#endif
-            return !_forceMobile;
-        }
-
-
+        
         public delegate void OnChangeVolumeDelegate();
         public OnChangeVolumeDelegate OnChangeVolume;
         // Start is called before the first frame update

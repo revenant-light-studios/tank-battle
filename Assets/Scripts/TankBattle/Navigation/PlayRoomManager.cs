@@ -4,6 +4,7 @@ using ExtensionMethods;
 using Networking.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
+using TankBattle.Global;
 using TankBattle.Tanks;
 using TankBattle.Terrain;
 using UnityEngine;
@@ -18,8 +19,6 @@ namespace TankBattle.Navigation
         private MeshTerrain _terrain;
         private int _randomSeed;
         private Random _randomGenerator;
-
-        private CustomSettings _globalSettings;
         
         private Vector3[] _spawnPoints;
 
@@ -47,12 +46,10 @@ namespace TankBattle.Navigation
         }
         private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
-            _globalSettings = FindObjectOfType<CustomSettings>();
-            
             Transform desktopUI = transform.FirstOrDefault(t => t.name == "UserUIDesktop");
             Transform mobileUI = transform.FirstOrDefault(t => t.name == "UserUIMobile");
 
-            if (_globalSettings.IsDesktop())
+            if (GlobalMethods.IsDesktop())
             {
                 desktopUI.gameObject.SetActive(true);
                 mobileUI.gameObject.SetActive(false);

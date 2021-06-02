@@ -1,5 +1,6 @@
 ﻿using ExtensionMethods;
 using Photon.Pun;
+using TankBattle.Global;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -30,12 +31,10 @@ namespace TankBattle.Navigation
         
         private void Awake()
         {
-            _globalSettings = FindObjectOfType<CustomSettings>();
-            
             _desktop = transform.FirstOrDefault(t => t.name == "Desktop").gameObject;
             _mobile = transform.FirstOrDefault(t => t.name == "Mobile").gameObject;
 
-            if (_globalSettings.IsDesktop())
+            if (GlobalMethods.IsDesktop())
             {
                 _desktop.SetActive(true);
                 _mobile.SetActive(false);
