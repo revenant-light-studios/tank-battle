@@ -1,4 +1,5 @@
-﻿using TankBattle.Navigation;
+﻿using System;
+using TankBattle.Navigation;
 using UnityEngine;
 
 namespace TankBattle.Audio
@@ -68,7 +69,7 @@ namespace TankBattle.Audio
         }
 
 
-        [System.Serializable]
+        [Serializable]
         public class SoundPrefab
         {
             public Sound sound;

@@ -1,38 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>%UNITY_WEB_NAME%</title>
     
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="assets/css/tank-battle.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        
+        <link rel="stylesheet" href="css/tank-battle.css" />
     
         <!-- unity resources -->
         <script src="%UNITY_WEBGL_LOADER_URL%"></script>
         <script>
             var unityInstance = UnityLoader.instantiate("unityContainer", "%UNITY_WEBGL_BUILD_URL%");
-            /*
-            var reference = 1280.0 / 720.0;
-            var resize = () => {
-                var height = canvas.clientHeight * window.devicePixelRatio;
-                                
-                
-            }
-            */
         </script>
     </head>
     <body>
-        <div class="webgl-wrapper">
-            <div class="aspect" style="margin-top: calc(100% / %UNITY_WIDTH% * %UNITY_HEIGHT%);"></div>
-            <div class="webgl-content">
-                <div id="unityContainer"></div>
-            </div>
-        </div>
-    
-        <div class="info">
-            <p>unity webgl responsive</p>
-            <p>press F or <a href="#" onclick="unityInstance.SetFullscreen(1)">click here</a> to toggle fullscreen</p>
-        </div>
+        <div id="unityContainer"></div>
     
         <!-- check for F key press to toggle full screen -->
         <script>

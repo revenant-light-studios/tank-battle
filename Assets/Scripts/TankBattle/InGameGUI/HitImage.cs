@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 namespace TankBattle.InGameGUI
 {

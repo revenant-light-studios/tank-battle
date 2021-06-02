@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace TankBattle.Navigation.Mobile
+﻿namespace TankBattle.Navigation.Mobile
 {
     public class SettingsManagerMobile : SettingsManager
     {

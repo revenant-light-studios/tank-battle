@@ -5,7 +5,7 @@ namespace TankBattle.Global
     public static class GlobalMethods
     {
  #if !UNITY_EDITOR && UNITY_WEBGL
-        [DllImport("__Internal")]
+        [System.Runtime.InteropServices.DllImport("__Internal")]
         private static extern bool IsMobile();
 #endif
 

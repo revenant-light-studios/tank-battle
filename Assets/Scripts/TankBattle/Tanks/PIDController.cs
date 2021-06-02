@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
 
 namespace TankBattle.Tanks
 {
-    [System.Serializable]
+    [Serializable]
     public class PIDController {
 	
         [Tooltip("Proportional constant (counters current error)")]

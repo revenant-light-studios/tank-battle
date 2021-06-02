@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace TankBattle.Tanks.Turrets
@@ -72,7 +73,7 @@ namespace TankBattle.Tanks.Turrets
         // }
         public override void UpdateTurret(Vector3 angle)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using ExtensionMethods;
+﻿using ExtensionMethods;
 using Networking.Utilities;
 using Photon.Pun;
 using Photon.Realtime;

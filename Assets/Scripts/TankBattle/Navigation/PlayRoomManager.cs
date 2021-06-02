@@ -23,8 +23,9 @@ namespace TankBattle.Navigation
         private Vector3[] _spawnPoints;
 
         [SerializeField] private GameObject _tankPrefab;
-        [SerializeField] private int _numberOfDummies;
-        [SerializeField] private bool _spawnDummies;
+        
+        private int _numberOfDummies = 10;
+        private bool _spawnDummies = false;
         
         public Random RandomGenerator
         {
@@ -46,6 +47,13 @@ namespace TankBattle.Navigation
         }
         private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
+            GameSettings settings = Resources.Load<GameSettings>("Settings/GameSettings");
+            if (settings)
+            {
+                _spawnDummies = settings.spawnDummyTanks;
+                _numberOfDummies = settings.numberOfDummies;
+            }
+            
             Transform desktopUI = transform.FirstOrDefault(t => t.name == "UserUIDesktop");
             Transform mobileUI = transform.FirstOrDefault(t => t.name == "UserUIMobile");
 

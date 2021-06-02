@@ -1,7 +1,7 @@
 using System;
+using ExitGames.Client.Photon;
 using Photon.Realtime;
 using UnityEngine;
-using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace TankBattle.Players
 {

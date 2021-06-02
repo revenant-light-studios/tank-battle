@@ -2,8 +2,6 @@
 using Photon.Pun;
 using TankBattle.Global;
 using UnityEngine;
-using UnityEngine.Serialization;
-
 
 namespace TankBattle.Navigation
 {
