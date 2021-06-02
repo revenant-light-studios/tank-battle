@@ -2,17 +2,15 @@ using System;
 using System.IO;
 using ExtensionMethods;
 using Networking.Utilities;
-using Photon.Compression;
 using Photon.Pun;
 using Photon.Realtime;
+using TankBattle.Global;
 using TankBattle.Tanks;
-using TankBattle.Tanks.Engines;
-using TankBattle.Tanks.Guns;
 using TankBattle.Terrain;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = System.Random;
 
 namespace TankBattle.Navigation
 {
@@ -20,15 +18,16 @@ namespace TankBattle.Navigation
     {
         private MeshTerrain _terrain;
         private int _randomSeed;
-        private System.Random _randomGenerator;
+        private Random _randomGenerator;
         
         private Vector3[] _spawnPoints;
 
         [SerializeField] private GameObject _tankPrefab;
-        [SerializeField] private int _numberOfDummies;
-        [SerializeField] private bool _spawnDummies;
-
-        public System.Random RandomGenerator
+        
+        private int _numberOfDummies = 10;
+        private bool _spawnDummies = false;
+        
+        public Random RandomGenerator
         {
             get => _randomGenerator;
         }
@@ -48,10 +47,31 @@ namespace TankBattle.Navigation
         }
         private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
+            GameSettings settings = Resources.Load<GameSettings>("Settings/GameSettings");
+            if (settings)
+            {
+                _spawnDummies = settings.spawnDummyTanks;
+                _numberOfDummies = settings.numberOfDummies;
+            }
+            
+            Transform desktopUI = transform.FirstOrDefault(t => t.name == "UserUIDesktop");
+            Transform mobileUI = transform.FirstOrDefault(t => t.name == "UserUIMobile");
+
+            if (GlobalMethods.IsDesktop())
+            {
+                desktopUI.gameObject.SetActive(true);
+                mobileUI.gameObject.SetActive(false);
+            }
+            else
+            {
+                desktopUI.gameObject.SetActive(false);
+                mobileUI.gameObject.SetActive(true);
+            }
+            
             Cursor.lockState = CursorLockMode.Confined;
             
             _randomSeed = (PhotonNetwork.InRoom) ? (int)PhotonNetwork.CurrentRoom.CustomProperties[RoomOptionsKeys.Seed] : Guid.NewGuid().GetHashCode();
-            _randomGenerator = new System.Random(_randomSeed);
+            _randomGenerator = new Random(_randomSeed);
             
             Canvas canvas = FindObjectOfType<Canvas>();
             _debugSeedText = canvas.transform.FirstOrDefault(t => t.name == "DebugSeed").GetComponent<Text>();
@@ -90,7 +110,7 @@ namespace TankBattle.Navigation
 
         private void GenerateSpawnPoints(int playerCount)
         {
-            System.Random generator = new System.Random(_randomSeed);
+            Random generator = new Random(_randomSeed);
             _spawnPoints = new Vector3[playerCount];
             int sectors = 360 / playerCount;
             int xCenter = _terrain.TerrainParameters.xSize / 2;
@@ -130,13 +150,19 @@ namespace TankBattle.Navigation
             for (int i = 0; i < numberOfTanks; i++)
             {
                 Vector3 position = _spawnPoints[_spawnPoints.Length - 1 - i];
-                GameObject dummyTank = Instantiate(_tankPrefab, position, Quaternion.identity);
+
+                GameObject dummyTank;
+                if (PhotonNetwork.IsConnected)
+                {
+                    dummyTank = PhotonNetwork.Instantiate(Path.Combine("Tanks", _tankPrefab.name), position, Quaternion.identity);
+                }
+                else
+                {
+                    dummyTank = Instantiate(_tankPrefab, position, Quaternion.identity);    
+                }
+                
                 dummyTank.name = $"Dummy{i}";
                 dummyTank.GetComponent<TankManager>().IsDummy = true;
-                
-                // dummyTank.GetComponent<PlayerInput>().enabled = false;
-                // dummyTank.GetComponent<CameraFollow>().enabled = false;
-                // dummyTank.GetComponent<TankGun>().enabled = false;
             }
         }
     }

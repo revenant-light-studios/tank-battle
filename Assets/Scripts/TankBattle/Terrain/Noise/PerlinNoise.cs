@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Random = System.Random;
 
 namespace TankBattle.Terrain.Noise
 {
@@ -14,7 +15,7 @@ namespace TankBattle.Terrain.Noise
             float halfHeight = 0.5f * height;
 
             // Debug.Log($"Generating perlin noise map with {seed}");
-            System.Random perlinRandom = new System.Random(seed != 0 ? seed : Guid.NewGuid().GetHashCode());
+            Random perlinRandom = new Random(seed != 0 ? seed : Guid.NewGuid().GetHashCode());
             Vector2[] octaveOffsets = new Vector2[octaves];
 
             for (int i = 0; i < octaves; i++)

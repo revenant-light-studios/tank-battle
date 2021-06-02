@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace TankBattle.Navigation
 {
@@ -46,7 +45,10 @@ namespace TankBattle.Navigation
                 OnChangeVolume?.Invoke();
             }
         }
-
+        
+        [SerializeField, FormerlySerializedAs("ForceMobile")]
+        private bool _forceMobile = false;
+        
         public delegate void OnChangeVolumeDelegate();
         public OnChangeVolumeDelegate OnChangeVolume;
         // Start is called before the first frame update

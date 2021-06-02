@@ -1,3 +1,4 @@
+using Cinemachine;
 using Photon.Pun;
 using TankBattle.InputManagers;
 using TankBattle.Tanks.Engines;
@@ -19,9 +20,9 @@ namespace TankBattle.Tanks
         private bool _fired = false;
 
         [SerializeField, FormerlySerializedAs("AxisStateX")]
-        private Cinemachine.AxisState _axisStateX;
+        private AxisState _axisStateX;
         [SerializeField, FormerlySerializedAs("AxisStateY")]
-        private Cinemachine.AxisState _axisStateY;
+        private AxisState _axisStateY;
 
         private VirtualJoystick _movementJoystick;
 

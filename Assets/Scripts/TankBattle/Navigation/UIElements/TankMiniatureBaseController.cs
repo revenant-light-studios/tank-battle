@@ -1,5 +1,4 @@
-﻿using System;
-using ExtensionMethods;
+﻿using ExtensionMethods;
 using UnityEngine;
 
 namespace TankBattle.Navigation.UIElements

@@ -1,4 +1,4 @@
-using TankBattle.Terrain.Noise; 
+using TankBattle.Terrain.Noise;
 
 namespace TankBattle.Terrain
 {

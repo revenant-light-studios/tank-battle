@@ -1,5 +1,3 @@
-using System;
-using ExtensionMethods;
 using UnityEngine;
 
 namespace TankBattle.Tanks.Bullets

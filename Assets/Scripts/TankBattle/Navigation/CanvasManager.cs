@@ -1,8 +1,7 @@
 ﻿using ExtensionMethods;
 using Photon.Pun;
+using TankBattle.Global;
 using UnityEngine;
-using UnityEngine.Serialization;
-
 
 namespace TankBattle.Navigation
 {
@@ -16,9 +15,7 @@ namespace TankBattle.Navigation
             Settings,
             WaitingRoom
         }
-        
-        [SerializeField, FormerlySerializedAs("IsDesktop")]
-        private bool _isDesktop = false;
+
 
         private CreditsManager _credits;
         private MainMenuManager _mainMenu;
@@ -28,13 +25,17 @@ namespace TankBattle.Navigation
         private GameObject _desktop;
         private GameObject _mobile;
 
+        private CustomSettings _globalSettings;
+        
         private void Awake()
         {
             _desktop = transform.FirstOrDefault(t => t.name == "Desktop").gameObject;
             _mobile = transform.FirstOrDefault(t => t.name == "Mobile").gameObject;
 
-            if (_isDesktop)
+            if (GlobalMethods.IsDesktop())
             {
+                _desktop.SetActive(true);
+                _mobile.SetActive(false);
                 _mainMenu = _desktop.transform.FirstOrDefault(t => t.name == "MainMenu").GetComponent<MainMenuManager>();
                 _credits = _desktop.transform.FirstOrDefault(t => t.name == "Credits").GetComponent<CreditsManager>();
                 _settings = _desktop.transform.FirstOrDefault(t => t.name == "Settings").GetComponent<SettingsManager>();
@@ -42,6 +43,8 @@ namespace TankBattle.Navigation
             }
             else
             {
+                _desktop.SetActive(false);
+                _mobile.SetActive(true);
                 _mainMenu = _mobile.transform.FirstOrDefault(t => t.name == "MainMenu").GetComponent<MainMenuManager>();
                 _credits = _mobile.transform.FirstOrDefault(t => t.name == "Credits").GetComponent<CreditsManager>();
                 _settings = _mobile.transform.FirstOrDefault(t => t.name == "Settings").GetComponent<SettingsManager>();

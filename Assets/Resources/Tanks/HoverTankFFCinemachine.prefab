@@ -138,8 +138,8 @@ MonoBehaviour:
   RocketLauncher: 1
   FlightDistance: 2
   HoverForce: 200
-  ForwardAccel: 2000
-  BackwardAccel: 300
+  ForwardAccel: 1000
+  BackwardAccel: 400
   TurnRate: 300
 --- !u!114 &4119116458498074648
 MonoBehaviour:

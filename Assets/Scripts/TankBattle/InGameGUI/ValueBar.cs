@@ -1,7 +1,6 @@
-﻿using System;
-using TMPro;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Serialization;
+
 namespace TankBattle.InGameGUI
 {
     public class ValueBar : MonoBehaviour
