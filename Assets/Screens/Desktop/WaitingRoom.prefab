@@ -1816,6 +1816,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerElemPrefab: {fileID: 8329438251547603585, guid: 8b3135636b35c034892c003887e35673,
     type: 3}
+  _settings: {fileID: 11400000, guid: 4ab308bc1dd0d491b87aa3e2bb32d7fd, type: 2}
 --- !u!1001 &3098903271549634069
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,7 +1,11 @@
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
+using TankBattle.Players;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Networking.Utilities
@@ -41,11 +45,13 @@ namespace Networking.Utilities
             roomOptions.CustomRoomProperties = new Hashtable()
             {
                 { RoomOptionsKeys.Name, $"Sala {key}" },
-                { RoomOptionsKeys.Seed, randomSeed }
+                { RoomOptionsKeys.Seed, randomSeed },
+                { RoomOptionsKeys.DefaultPlayerNames, CreateListOfNames()}
             };
             roomOptions.CustomRoomPropertiesForLobby = new string[]
             {
-                RoomOptionsKeys.Name
+                RoomOptionsKeys.Name,
+                RoomOptionsKeys.DefaultPlayerNames
             };
             return roomOptions;
         }
@@ -60,6 +66,17 @@ namespace Networking.Utilities
             }
 
             return name;
+        }
+
+        private string[] CreateListOfNames()
+        {
+            List<string> _defaultNames;
+            PlayerDefaultNames _maleNames = Resources.Load<PlayerDefaultNames>("Settings/DefaultMaleNames");
+            PlayerDefaultNames _femaleNames = Resources.Load<PlayerDefaultNames>("Settings/DefaultFemaleNames");
+            _defaultNames = new List<string>(_maleNames.Names);
+            _defaultNames.AddRange(_femaleNames.Names);
+            _defaultNames = _defaultNames.OrderBy(a => Guid.NewGuid()).ToList();
+            return _defaultNames.ToArray();
         }
     }
 }

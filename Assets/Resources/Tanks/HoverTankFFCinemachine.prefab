@@ -155,7 +155,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TankBullet: {fileID: 2577449839175722021, guid: 30265f97304d04e33965040e041d0735,
     type: 3}
-  _firingRate: 1
+  _firingRate: 0.75
+  _maxEnergy: 1
+  _unloadRate: 0.1
+  _reloadRate: 0.25
 --- !u!114 &8380127123188987194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5619,7 +5622,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4dfa116597c43eea1a04d0ca003f2df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Crosshair: {fileID: 0}
 --- !u!114 &7584427002095993701
 MonoBehaviour:
   m_ObjectHideFlags: 0
