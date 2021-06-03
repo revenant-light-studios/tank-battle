@@ -4,7 +4,6 @@ namespace TankBattle.Tanks.Turrets
 {
     public class Turret2 : ATankTurret
     {
-        public CrossHair Crosshair;
         private Vector3 _turretRotation;
         
         private void Awake()

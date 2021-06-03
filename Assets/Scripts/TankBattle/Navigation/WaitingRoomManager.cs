@@ -1,11 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ExtensionMethods;
+using Networking.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
 using TankBattle.Global;
+using TankBattle.Players;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace TankBattle.Navigation
 {
@@ -46,7 +51,6 @@ namespace TankBattle.Navigation
 
         public delegate void OnGoCreditsDelegate();
         public OnGoCreditsDelegate OnGoCredits;
-
 
         private void Awake()
         {
@@ -222,6 +226,12 @@ namespace TankBattle.Navigation
 
         private void AddPlayerToList(Player player)
         {
+            if (string.IsNullOrEmpty(player.NickName))
+            {
+                string[] defaultNames = (string[]) PhotonNetwork.CurrentRoom.CustomProperties[RoomOptionsKeys.DefaultPlayerNames];
+                player.NickName = defaultNames[player.ActorNumber];
+            }
+
             GameObject element = Instantiate(_playerElemPrefab, _playersList);
             element.name = player.UserId;
 
@@ -247,6 +257,5 @@ namespace TankBattle.Navigation
         {
             PhotonNetwork.LeaveRoom();
         }
-
     }
 }

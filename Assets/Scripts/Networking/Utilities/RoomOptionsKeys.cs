@@ -4,5 +4,6 @@ namespace Networking.Utilities
     {
         public static string Name = "name";
         public static string Seed = "seed";
+        public static string DefaultPlayerNames = "defaultplayernames";
     }
 }

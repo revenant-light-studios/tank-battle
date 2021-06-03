@@ -1,51 +1,42 @@
+using System;
+using System.Collections;
+using ExtensionMethods;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace TankBattle.Tanks
 {
     public class CrossHair : MonoBehaviour
     {
-        public Sprite SearchingSprite;
-        public Sprite AimSprite; 
-            
-        private Material _crossHairMaterial;
-        private bool _targetReached;
-
-        public bool TargetReached
-        {
-            get => _targetReached;
-            set
-            {
-                _targetReached = value;
-
-                if (_targetReached)
-                {
-                    if (AimSprite)
-                    {
-                        _crossHairMaterial.SetTexture("_MainTex", AimSprite.texture);
-                    }
-                }
-                else
-                {
-                    if (SearchingSprite)
-                    {
-                        _crossHairMaterial.SetTexture("_MainTex", SearchingSprite.texture);
-                    }
-                }
-            }
-        }
+        [SerializeField, FormerlySerializedAs("CrosshairColor")] 
+        private Color _crossHairColor;
         
-        private void Start()
-        {
-            _crossHairMaterial = GetComponent<MeshRenderer>().material;
-            
-            if (SearchingSprite == null)
-            {
-                SearchingSprite = Resources.Load<Sprite>("Sprites/CrosshairSearch");
-            }
+        [SerializeField, FormerlySerializedAs("CrosshairDisabledColor")]
+        private Color _crosshairDisabledColor;
+        
+        private Image _crossHair;
+        private Image _energyBar;
 
-            if (AimSprite == null)
+
+        private void Awake()
+        {
+            _crossHair = transform.FirstOrDefault(t => t.name == "CrosshairBase").GetComponent<Image>();
+            _energyBar = transform.FirstOrDefault(t => t.name == "EnergyBar").GetComponent<Image>();
+        }
+
+        public void UpdateEnergy(float energy, float neededEnergy)
+        {
+            _energyBar.fillAmount = energy < neededEnergy ? 0.0f : energy;
+
+            // Debug.Log($"Energy: {energy}, minimum: {neededEnergy}");
+            if (energy < neededEnergy)
             {
-                AimSprite = Resources.Load<Sprite>("Sprites/CrosshairAim");
+                _crossHair.color = _crosshairDisabledColor;
+            }
+            else
+            {
+                _crossHair.color = _crossHairColor;
             }
         }
     }

@@ -16,9 +16,6 @@ namespace TankBattle.Tanks
         private ATankGun _gun;
         private ATankTurret _turret;
 
-        private float _lastFired = 0f;
-        private bool _fired = false;
-
         [SerializeField, FormerlySerializedAs("AxisStateX")]
         private AxisState _axisStateX;
         [SerializeField, FormerlySerializedAs("AxisStateY")]
@@ -107,22 +104,7 @@ namespace TankBattle.Tanks
         {
             if (Input.GetButton("Fire1"))
             {
-                if(!_fired)
-                {
-                    _lastFired = _gun.FiringRate;
-                    _fired = true;
-                    _gun.Fire();
-                }
-            }
-            
-            if (_fired)
-            {
-                _lastFired -= Time.deltaTime;
-                
-                if (_lastFired <= 0f)
-                {
-                    _fired = false;
-                }
+                _gun.Fire();
             }
         }
     }
