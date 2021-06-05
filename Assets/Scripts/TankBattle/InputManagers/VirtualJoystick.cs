@@ -2,6 +2,7 @@ using System;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace TankBattle.InputManagers
@@ -9,72 +10,72 @@ namespace TankBattle.InputManagers
     public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler, AxisState.IInputAxisProvider
     {
 
-        public float GetAxisValue(int axis)
+        [SerializeField, FormerlySerializedAs("Container")]
+        private Image _container;
+        [SerializeField, FormerlySerializedAs("Joystick")]
+        private Image _joystick;
+
+        private float _radious = 0;
+        private Vector2 _inputDirection = Vector2.zero;
+
+        private void Start()
         {
-            if (axis == 0)
-            {
-                return InputDirection.x;
-            } 
-            
-            if (axis == 1)
-            {
-                return InputDirection.y;
-            }
-
-            return InputDirection.z;
-        }
-        
-        private Image jsContainer;
-        private Image joystick;
-        public Vector3 InputDirection;
-
-
-        void Start()
-        {
-            jsContainer = GetComponent<Image>();
-            joystick = transform.GetChild(0).GetComponent<Image>(); //this command is used because there is only one child in hierarchy
-            InputDirection = Vector3.zero;
+            _radious = _container.rectTransform.rect.width * 0.5f;
+            _container.gameObject.SetActive(false);
+            _joystick.gameObject.SetActive(false);
         }
 
         public void OnDrag(PointerEventData ped)
         {
-            Vector2 position = Vector2.zero;
+            var containerPos = new Vector2(_container.transform.position.x, _container.transform.position.y);
 
-            //To get InputDirection
-            RectTransformUtility.ScreenPointToLocalPointInRectangle
-                (jsContainer.rectTransform,
-                ped.position,
-                ped.pressEventCamera,
-                out position);
+            var position = ped.position - containerPos;
 
+            var posX = Mathf.Clamp(position.x, -_radious, _radious);
+            var posY = Mathf.Clamp(position.y, -_radious, _radious);
 
+            position = new Vector2(posX, posY);
 
-            position.x = (position.x / jsContainer.rectTransform.sizeDelta.x);
-            position.y = (position.y / jsContainer.rectTransform.sizeDelta.y);
+            position = (position.magnitude > _radious) ? position.normalized * _radious : position;
 
-            InputDirection = new Vector3(position.x, position.y, 0);
-            InputDirection = (InputDirection.magnitude > 1) ? InputDirection.normalized : InputDirection;
+            Debug.Log(position);
+            _joystick.transform.position = position + containerPos;
 
-            //to define the area in which joystick can move around
-            joystick.rectTransform.anchoredPosition = new Vector3(InputDirection.x * (jsContainer.rectTransform.sizeDelta.x / 3)
-                , InputDirection.y * (jsContainer.rectTransform.sizeDelta.y) / 3);
+            _inputDirection = position/_radious;
+            Debug.Log(_inputDirection);
 
-        }
-
-        internal object FirstOrDefault(Func<object, bool> p)
-        {
-            throw new NotImplementedException();
         }
 
         public void OnPointerDown(PointerEventData ped)
         {
-            OnDrag(ped);
+            Debug.Log(transform.gameObject.name);
+            _container.transform.position = ped.position;
+            _container.gameObject.SetActive(true);
+            _joystick.transform.position = ped.position;
+            _joystick.gameObject.SetActive(true);
+
         }
 
         public void OnPointerUp(PointerEventData ped)
         {
-            InputDirection = Vector3.zero;
-            joystick.rectTransform.anchoredPosition = Vector3.zero;
+            _inputDirection = Vector2.zero;
+            _container.gameObject.SetActive(false);
+            _joystick.gameObject.SetActive(false);
+        }
+
+        public float GetAxisValue(int axis)
+        {
+            if (axis == 0)
+            {
+                return _inputDirection.x;
+            }
+
+            if (axis == 1)
+            {
+                return _inputDirection.y;
+            }
+
+            return 0;
         }
     }
 }

@@ -6,6 +6,7 @@ using TankBattle.Tanks.Guns;
 using TankBattle.Tanks.Turrets;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace TankBattle.Tanks
 {
