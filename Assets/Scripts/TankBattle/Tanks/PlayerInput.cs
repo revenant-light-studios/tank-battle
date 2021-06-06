@@ -27,7 +27,7 @@ namespace TankBattle.Tanks
 
         private VirtualJoystick _movementJoystick;
 
-        public void InitInput(VirtualJoystick movement, VirtualJoystick aim)
+        public void InitInput(VirtualJoystick movement, VirtualJoystick aim, ShootBtn shoot, Button specialShoot)
         {
             if (aim)
             {
@@ -47,6 +47,34 @@ namespace TankBattle.Tanks
             }
 
             _movementJoystick = movement;
+
+            if (shoot)
+            {
+                shoot.onShoot += () => Shoot();
+                shoot.onStopShoot += () => StopShoot();
+            }
+
+            if (specialShoot)
+            {
+                specialShoot.onClick.AddListener(SpecialShoot);
+            }
+        }
+
+        private void Shoot()
+        {
+            Debug.Log("Shoot");
+            _fired = true;
+        }
+
+        private void StopShoot()
+        {
+            Debug.Log("Stoop");
+            _fired = false;
+        }
+
+        private void SpecialShoot()
+        {
+            throw new System.NotImplementedException();
         }
 
         private void Start()
@@ -106,25 +134,41 @@ namespace TankBattle.Tanks
         /// </summary>
         private void GunInput()
         {
-            if (Input.GetButton("Fire1"))
+            //Si es desktop
+            if (_movementJoystick == null)
             {
-                if(!_fired)
+                if (Input.GetButton("Fire1"))
                 {
-                    _lastFired = _gun.FiringRate;
-                    _fired = true;
-                    _gun.Fire();
+                    if (!_fired)
+                    {
+                        _lastFired = _gun.FiringRate;
+                        _fired = true;
+                        _gun.Fire();
+                    }
+
+                    if (_fired)
+                    {
+
+                        if (_lastFired <= 0f)
+                        {
+                            _fired = false;
+                        }
+                    }
                 }
             }
-            
-            if (_fired)
+            else
             {
-                _lastFired -= Time.deltaTime;
-                
-                if (_lastFired <= 0f)
+                if (_fired)
                 {
-                    _fired = false;
+                    if (_lastFired <= 0)
+                    {
+                        _gun.Fire();
+                        _lastFired = _gun.FiringRate;
+                    }
                 }
             }
+
+            _lastFired -= Time.deltaTime;
         }
     }
 }
