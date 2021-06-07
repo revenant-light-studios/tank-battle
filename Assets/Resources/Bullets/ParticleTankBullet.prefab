@@ -141,6 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e729c326859749f3ba68b385f0e8eb4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _damage: 0.2
 --- !u!199 &2966935022017670435
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -3963,7 +3964,7 @@ ParticleSystem:
     radiusScale: 1
     collidesWith:
       serializedVersion: 2
-      m_Bits: 4294967295
+      m_Bits: 3383
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5

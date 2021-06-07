@@ -1,10 +1,8 @@
-using System;
 using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Tanks.Bullets;
 using UnityEngine;
 using UnityEngine.Serialization;
-using UnityEngine.UI;
 
 namespace TankBattle.Tanks.Guns
 {
@@ -59,15 +57,6 @@ namespace TankBattle.Tanks.Guns
             _energy = _maxEnergy;
         }
         
-        private void OnBulletHit(GameObject other)
-        {
-            TankValues tankValues = other.GetComponent<TankValues>();
-            if (tankValues != null)
-            {
-                OnTankHit?.Invoke(tankValues);
-            }
-        }
-
         private void Update()
         {
             if (_photonView.IsMine || !PhotonNetwork.IsConnected)
@@ -129,7 +118,6 @@ namespace TankBattle.Tanks.Guns
         {
             _energy = Mathf.Clamp(value, 0.0f, 1.0f);
             if(_crossHair) _crossHair.UpdateEnergy(_energy / _maxEnergy, _unloadRate);
-            // Debug.Log($"Energy: {_energy}");
         }
     }
 }

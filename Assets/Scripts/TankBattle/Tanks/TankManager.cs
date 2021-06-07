@@ -21,6 +21,8 @@ namespace TankBattle.Tanks
         private ATankHud _tankHud;
         private DetectableObject _detectableObject;
 
+        private List<DetectableObject> _inScreenTanks;
+
         public bool IsDummy = false;
 
         private void Awake()
@@ -37,6 +39,9 @@ namespace TankBattle.Tanks
             {
                 InitLocalTank();
                 InitEnemyTracker();
+
+                // Put local tank in non collission layer
+                gameObject.SetLayerRecursively(12);
             }
             else
             {
@@ -52,7 +57,7 @@ namespace TankBattle.Tanks
                 }
             }
         }
-
+        
         private Transform _launchPointTransform;
         private Transform _cameraTransform;
         private UnityEngine.Camera _camera;
@@ -86,61 +91,60 @@ namespace TankBattle.Tanks
             _cameraTransform = GameObject.Find("Camera Position")?.transform;
             _camera = _cameraTransform.FirstOrDefault(t => t.name == "Main Camera").GetComponent<UnityEngine.Camera>();
             _launchPointTransform = transform.FirstOrDefault(t => t.name == "FirePoint");
+            
+            _inScreenTanks = new List<DetectableObject>(Radar.Instance.DetectableObjects);
+            foreach (DetectableObject tank in _inScreenTanks)
+            {
+                tank.InitTrackerImage(_tankHud.transform, _camera);
+            }
+            
+            Radar.Instance.OnDetectableObjectAdded = o =>
+            {
+                _inScreenTanks.Add(o);
+                o.InitTrackerImage(_tankHud.transform, _camera);
+            };
+            
+            Radar.Instance.OnDetectableObjectRemoved = o => _inScreenTanks.Remove(o);
         }
-
+        
         private void Update()
         {
             if ((_photonView.IsMine || !PhotonNetwork.IsConnected) && !IsDummy)
             {
                 Plane[] planes = GeometryUtility.CalculateFrustumPlanes(_camera);
-                List<DetectableObject> objects = new List<DetectableObject>(Radar.Instance.DetectableObjects);
                 
-                for (int i = 0; i < objects.Count; i++)
+                
+                for (int i = _inScreenTanks.Count - 1; i >= 0 ; i--)
                 {
-                    DetectableObject dObj = objects[i];
+                    DetectableObject dObj = _inScreenTanks[i];
 
                     if (dObj && dObj.gameObject != gameObject)
                     {
                         if (GeometryUtility.TestPlanesAABB(planes, dObj.Bounds))
                         {
-                            if (!dObj.IsVisibleInCamera)
+                            if (!dObj.Visible)
                             {
                                 // Debug.LogFormat("DetectableObject {0} entered camera", dObj.name);   
                             }
                             
-                            dObj.IsVisibleInCamera = true;
+                            dObj.Visible = true;
 
                             Vector3 direction = dObj.Bounds.center - _detectableObject.Bounds.center;
                             bool tracked = false;
 
                             if (Physics.Raycast(_detectableObject.Bounds.center, direction, out RaycastHit hit))
                             {
-                                if (hit.transform.gameObject == dObj.gameObject)
-                                {
-                                    // Debug.Log($"{dObj.name} tracked");
-                                    tracked = true;
-                                }
-                            }
-
-                            if (tracked)
-                            {
-                                dObj.ShowTrackerImage(_tankHud.transform, dObj.gameObject);
-                                dObj.UpdateTrackerImage(_camera);
-                            }
-                            else
-                            {
-                                dObj.HideTrackerImage();
+                                dObj.Tracked = (hit.transform.gameObject == dObj.gameObject);
                             }
                         }
                         else
                         {
-                            if (dObj.IsVisibleInCamera)
+                            if (dObj.Visible)
                             {
                                 // Debug.LogFormat("DetectableObject {0} exit camera", Radar.Instance.DetectableObjects[i].name);
                             }
 
-                            dObj.IsVisibleInCamera = false;
-                            dObj.HideTrackerImage();
+                            dObj.Visible = false;
                         }
                     }
                 }

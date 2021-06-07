@@ -1,4 +1,5 @@
 using Cinemachine;
+using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.InputManagers;
 using TankBattle.Tanks.Engines;
@@ -14,6 +15,7 @@ namespace TankBattle.Tanks
         private PhotonView _photonView;
         private ATankEngine _engine;
         private ATankGun _gun;
+        private ATankGun _missileLauncher;
         private ATankTurret _turret;
 
         [SerializeField, FormerlySerializedAs("AxisStateX")]
@@ -49,6 +51,7 @@ namespace TankBattle.Tanks
         {
             _photonView = GetComponent<PhotonView>();
             _gun = GetComponentInChildren<ATankGun>();
+            _missileLauncher = transform.FirstOrDefault(t => t.name == "MissileLauncher").GetComponent<SpreadBombLauncher>();
             _engine = GetComponentInChildren<ATankEngine>();
             _turret = GetComponentInChildren<ATankTurret>();
         }
@@ -105,6 +108,14 @@ namespace TankBattle.Tanks
             if (Input.GetButton("Fire1"))
             {
                 _gun.Fire();
+            }
+
+            if (Input.GetButton("Fire2"))
+            {
+                if (_missileLauncher && _missileLauncher.isActiveAndEnabled)
+                {
+                    _missileLauncher.Fire();
+                }
             }
         }
     }

@@ -4900,7 +4900,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 1.766587e+23, z: 4.5845e-41, w: 0}
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -4921,7 +4921,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6244015059409657188
 Transform:
   m_ObjectHideFlags: 0
@@ -5046,6 +5046,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e75214d3e734d8782bb41a16e18afc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _damage: 0
   _force: 100
 --- !u!136 &217835508445477690
 CapsuleCollider:
