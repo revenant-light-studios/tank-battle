@@ -77,7 +77,7 @@ namespace TankBattle.Tanks
             }
             else
             {
-                _playerInput.InitInput(null, null, null, null);
+                 _playerInput.InitInput(null, null, null, null);
             }
         }
 

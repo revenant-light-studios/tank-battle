@@ -1,12 +1,12 @@
 using Cinemachine;
 using Photon.Pun;
+using TankBattle.Global;
 using TankBattle.InputManagers;
 using TankBattle.Tanks.Engines;
 using TankBattle.Tanks.Guns;
 using TankBattle.Tanks.Turrets;
 using UnityEngine;
 using UnityEngine.Serialization;
-using UnityEngine.UI;
 
 namespace TankBattle.Tanks
 {
@@ -17,17 +17,16 @@ namespace TankBattle.Tanks
         private ATankGun _gun;
         private ATankTurret _turret;
 
-        private float _lastFired = 0f;
-        private bool _fired = false;
-
         [SerializeField, FormerlySerializedAs("AxisStateX")]
         private AxisState _axisStateX;
         [SerializeField, FormerlySerializedAs("AxisStateY")]
         private AxisState _axisStateY;
 
         private VirtualJoystick _movementJoystick;
+        private VirtualButton _shootButton;
+        private VirtualButton _secondaryShootButton;
 
-        public void InitInput(VirtualJoystick movement, VirtualJoystick aim, ShootBtn shoot, Button specialShoot)
+        public void InitInput(VirtualJoystick movement, VirtualJoystick aim, VirtualButton shoot, VirtualButton specialShoot)
         {
             if (aim)
             {
@@ -48,35 +47,17 @@ namespace TankBattle.Tanks
 
             _movementJoystick = movement;
 
-            if (shoot)
+            if (shoot != null)
             {
-                shoot.onShoot += () => Shoot();
-                shoot.onStopShoot += () => StopShoot();
+                _shootButton = shoot;
             }
 
-            if (specialShoot)
+            if (specialShoot != null)
             {
-                specialShoot.onClick.AddListener(SpecialShoot);
+                _secondaryShootButton = specialShoot;
             }
         }
-
-        private void Shoot()
-        {
-            Debug.Log("Shoot");
-            _fired = true;
-        }
-
-        private void StopShoot()
-        {
-            Debug.Log("Stoop");
-            _fired = false;
-        }
-
-        private void SpecialShoot()
-        {
-            throw new System.NotImplementedException();
-        }
-
+        
         private void Start()
         {
             _photonView = GetComponent<PhotonView>();
@@ -135,40 +116,25 @@ namespace TankBattle.Tanks
         private void GunInput()
         {
             //Si es desktop
-            if (_movementJoystick == null)
+            if (GlobalMethods.IsDesktop())
             {
                 if (Input.GetButton("Fire1"))
                 {
-                    if (!_fired)
-                    {
-                        _lastFired = _gun.FiringRate;
-                        _fired = true;
-                        _gun.Fire();
-                    }
-
-                    if (_fired)
-                    {
-
-                        if (_lastFired <= 0f)
-                        {
-                            _fired = false;
-                        }
-                    }
+                    _gun.Fire();
                 }
             }
             else
             {
-                if (_fired)
+                if (_shootButton.IsPressed())
                 {
-                    if (_lastFired <= 0)
-                    {
-                        _gun.Fire();
-                        _lastFired = _gun.FiringRate;
-                    }
+                    _gun.Fire();    
+                }
+
+                if(_secondaryShootButton.IsPressed())
+                {
+                    
                 }
             }
-
-            _lastFired -= Time.deltaTime;
         }
     }
 }

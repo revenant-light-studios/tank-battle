@@ -26,7 +26,7 @@ namespace TankBattle.InGameGUI
             {
                 _tankValues.OnValuesChanged = OnTankValuesChanged;
                 _tankValues.OnTankWasHit = OnTankWasHit;
-                Debug.LogFormat("Tank {0} registered with hud", tank.name);
+                // Debug.LogFormat("Tank {0} registered with hud", tank.name);
             }
         }
         private void OnTankWasHit(TankValues values)

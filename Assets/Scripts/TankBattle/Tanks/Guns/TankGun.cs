@@ -2,23 +2,36 @@ using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Tanks.Bullets;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.Serialization;
 
 namespace TankBattle.Tanks.Guns
 {
     public class TankGun : ATankGun
     {
-        [SerializeField] private float _firingRate = 2f;
+        [SerializeField, FormerlySerializedAs("FiringRate"), InspectorName("Fire rate"), Tooltip("Seconds between consecutive shots")] 
+        private float _firingRate = 2f;
+     
+        [SerializeField, FormerlySerializedAs("MaxEnergy"), InspectorName("Maximum energy"), Tooltip("Maximum capacity of gun")]
+        private float _maxEnergy = 1.0f;
+
+        [SerializeField, FormerlySerializedAs("UnloadRate"), InspectorName("UnloadRate"), Tooltip("Amount of energy consumed by each shot")] 
+        private float _unloadRate = 0.1f;
+
+        [SerializeField, FormerlySerializedAs("ReloadRate"), InspectorName("ReloadRate"),  Tooltip("Time to fully reload the weapon in seconds")]
+        private float _reloadTime = 3.0f;
+        
+        private float _energy;
+        private float _lastFired;
+        private bool _canFire;
+        private float _reloadRate;
 
         public override float FiringRate => _firingRate;
 
         private Transform _cannonTransform;
         private ParticleSystem _muzzleParticleSystem;
         private ATankBullet _bullet;
-
         private PhotonView _photonView;
-        private Image _crossHairImage;
-
+        private CrossHair _crossHair;
         private AudioSource _gunAudio;
 
         private void Awake()
@@ -35,9 +48,15 @@ namespace TankBattle.Tanks.Guns
             Canvas canvas = FindObjectOfType<Canvas>();
             if (canvas)
             {
-                _crossHairImage = canvas.transform.FirstOrDefault(t => t.name == "Crosshair").GetComponent<Image>();    
+                _crossHair = canvas.transform.FirstOrDefault(t => t.name == "Crosshair").GetComponent<CrossHair>();    
             }
         }
+
+        private void OnEnable()
+        {
+            _energy = _maxEnergy;
+        }
+        
         private void OnBulletHit(GameObject other)
         {
             TankValues tankValues = other.GetComponent<TankValues>();
@@ -51,16 +70,34 @@ namespace TankBattle.Tanks.Guns
         {
             if (_photonView.IsMine || !PhotonNetwork.IsConnected)
             {
-                if (_crossHairImage != null && Physics.Raycast(_cannonTransform.position, _cannonTransform.forward, out RaycastHit hit))
+                if (_crossHair != null && Physics.Raycast(_cannonTransform.position, _cannonTransform.forward, out RaycastHit hit))
                 {
                     Vector3 position = UnityEngine.Camera.main.WorldToScreenPoint(hit.point);
-                    _crossHairImage.transform.position = position;
+                    _crossHair.transform.position = position;
                 }
+            }
+            
+            _lastFired += Time.deltaTime;
+            
+            if (_lastFired > 2 * _firingRate)
+            {
+                if (_energy < _maxEnergy)
+                {
+                    _reloadRate = _maxEnergy / _reloadTime;
+                    UpdateEnergy(_energy + _reloadRate * Time.deltaTime);
+                }
+            }
+            
+            if (!_canFire && _lastFired >= _firingRate)
+            {
+                _canFire = true;
             }
         }
 
         public override void Fire()
         {
+            if (!_canFire) return;
+            
             if(PhotonNetwork.IsConnected && _photonView.IsMine)
             {
                 _photonView.RPC("NetworkFire", RpcTarget.All);
@@ -69,14 +106,28 @@ namespace TankBattle.Tanks.Guns
             {
                 NetworkFire();
             }
+
+            _lastFired = 0.0f;
+            _canFire = false;
         }
 
         [PunRPC]
         void NetworkFire()
         {
-            _bullet?.Fire(_cannonTransform);
-            _muzzleParticleSystem.Play();
-            _gunAudio?.PlayOneShot(_gunAudio.clip);
+            if (_energy >= _unloadRate)
+            {
+                _bullet?.Fire(_cannonTransform);
+                _muzzleParticleSystem.Play();
+                _gunAudio?.PlayOneShot(_gunAudio.clip);
+                UpdateEnergy(_energy - _unloadRate);
+            }
+        }
+
+        private void UpdateEnergy(float value)
+        {
+            _energy = Mathf.Clamp(value, 0.0f, 1.0f);
+            if(_crossHair) _crossHair.UpdateEnergy(_energy / _maxEnergy, _unloadRate);
+            // Debug.Log($"Energy: {_energy}");
         }
     }
 }

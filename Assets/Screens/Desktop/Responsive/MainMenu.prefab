@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1615499235}
   - component: {fileID: 1615499237}
   - component: {fileID: 1615499236}
+  - component: {fileID: 5507044006292539134}
   m_Layer: 0
   m_Name: RawImage
   m_TagString: Untagged
@@ -33,7 +34,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -71,6 +72,20 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
+--- !u!114 &5507044006292539134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1615499234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AspectMode: 3
+  m_AspectRatio: 2.7479906
 --- !u!1 &258233480282302603
 GameObject:
   m_ObjectHideFlags: 0
@@ -2118,6 +2133,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3355376499273862552}
     m_Modifications:
+    - target: {fileID: 4727962436021349611, guid: b099f3e75e53e46f9a2b4d53f1e50fd2,
+        type: 3}
+      propertyPath: orthographic
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6051362169304884783, guid: b099f3e75e53e46f9a2b4d53f1e50fd2,
         type: 3}
       propertyPath: m_RootOrder

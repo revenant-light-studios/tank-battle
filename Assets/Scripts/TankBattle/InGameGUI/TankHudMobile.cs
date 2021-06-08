@@ -1,7 +1,6 @@
 using TankBattle.InputManagers;
 using UnityEngine;
 using UnityEngine.Serialization;
-using UnityEngine.UI;
 
 namespace TankBattle.InGameGUI
 {
@@ -14,23 +13,22 @@ namespace TankBattle.InGameGUI
         private VirtualJoystick _aimJoystick;
 
         [SerializeField, FormerlySerializedAs("Shoot")]
-        private ShootBtn _shootBtn;
+        private VirtualButton _shootBtn;
 
         [SerializeField, FormerlySerializedAs("SpecialShoot")]
-        private Button _specialShootBtn;
+        private VirtualButton _specialShootBtn;
 
         public VirtualJoystick MovementJoystick { get => _movementJoystick; }
         
         public VirtualJoystick AimJoystick { get => _aimJoystick; }
         
-        public ShootBtn ShootBtn { get => _shootBtn; }
+        public VirtualButton ShootBtn { get => _shootBtn; }
 
-        public Button SpecialShootBtn { get => _specialShootBtn; }
+        public VirtualButton SpecialShootBtn { get => _specialShootBtn; }
         
         public override void RegisterTank(GameObject tank)
         {
             base.RegisterTank(tank);
-            
         }
     }
 }

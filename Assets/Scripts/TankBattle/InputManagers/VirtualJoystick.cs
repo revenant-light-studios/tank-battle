@@ -1,4 +1,3 @@
-using System;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -35,25 +34,18 @@ namespace TankBattle.InputManagers
             var posY = Mathf.Clamp(position.y, -_radious, _radious);
 
             position = new Vector2(posX, posY);
-
             position = (position.magnitude > _radious) ? position.normalized * _radious : position;
 
-            Debug.Log(position);
             _joystick.transform.position = position + containerPos;
-
             _inputDirection = position/_radious;
-            Debug.Log(_inputDirection);
-
         }
 
         public void OnPointerDown(PointerEventData ped)
         {
-            Debug.Log(transform.gameObject.name);
             _container.transform.position = ped.position;
             _container.gameObject.SetActive(true);
             _joystick.transform.position = ped.position;
             _joystick.gameObject.SetActive(true);
-
         }
 
         public void OnPointerUp(PointerEventData ped)
