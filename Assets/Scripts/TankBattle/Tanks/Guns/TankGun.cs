@@ -1,10 +1,8 @@
-using System;
 using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Tanks.Bullets;
 using UnityEngine;
 using UnityEngine.Serialization;
-using UnityEngine.UI;
 
 namespace TankBattle.Tanks.Guns
 {

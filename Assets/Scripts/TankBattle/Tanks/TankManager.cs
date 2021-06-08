@@ -73,11 +73,11 @@ namespace TankBattle.Tanks
             if (_tankHud is TankHudMobile)
             {
                 TankHudMobile tankHudMobile = (TankHudMobile)_tankHud;
-                _playerInput.InitInput(tankHudMobile.MovementJoystick, tankHudMobile.AimJoystick);    
+                _playerInput.InitInput(tankHudMobile.MovementJoystick, tankHudMobile.AimJoystick, tankHudMobile.ShootBtn, tankHudMobile.SpecialShootBtn);    
             }
             else
             {
-                _playerInput.InitInput(null, null);
+                 _playerInput.InitInput(null, null, null, null);
             }
         }
 

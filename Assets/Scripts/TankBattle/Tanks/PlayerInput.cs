@@ -1,5 +1,6 @@
 using Cinemachine;
 using Photon.Pun;
+using TankBattle.Global;
 using TankBattle.InputManagers;
 using TankBattle.Tanks.Engines;
 using TankBattle.Tanks.Guns;
@@ -22,8 +23,10 @@ namespace TankBattle.Tanks
         private AxisState _axisStateY;
 
         private VirtualJoystick _movementJoystick;
+        private VirtualButton _shootButton;
+        private VirtualButton _secondaryShootButton;
 
-        public void InitInput(VirtualJoystick movement, VirtualJoystick aim)
+        public void InitInput(VirtualJoystick movement, VirtualJoystick aim, VirtualButton shoot, VirtualButton specialShoot)
         {
             if (aim)
             {
@@ -43,8 +46,18 @@ namespace TankBattle.Tanks
             }
 
             _movementJoystick = movement;
-        }
 
+            if (shoot != null)
+            {
+                _shootButton = shoot;
+            }
+
+            if (specialShoot != null)
+            {
+                _secondaryShootButton = specialShoot;
+            }
+        }
+        
         private void Start()
         {
             _photonView = GetComponent<PhotonView>();
@@ -102,9 +115,25 @@ namespace TankBattle.Tanks
         /// </summary>
         private void GunInput()
         {
-            if (Input.GetButton("Fire1"))
+            //Si es desktop
+            if (GlobalMethods.IsDesktop())
             {
-                _gun.Fire();
+                if (Input.GetButton("Fire1"))
+                {
+                    _gun.Fire();
+                }
+            }
+            else
+            {
+                if (_shootButton.IsPressed())
+                {
+                    _gun.Fire();    
+                }
+
+                if(_secondaryShootButton.IsPressed())
+                {
+                    
+                }
             }
         }
     }
