@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 5862101084453202260}
   - component: {fileID: 2751519101298133832}
   - component: {fileID: -2123007057018740721}
-  - component: {fileID: 4119116458498074648}
   - component: {fileID: 8380127123188987194}
   - component: {fileID: 4805087192327510034}
   - component: {fileID: 5656289977461324510}
@@ -74,6 +73,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsDummy: 0
+  _primaryGunPrefab: {fileID: 4268372034416210600, guid: 7dc340ddbe74e4846afdc2b79ab342d5,
+    type: 3}
+  _secondaryGunPrefab: {fileID: 1820445929, guid: 8035f1d99b0e343b18bc284ed6f954cd,
+    type: 3}
 --- !u!114 &2751519101298133832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141,24 +144,6 @@ MonoBehaviour:
   ForwardAccel: 1000
   BackwardAccel: 400
   TurnRate: 300
---- !u!114 &4119116458498074648
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1734168727806922917}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 519cbe1d8c774ebcb198bb52b4acaf84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TankBullet: {fileID: 2577449839175722021, guid: 30265f97304d04e33965040e041d0735,
-    type: 3}
-  _firingRate: 0.75
-  _maxEnergy: 1
-  _unloadRate: 0.1
-  _reloadTime: 3
 --- !u!114 &8380127123188987194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -321,7 +306,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7e73d2895684d98b27786f00ae7aec1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsVisibleInCamera: 0
 --- !u!114 &8401341042060314564
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -458,8 +442,7 @@ Transform:
   m_LocalRotation: {x: 0.026176924, y: 0, z: 0, w: 0.99965733}
   m_LocalPosition: {x: -0.0054771835, y: 0.2, z: 4.71}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 4443114703313224905}
+  m_Children: []
   m_Father: {fileID: 4948535897693454724}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 3, y: 0, z: 0}
@@ -474,7 +457,6 @@ GameObject:
   - component: {fileID: 2869717754032599027}
   - component: {fileID: 1726834861040643683}
   - component: {fileID: 3877665520784868293}
-  - component: {fileID: 5692745024788285336}
   m_Layer: 0
   m_Name: MissileLauncher
   m_TagString: Untagged
@@ -544,21 +526,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &5692745024788285336
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3477849814907720539}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56efa172e737486684ff3d1442e81da8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TankBullet: {fileID: 7681691800287927792, guid: 5962b810db67b496086c13f6817bb4d0,
-    type: 3}
-  _firingRate: 2
 --- !u!1 &4310430477171234907
 GameObject:
   m_ObjectHideFlags: 0
@@ -5699,88 +5666,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -3390779978460630615, guid: bbcf6a7bc199942298e45e1867e7ad6e, type: 3}
---- !u!1001 &7771188156987557414
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 6438751389128159682}
-    m_Modifications:
-    - target: {fileID: 6106548380421796769, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: playOnAwake
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6106829087373898503, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: playOnAwake
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6230912562917084981, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_Name
-      value: TankMuzzleFlash
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 1372248abe59e47598018ad36e9a8ac8, type: 3}
---- !u!4 &4443114703313224905 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-    type: 3}
-  m_PrefabInstance: {fileID: 7771188156987557414}
-  m_PrefabAsset: {fileID: 0}

@@ -1,4 +1,5 @@
 using TankBattle.InputManagers;
+using TankBattle.Tanks;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -16,10 +17,9 @@ namespace TankBattle.InGameGUI
         
         public VirtualJoystick AimJoystick { get => _aimJoystick; }
         
-        public override void RegisterTank(GameObject tank)
+        public override void RegisterTank(TankManager tankManager)
         {
-            base.RegisterTank(tank);
-            
+            base.RegisterTank(tankManager);
         }
     }
 }

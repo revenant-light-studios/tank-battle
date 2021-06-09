@@ -5,13 +5,16 @@ using TankBattle.Global;
 using TankBattle.InGameGUI;
 using TankBattle.Tanks.Camera;
 using TankBattle.Tanks.Guns;
+using TankBattle.Tanks.Turrets;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace TankBattle.Tanks
 {
-    [RequireComponent(typeof(PhotonView)), 
+    [RequireComponent(typeof(PhotonView)),
      RequireComponent(typeof(ATankCamera)), 
-     RequireComponent(typeof(PlayerInput)), 
+     RequireComponent(typeof(PlayerInput)),
+     RequireComponent(typeof(TankValues)),
      RequireComponent(typeof(DetectableObject))]
     public class TankManager : MonoBehaviour
     {
@@ -19,26 +22,41 @@ namespace TankBattle.Tanks
         private ATankCamera _cameraFollow;
         private PlayerInput _playerInput;
         private ATankHud _tankHud;
+        private ATankTurret _turret;
+        private TankValues _tankValues;
         private DetectableObject _detectableObject;
 
         private List<DetectableObject> _inScreenTanks;
 
         public bool IsDummy = false;
+        
+        #region Public properties
+
+        public ATankTurret Turret
+        {
+            get => _turret;
+        }
+        #endregion
 
         private void Awake()
         {
+            _tankValues = GetComponent<TankValues>();
             _photonView = GetComponent<PhotonView>();
             _cameraFollow = GetComponent<ATankCamera>();
             _playerInput = GetComponent<PlayerInput>();
             _detectableObject = GetComponent<DetectableObject>();
+            _turret = GetComponentInChildren<ATankTurret>();
         }
 
         private void Start()
         {
             if ((_photonView.IsMine || !PhotonNetwork.IsConnected) && !IsDummy)
             {
-                InitLocalTank();
+                InitTankGunsFromPrefabs();
                 InitEnemyTracker();
+                InitInput();
+                InitCamera();
+                InitUI();
 
                 // Put local tank in non collission layer
                 gameObject.SetLayerRecursively(12);
@@ -52,40 +70,61 @@ namespace TankBattle.Tanks
 
                 if (IsDummy)
                 {
-                    GetComponent<TankGun>().enabled = false;
                     GetComponent<AudioSource>().enabled = false;
                 }
             }
         }
-        
-        private Transform _launchPointTransform;
-        private Transform _cameraTransform;
-        private UnityEngine.Camera _camera;
 
-        private void InitLocalTank()
+        private void Update()
+        {
+            UpdateEnemyTracker();
+        }
+
+        #region UI Management
+        private void InitUI()
         {
             GameObject userUI = GameObject.FindGameObjectWithTag("UserGameUI");
             if (userUI)
             {
                 _tankHud = userUI.transform.GetComponentInChildren<ATankHud>();
-                _tankHud.RegisterTank(gameObject);
+                _tankHud.RegisterTank(this);
 
             }
+        }
+        #endregion
+        
+        #region Camera management
 
+        private void InitCamera()
+        {
             _cameraFollow.StartFollowing();
+        }
+        #endregion
+
+        #region Input management
+
+        private void InitInput()
+        {
+            // Init input
             _playerInput.enabled = true;
-                
-            if (_tankHud is TankHudMobile)
-            {
-                TankHudMobile tankHudMobile = (TankHudMobile)_tankHud;
-                _playerInput.InitInput(tankHudMobile.MovementJoystick, tankHudMobile.AimJoystick);    
-            }
-            else
+            
+            if (GlobalMethods.IsDesktop())
             {
                 _playerInput.InitInput(null, null);
             }
+            else
+            {
+                TankHudMobile tankHudMobile = (TankHudMobile)_tankHud;
+                _playerInput.InitInput(tankHudMobile.MovementJoystick, tankHudMobile.AimJoystick);
+            }
         }
-
+        #endregion
+        
+        #region Enemy tracking
+        private Transform _cameraTransform;
+        private UnityEngine.Camera _camera;
+        private Transform _launchPointTransform;
+        
         private void InitEnemyTracker()
         {
             _cameraTransform = GameObject.Find("Camera Position")?.transform;
@@ -106,8 +145,8 @@ namespace TankBattle.Tanks
             
             Radar.Instance.OnDetectableObjectRemoved = o => _inScreenTanks.Remove(o);
         }
-        
-        private void Update()
+
+        private void UpdateEnemyTracker()
         {
             if ((_photonView.IsMine || !PhotonNetwork.IsConnected) && !IsDummy)
             {
@@ -148,8 +187,85 @@ namespace TankBattle.Tanks
                         }
                     }
                 }
-                
+            }            
+        }
+        #endregion
+        
+        #region Weapons management
+
+        private void InitTankGunsFromPrefabs()
+        {
+            if (_primaryGunPrefab)
+            {
+                PrimaryGun = _primaryGunPrefab;
+            }
+
+            if (_secondaryGunPrefab)
+            {
+                SecondaryGun = _secondaryGunPrefab;
             }
         }
+        
+        public enum TankWeapon
+        {
+            Primary,
+            Secondary
+        }
+        
+        [SerializeField, FormerlySerializedAs("PrimaryGun"), InspectorName("Primary gun Prefab")]
+        private ATankGun _primaryGunPrefab;
+        
+        private ATankGun _primaryGun;
+        public ATankGun PrimaryGun
+        {
+            get => _primaryGun;
+            set
+            {
+                Transform firePoint = transform.FirstOrDefault(t => t.name == "FirePoint");
+                _primaryGun = Instantiate(value, firePoint ? firePoint : transform);
+                _onTankWeaponEnabled?.Invoke(_primaryGun, TankWeapon.Primary);
+            }
+        }
+        
+        [SerializeField, FormerlySerializedAs("SecondaryGun"), InspectorName("Secondary gun Prefab")]
+        private ATankGun _secondaryGunPrefab;
+        
+        private ATankGun _secondaryGun;
+        public ATankGun SecondaryGun
+        {
+            get => _secondaryGun;
+            set
+            {
+                Transform missilePoint = transform.FirstOrDefault(t => t.name == "LaunchPoint");
+                _secondaryGun = Instantiate(value, missilePoint ? missilePoint : transform);
+                _onTankWeaponEnabled?.Invoke(_secondaryGun, TankWeapon.Secondary);
+            }
+        }
+        
+        public delegate void OnTankWeaponEnabledDelegate(ATankGun gun, TankWeapon weapon);
+        private OnTankWeaponEnabledDelegate _onTankWeaponEnabled;
+        public event OnTankWeaponEnabledDelegate OnTankWeaponEnabled
+        {
+            add
+            {
+                _onTankWeaponEnabled += value;
+
+                if (_primaryGun != null)
+                {
+                    _onTankWeaponEnabled.Invoke(_primaryGun, TankWeapon.Primary);
+                }
+
+                if (_secondaryGun != null)
+                {
+                    _onTankWeaponEnabled.Invoke(_secondaryGun, TankWeapon.Secondary);
+                }
+            }
+
+            remove
+            {
+                _onTankWeaponEnabled -= value;
+            }
+        }
+        #endregion
     }
 }

@@ -3,12 +3,16 @@ using TankBattle.InGameGUI;
 using TankBattle.Tanks.Bullets;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace TankBattle.Tanks.Guns
 {
     public class MissileLauncher : ATankGun
     {
         private ATankBullet _missile;
+        private AudioSource _launchSound;
+        
+        [SerializeField, FormerlySerializedAs("TrackedTank")]
         private GameObject _trackedTank;
 
 
@@ -18,11 +22,8 @@ namespace TankBattle.Tanks.Guns
             {
                 _missile = Resources.Load<Missile>("Bullets/Missile");    
             }
-        }
 
-        public override float FiringRate
-        {
-            get;
+            _launchSound = GetComponent<AudioSource>();
         }
         
         public GameObject TrackedTank
@@ -39,32 +40,22 @@ namespace TankBattle.Tanks.Guns
             }
         }
 
-        public override void Fire()
+        public override void NetworkFire()
         {
             if (!_missile) return;
             
-            ATankBullet missileInstance = Instantiate(_missile);
+            Missile missileInstance = (Missile)Instantiate(_missile);
+            
+            if(_trackedTank) missileInstance.target = _trackedTank;
             missileInstance.OnBulletHit = OnBulletHit;
             missileInstance.transform.position = transform.position;
             missileInstance.transform.rotation = transform.rotation;
             missileInstance.Fire(transform);
-        }
-    }
-    
-    #if UNITY_EDITOR
-    [CustomEditor(typeof(MissileLauncher))]
-    public class MissileLauncherEditor : Editor
-    {
-        public override void OnInspectorGUI()
-        {
-            DrawDefaultInspector();
 
-            if (GUILayout.Button("Fire"))
+            if (_launchSound)
             {
-                MissileLauncher missile = (MissileLauncher)target;
-                missile.Fire();
+                _launchSound.PlayOneShot(_launchSound.clip);
             }
         }
     }
-#endif
 }

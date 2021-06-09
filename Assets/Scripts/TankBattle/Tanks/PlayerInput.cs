@@ -13,9 +13,9 @@ namespace TankBattle.Tanks
     public class PlayerInput : MonoBehaviour
     {
         private PhotonView _photonView;
+        private ATankGun _primaryGun;
+        private ATankGun _secondaryGun;
         private ATankEngine _engine;
-        private ATankGun _gun;
-        private ATankGun _missileLauncher;
         private ATankTurret _turret;
 
         [SerializeField, FormerlySerializedAs("AxisStateX")]
@@ -50,10 +50,23 @@ namespace TankBattle.Tanks
         private void Start()
         {
             _photonView = GetComponent<PhotonView>();
-            _gun = GetComponentInChildren<ATankGun>();
-            _missileLauncher = transform.FirstOrDefault(t => t.name == "MissileLauncher").GetComponent<SpreadBombLauncher>();
             _engine = GetComponentInChildren<ATankEngine>();
             _turret = GetComponentInChildren<ATankTurret>();
+
+            TankManager tankManager = GetComponent<TankManager>();
+            if (tankManager)
+            {
+                tankManager.OnTankWeaponEnabled += (gun, weapon) =>
+                {
+                    if (weapon == TankManager.TankWeapon.Primary)
+                    {
+                        _primaryGun = gun;
+                    } else if (weapon == TankManager.TankWeapon.Secondary)
+                    {
+                        _secondaryGun = gun;
+                    }
+                };
+            }
         }
 
         private void Update()
@@ -105,16 +118,16 @@ namespace TankBattle.Tanks
         /// </summary>
         private void GunInput()
         {
-            if (Input.GetButton("Fire1"))
+            if (Input.GetButton("Fire1") && _primaryGun)
             {
-                _gun.Fire();
+                _primaryGun.Fire();
             }
 
-            if (Input.GetButton("Fire2"))
+            if (Input.GetButton("Fire2") && _secondaryGun)
             {
-                if (_missileLauncher && _missileLauncher.isActiveAndEnabled)
+                if (_secondaryGun && _secondaryGun.isActiveAndEnabled)
                 {
-                    _missileLauncher.Fire();
+                    _secondaryGun.Fire();
                 }
             }
         }

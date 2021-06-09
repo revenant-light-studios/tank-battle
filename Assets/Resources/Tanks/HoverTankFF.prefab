@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 5862101084453202260}
   - component: {fileID: 2751519101298133832}
   - component: {fileID: -2123007057018740721}
-  - component: {fileID: 4119116458498074648}
   - component: {fileID: 8380127123188987194}
   - component: {fileID: 8533508333633328743}
   - component: {fileID: 4805087192327510034}
@@ -73,6 +72,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89762ad74d314fccb11595d192b04d49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _primaryGunPrefab: {fileID: 0}
+  _secondaryGunPrefab: {fileID: 0}
   IsDummy: 0
 --- !u!114 &2751519101298133832
 MonoBehaviour:
@@ -141,21 +142,6 @@ MonoBehaviour:
   ForwardAccel: 700
   BackwardAccel: 300
   TurnRate: 300
---- !u!114 &4119116458498074648
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1734168727806922917}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 519cbe1d8c774ebcb198bb52b4acaf84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TankBullet: {fileID: 2577449839175722021, guid: 30265f97304d04e33965040e041d0735,
-    type: 3}
-  _firingRate: 1
 --- !u!114 &8380127123188987194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -336,7 +322,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7e73d2895684d98b27786f00ae7aec1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsVisibleInCamera: 0
 --- !u!1 &2222818512683905590
 GameObject:
   m_ObjectHideFlags: 0
@@ -459,8 +444,7 @@ Transform:
   m_LocalRotation: {x: 0.026176924, y: 0, z: 0, w: 0.99965733}
   m_LocalPosition: {x: -0.0054771835, y: 0.2, z: 4.71}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 4443114703313224905}
+  m_Children: []
   m_Father: {fileID: 4948535897693454724}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 3, y: 0, z: 0}
@@ -5623,7 +5607,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4dfa116597c43eea1a04d0ca003f2df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Crosshair: {fileID: 0}
 --- !u!114 &7584427002095993701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5654,88 +5637,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -3390779978460630615, guid: bbcf6a7bc199942298e45e1867e7ad6e, type: 3}
---- !u!1001 &7771188156987557414
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 6438751389128159682}
-    m_Modifications:
-    - target: {fileID: 6106548380421796769, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: playOnAwake
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6106829087373898503, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: playOnAwake
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6230912562917084981, guid: 1372248abe59e47598018ad36e9a8ac8,
-        type: 3}
-      propertyPath: m_Name
-      value: TankMuzzleFlash
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 1372248abe59e47598018ad36e9a8ac8, type: 3}
---- !u!4 &4443114703313224905 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6228992017380901615, guid: 1372248abe59e47598018ad36e9a8ac8,
-    type: 3}
-  m_PrefabInstance: {fileID: 7771188156987557414}
-  m_PrefabAsset: {fileID: 0}

@@ -1,3 +1,4 @@
+using System;
 using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Tanks.Bullets;
@@ -31,6 +32,18 @@ namespace TankBattle.Tanks
 
         private ForceField.ForceField _forceField;
 
+        private void Awake()
+        {
+            TankManager tankManager = GetComponent<TankManager>();
+            if (tankManager)
+            {
+                tankManager.OnTankWeaponEnabled += (gun, weapon) =>
+                {
+                    gun.OnTankHit = OnBulletHit;
+                };
+            }
+        }
+
         private void Start()
         {
             _forceField = GetComponentInChildren<ForceField.ForceField>();
@@ -38,15 +51,6 @@ namespace TankBattle.Tanks
             
             _shieldAmount = TotalShield;
             _armorAmount = TotalArmor;
-
-            ATankGun _gun = GetComponent<ATankGun>();
-            if(_gun) _gun.OnTankHit = OnBulletHit;
-
-            SpreadBombLauncher spreadBombLauncher = transform.FirstOrDefault(t => t.name == "MissileLauncher").GetComponent<SpreadBombLauncher>();
-            if (spreadBombLauncher != null)
-            {
-                spreadBombLauncher.OnTankHit = OnBulletHit;
-            }
         }
         private void OnBulletHit(TankValues otherValues, ATankBullet bullet)
         {
