@@ -12,14 +12,19 @@ namespace TankBattle.InGameGUI
         
         [SerializeField, FormerlySerializedAs("AimJoystick")]
         private VirtualJoystick _aimJoystick;
-        
+
+        [SerializeField, FormerlySerializedAs("Shoot")]
+        private VirtualButton _shootBtn;
+
+        [SerializeField, FormerlySerializedAs("SpecialShoot")]
+        private VirtualButton _specialShootBtn;
+
         public VirtualJoystick MovementJoystick { get => _movementJoystick; }
         
         public VirtualJoystick AimJoystick { get => _aimJoystick; }
         
-        public override void RegisterTank(TankManager tankManager)
-        {
-            base.RegisterTank(tankManager);
-        }
+        public VirtualButton ShootBtn { get => _shootBtn; }
+
+        public VirtualButton SpecialShootBtn { get => _specialShootBtn; }
     }
 }

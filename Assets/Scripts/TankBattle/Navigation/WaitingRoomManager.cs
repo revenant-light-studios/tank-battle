@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using ExtensionMethods;
 using Networking.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
 using TankBattle.Global;
-using TankBattle.Players;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 namespace TankBattle.Navigation
 {

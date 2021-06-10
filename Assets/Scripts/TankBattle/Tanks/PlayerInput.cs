@@ -1,6 +1,7 @@
 using Cinemachine;
 using ExtensionMethods;
 using Photon.Pun;
+using TankBattle.Global;
 using TankBattle.InputManagers;
 using TankBattle.Tanks.Engines;
 using TankBattle.Tanks.Guns;
@@ -24,8 +25,10 @@ namespace TankBattle.Tanks
         private AxisState _axisStateY;
 
         private VirtualJoystick _movementJoystick;
+        private VirtualButton _shootButton;
+        private VirtualButton _secondaryShootButton;
 
-        public void InitInput(VirtualJoystick movement, VirtualJoystick aim)
+        public void InitInput(VirtualJoystick movement, VirtualJoystick aim, VirtualButton shoot, VirtualButton specialShoot)
         {
             // Aiming is controlled by cinemachine camera module
             if (aim)
@@ -46,8 +49,18 @@ namespace TankBattle.Tanks
             }
 
             _movementJoystick = movement;
-        }
 
+            if (shoot != null)
+            {
+                _shootButton = shoot;
+            }
+
+            if (specialShoot != null)
+            {
+                _secondaryShootButton = specialShoot;
+            }
+        }
+        
         private void Start()
         {
             _photonView = GetComponent<PhotonView>();
@@ -119,14 +132,30 @@ namespace TankBattle.Tanks
         /// </summary>
         private void GunInput()
         {
-            if (Input.GetButton("Fire1") && _primaryGun)
+            if (GlobalMethods.IsDesktop())
             {
-                _primaryGun.Fire();
-            }
+                if (Input.GetButton("Fire1") && _primaryGun)
+                {
+                    _primaryGun.Fire();
+                }
 
-            if (Input.GetButton("Fire2") && _secondaryGun)
+                if (Input.GetButton("Fire2") && _secondaryGun)
+                {
+                    if (_secondaryGun && _secondaryGun.isActiveAndEnabled)
+                    {
+                        _secondaryGun.Fire();
+                    }
+                }
+                
+            }
+            else
             {
-                if (_secondaryGun && _secondaryGun.isActiveAndEnabled)
+                if (_shootButton.IsPressed())
+                {
+                    _primaryGun.Fire();
+                }
+
+                if (_secondaryShootButton.IsPressed())
                 {
                     _secondaryGun.Fire();
                 }

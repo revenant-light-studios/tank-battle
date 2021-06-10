@@ -118,12 +118,12 @@ namespace TankBattle.Tanks
             
             if (GlobalMethods.IsDesktop())
             {
-                _playerInput.InitInput(null, null);
+                _playerInput.InitInput(null, null, null, null);
             }
             else
             {
                 TankHudMobile tankHudMobile = (TankHudMobile)_tankHud;
-                _playerInput.InitInput(tankHudMobile.MovementJoystick, tankHudMobile.AimJoystick);
+                _playerInput.InitInput(tankHudMobile.MovementJoystick, tankHudMobile.AimJoystick, tankHudMobile.ShootBtn, tankHudMobile.SpecialShootBtn);
             }
         }
         #endregion
