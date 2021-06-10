@@ -17,4 +17,4 @@ MonoBehaviour:
   startWaitTime: 10
   spawnDummyTanks: 0
   numberOfDummies: 20
-  forceMobile: 1
+  forceMobile: 0
