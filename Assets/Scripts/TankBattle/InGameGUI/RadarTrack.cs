@@ -28,7 +28,7 @@ namespace TankBattle.InGameGUI
         {
             _parentCanvas = transform.parent.GetComponent<Canvas>();
             _rectTransform = GetComponent<RectTransform>();
-            _trackingImage = transform.FirstOrDefault(t => t.name == "TrackingImage")?.GetComponent<Image>();
+            _trackingImage = transform.FirstOrDefault(t => t.name == "TrackerImage")?.GetComponent<Image>();
             if (_trackingImage) _trackingImage.color = TrackerColor;
             
             _lifeBar = transform.FirstOrDefault(t => t.name == "LifeBar")?.GetComponent<Image>();
@@ -87,7 +87,7 @@ namespace TankBattle.InGameGUI
             if (_name) _name.text = objName;
         }
 
-        public void SetTrankingState(LockedState state)
+        public void SetTrackingState(LockedState state)
         {
             if (!_trackingImage) return;
             
@@ -99,6 +99,8 @@ namespace TankBattle.InGameGUI
             {
                 _trackingImage.color = LockedColor;
             }
+            
+            // Debug.Log($"Tracker for {_name.text} color set to {_trackingImage.color}");
         }
     }
 }

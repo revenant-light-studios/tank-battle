@@ -1,4 +1,5 @@
 using System;
+using TankBattle.Global;
 using TankBattle.InGameGUI;
 using TankBattle.Tanks.Bullets;
 using UnityEditor;
@@ -15,7 +16,6 @@ namespace TankBattle.Tanks.Guns
         [SerializeField, FormerlySerializedAs("TrackedTank")]
         private GameObject _trackedTank;
 
-
         private void Awake()
         {
             if (!_missile)
@@ -29,14 +29,11 @@ namespace TankBattle.Tanks.Guns
         public GameObject TrackedTank
         {
             get => _trackedTank;
-            
+
             set
             {
-                if(_trackedTank != null) _trackedTank.GetComponent<RadarTrack>().SetTrankingState(RadarTrack.LockedState.None);
-                
-                _trackedTank.GetComponent<RadarTrack>()?.SetTrankingState(RadarTrack.LockedState.Locked);
                 _trackedTank = value;
-                
+                // Debug.Log($"Locked {_trackedTank.name}");
             }
         }
 

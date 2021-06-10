@@ -31,7 +31,8 @@ namespace TankBattle.Global
                 return bounds;
             }
         }
-        
+
+        #region Visibility, tracking and locking states
         private bool _visible = false;
         public bool Visible
         {
@@ -65,6 +66,19 @@ namespace TankBattle.Global
                 _tracked = value;  
             } 
         }
+
+        private bool _locked = false;
+        public bool Locked
+        {
+            get => _locked;
+
+            set
+            {
+                _locked = value;
+                if(_radarTrack) _radarTrack.SetTrackingState(_locked ? RadarTrack.LockedState.Locked : RadarTrack.LockedState.None);
+            }
+        }
+        #endregion
         
         private void Start()
         {

@@ -45,7 +45,7 @@ namespace TankBattle.InGameGUI
                 }
             };
 
-            Debug.LogFormat("Tank {0} registered with hud", tankManager.name);
+            // Debug.LogFormat("Tank {0} registered with hud", tankManager.name);
         }
         private void OnTurretMove(Vector3 hitPoint)
         {

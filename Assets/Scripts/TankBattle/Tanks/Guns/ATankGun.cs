@@ -59,7 +59,7 @@ namespace TankBattle.Tanks.Guns
             TankValues tankValues = other.GetComponent<TankValues>();
             if (tankValues != null)
             {
-                Debug.Log($"Hit {other.name}");
+                // Debug.Log($"Hit {other.name}");
                 if (OnTankHit != null)
                 {
                     OnTankHit?.Invoke(tankValues, TankBullet);    

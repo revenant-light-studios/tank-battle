@@ -37,7 +37,7 @@ namespace TankBattle.Tanks.Bullets
                     _impactEffect.transform.position = transform.InverseTransformVector(collisionEvents[0].intersection);    
                 }
                 _impactEffect.Play();
-                Debug.Log($"ImpactEffect played");
+                // Debug.Log($"ImpactEffect played");
             }
             
         }

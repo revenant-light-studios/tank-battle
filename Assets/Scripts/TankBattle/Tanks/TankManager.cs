@@ -3,6 +3,7 @@ using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Global;
 using TankBattle.InGameGUI;
+using TankBattle.Tanks.Bullets;
 using TankBattle.Tanks.Camera;
 using TankBattle.Tanks.Guns;
 using TankBattle.Tanks.Turrets;
@@ -25,9 +26,7 @@ namespace TankBattle.Tanks
         private ATankTurret _turret;
         private TankValues _tankValues;
         private DetectableObject _detectableObject;
-
-        private List<DetectableObject> _inScreenTanks;
-
+        
         public bool IsDummy = false;
         
         #region Public properties
@@ -78,6 +77,15 @@ namespace TankBattle.Tanks
         private void Update()
         {
             UpdateEnemyTracker();
+            
+            // Testing
+            if ((_photonView.IsMine || !PhotonNetwork.IsConnected) && !IsDummy)
+            {
+                if (Input.GetKeyDown(KeyCode.Tab))
+                {
+                    SelectNextEnemy();
+                }
+            }
         }
 
         #region UI Management
@@ -121,9 +129,11 @@ namespace TankBattle.Tanks
         #endregion
         
         #region Enemy tracking
+        private List<DetectableObject> _inScreenTanks;
         private Transform _cameraTransform;
         private UnityEngine.Camera _camera;
         private Transform _launchPointTransform;
+        private DetectableObject _trackedTank;
         
         private void InitEnemyTracker()
         {
@@ -188,6 +198,34 @@ namespace TankBattle.Tanks
                     }
                 }
             }            
+        }
+
+        private void SelectNextEnemy()
+        {
+            int currentTankIndex = 0;
+            DetectableObject currentTrackedTank = _trackedTank;
+            DetectableObject tank;
+            
+            if (_trackedTank != null)
+            {
+                currentTankIndex = _inScreenTanks.IndexOf(_trackedTank);
+            }
+            
+            for (int i = 0; i < _inScreenTanks.Count - 1; i++)
+            {
+                currentTankIndex = (currentTankIndex + 1) % _inScreenTanks.Count;
+                tank = _inScreenTanks[currentTankIndex];
+                
+                if (tank.Visible && tank.Tracked)
+                {
+                    _trackedTank = tank;
+                    _trackedTank.Locked = true;
+                    if (_secondaryGun is MissileLauncher) ((MissileLauncher)_secondaryGun).TrackedTank = _trackedTank.gameObject;
+                    
+                    if (currentTrackedTank) currentTrackedTank.Locked = false;
+                    break;
+                }
+            }
         }
         #endregion
         

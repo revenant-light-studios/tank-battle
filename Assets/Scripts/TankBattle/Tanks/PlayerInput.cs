@@ -27,6 +27,7 @@ namespace TankBattle.Tanks
 
         public void InitInput(VirtualJoystick movement, VirtualJoystick aim)
         {
+            // Aiming is controlled by cinemachine camera module
             if (aim)
             {
                 Cursor.visible = true;

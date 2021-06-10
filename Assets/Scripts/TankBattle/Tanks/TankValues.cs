@@ -1,8 +1,6 @@
-using System;
 using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Tanks.Bullets;
-using TankBattle.Tanks.Guns;
 using UnityEditor;
 using UnityEngine;
 
@@ -92,7 +90,7 @@ namespace TankBattle.Tanks
                 }
             }
             
-            Debug.LogFormat("Shield: {0}, Armor: {1}", _shieldAmount, _armorAmount);
+            // Debug.LogFormat("Shield: {0}, Armor: {1}", _shieldAmount, _armorAmount);
             
             OnValuesChanged?.Invoke(this);
         }
