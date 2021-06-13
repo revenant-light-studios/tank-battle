@@ -223,7 +223,7 @@ namespace TankBattle.Tanks
 
         private void SelectNextEnemy()
         {
-            int currentTankIndex = 0;
+            int currentTankIndex = -1;
             DetectableObject tank;
             
             if (_trackedTank != null)
@@ -231,7 +231,7 @@ namespace TankBattle.Tanks
                 currentTankIndex = _inScreenTanks.IndexOf(_trackedTank);
             }
             
-            for (int i = 0; i < _inScreenTanks.Count - 1; i++)
+            for (int i = 0; i < _inScreenTanks.Count; i++)
             {
                 currentTankIndex = (currentTankIndex + 1) % _inScreenTanks.Count;
                 tank = _inScreenTanks[currentTankIndex];

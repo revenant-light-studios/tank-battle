@@ -75,7 +75,7 @@ MonoBehaviour:
   IsDummy: 0
   _primaryGunPrefab: {fileID: 4268372034416210600, guid: 7dc340ddbe74e4846afdc2b79ab342d5,
     type: 3}
-  _secondaryGunPrefab: {fileID: 9043795705806543594, guid: a25319908192c4afb81027b9b4d7b55f,
+  _secondaryGunPrefab: {fileID: 1820445929, guid: 8035f1d99b0e343b18bc284ed6f954cd,
     type: 3}
 --- !u!114 &2751519101298133832
 MonoBehaviour:
