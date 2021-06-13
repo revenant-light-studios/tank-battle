@@ -2,6 +2,7 @@ using System;
 using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Tanks.Bullets;
+using TankBattle.Tanks.Bullets.Effects;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -14,7 +15,7 @@ namespace TankBattle.Tanks.Guns
         
         private ATankBullet _bullet;
         private Transform _launchPoint;
-
+        
         protected override void Awake()
         {
             base.Awake();

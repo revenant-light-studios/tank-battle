@@ -366,7 +366,8 @@ namespace TankBattle.Tanks
             }
             else
             {
-                ATankGun gun = Resources.Load<ATankGun>(resource);
+                ATankGun gunPrefab = Resources.Load<ATankGun>(resource);
+                ATankGun gun = Instantiate(gunPrefab);
                 
                 if (weapon == TankWeapon.Primary)
                 {
