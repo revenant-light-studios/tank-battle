@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using ExitGames.Client.Photon.StructWrapping;
+using Photon.Pun;
 using TankBattle.InGameGUI;
 using TankBattle.Tanks;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace TankBattle.Global
 {
@@ -74,6 +77,7 @@ namespace TankBattle.Global
 
             set
             {
+                Debug.Log($"{name}: I was locked");
                 _locked = value;
                 if(_radarTrack) _radarTrack.SetTrackingState(_locked ? RadarTrack.LockedState.Locked : RadarTrack.LockedState.None);
             }
@@ -107,13 +111,25 @@ namespace TankBattle.Global
         {
             _currentCamera = _camera;
             _tankValues = gameObject.GetComponent<TankValues>();
+
+            string playerName = gameObject.name;
+            
+            if (PhotonNetwork.IsConnected)
+            {
+                PhotonView view = GetComponent<PhotonView>();
+
+                if (view != null && view.Owner != null)
+                {
+                    playerName = view.Owner.NickName;
+                }
+            }
             
             if (_radarTrack == null)
             {
                 GameObject go = Instantiate(Resources.Load<GameObject>("Tanks/Hud/RadarTracker"), canvas);
-                go.name = $"RadarTrack-{gameObject.name}";
+                go.name = $"RadarTrack-{playerName}";
                 _radarTrack = go.GetComponent<RadarTrack>();
-                _radarTrack.SetName(gameObject.name);
+                _radarTrack.SetName(playerName);
             }
         }
         

@@ -12,13 +12,12 @@ namespace TankBattle.Tanks.Guns
         private float _lastFire;
         private bool _canFire;
         
-        private PhotonView _photonView;
         private ATankBullet _bullet;
         private Transform _launchPoint;
 
-        private void Awake()
+        protected override void Awake()
         {
-            _photonView = GetComponent<PhotonView>();
+            base.Awake();
             
             _launchPoint = transform.FirstOrDefault(t => t.name == "LaunchPoint");
             _bullet = Instantiate(TankBullet, _launchPoint ? _launchPoint : transform);

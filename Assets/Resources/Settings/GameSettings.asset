@@ -16,5 +16,5 @@ MonoBehaviour:
   maximumNumberOfPlayers: 20
   startWaitTime: 10
   spawnDummyTanks: 1
-  numberOfDummies: 10
+  numberOfDummies: 5
   forceMobile: 0

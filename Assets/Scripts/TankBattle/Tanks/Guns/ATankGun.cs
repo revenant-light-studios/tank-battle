@@ -1,3 +1,5 @@
+using System;
+using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Tanks.Bullets;
 using UnityEditor;
@@ -6,13 +8,19 @@ using UnityEngine.Serialization;
 
 namespace TankBattle.Tanks.Guns
 {
-    public abstract class ATankGun : MonoBehaviour
+    public abstract class ATankGun : MonoBehaviour, IPunInstantiateMagicCallback
     {
+        
         [SerializeField, FormerlySerializedAs("FiringRate"), InspectorName("Fire rate"), Tooltip("Seconds between consecutive shots")] 
         protected float _firingRate = 2f;
 
         protected float LastFired;
         protected bool CanFire;
+
+        protected virtual void Awake()
+        {
+            _photonView = GetComponent<PhotonView>();
+        }
 
         protected virtual void Update()
         {
@@ -68,6 +76,26 @@ namespace TankBattle.Tanks.Guns
                 {
                     tankValues.WasHit(TankBullet);
                 }
+            }
+        }
+        public void OnPhotonInstantiate(PhotonMessageInfo info)
+        {
+            // Read instantiation data
+            object[] instantiationData = info.photonView.InstantiationData;
+            int viewId = (int)instantiationData[0];
+            TankManager.TankWeapon weaponType = (TankManager.TankWeapon)instantiationData[1];
+            
+            // Parent tank view
+            PhotonView parentView = PhotonNetwork.GetPhotonView(viewId);
+            TankManager tankManager = parentView.GetComponent<TankManager>();
+
+            if (weaponType == TankManager.TankWeapon.Primary)
+            {
+                tankManager.PrimaryGun = this;
+            }
+            else
+            {
+                tankManager.SecondaryGun = this;
             }
         }
     }

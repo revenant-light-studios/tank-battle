@@ -7,6 +7,7 @@ using TankBattle.Tanks.Bullets;
 using TankBattle.Tanks.Camera;
 using TankBattle.Tanks.Guns;
 using TankBattle.Tanks.Turrets;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -17,7 +18,7 @@ namespace TankBattle.Tanks
      RequireComponent(typeof(PlayerInput)),
      RequireComponent(typeof(TankValues)),
      RequireComponent(typeof(DetectableObject))]
-    public class TankManager : MonoBehaviour
+    public class TankManager : MonoBehaviour, IPunInstantiateMagicCallback
     {
         private PhotonView _photonView;
         private ATankCamera _cameraFollow;
@@ -49,8 +50,18 @@ namespace TankBattle.Tanks
 
         private void Start()
         {
+            // All network tanks
+            if (PhotonNetwork.IsConnected)
+            {
+                if (_photonView && _photonView.Owner != null)
+                {
+                    gameObject.name = _photonView.Owner.NickName;    
+                }
+            }
+            
             if ((_photonView.IsMine || !PhotonNetwork.IsConnected) && !IsDummy)
             {
+                // Only local player tank
                 InitTankGunsFromPrefabs();
                 InitEnemyTracker();
                 InitInput();
@@ -58,12 +69,13 @@ namespace TankBattle.Tanks
                 InitUI();
 
                 // Put local tank in non collission layer
-                gameObject.SetLayerRecursively(12);
+                // gameObject.SetLayerRecursively(12);
             }
             else
             {
+                // All non local tanks
                 Radar.Instance.AddDetectableObject(_detectableObject);
-                
+
                 _playerInput.enabled = false;
                 _cameraFollow.enabled = false;
 
@@ -76,16 +88,21 @@ namespace TankBattle.Tanks
 
         private void Update()
         {
-            UpdateEnemyTracker();
-            
-            // Testing
             if ((_photonView.IsMine || !PhotonNetwork.IsConnected) && !IsDummy)
             {
+                UpdateEnemyTracker();
+            
+                // Testing
                 if (Input.GetKeyDown(KeyCode.Tab))
                 {
+                    // Debug.Log("Tracking key pressed");
                     SelectNextEnemy();
                 }
             }
+        }
+
+        public void OnPhotonInstantiate(PhotonMessageInfo info)
+        {
         }
 
         #region UI Management
@@ -140,17 +157,22 @@ namespace TankBattle.Tanks
             _cameraTransform = GameObject.Find("Camera Position")?.transform;
             _camera = _cameraTransform.FirstOrDefault(t => t.name == "Main Camera").GetComponent<UnityEngine.Camera>();
             _launchPointTransform = transform.FirstOrDefault(t => t.name == "FirePoint");
+
+            _inScreenTanks = new List<DetectableObject>();
             
-            _inScreenTanks = new List<DetectableObject>(Radar.Instance.DetectableObjects);
-            foreach (DetectableObject tank in _inScreenTanks)
+            Debug.Log($"InitEnemyTracker, tanks: {Radar.Instance.DetectableObjects.Count}");
+            foreach (DetectableObject tank in Radar.Instance.DetectableObjects)
             {
                 tank.InitTrackerImage(_tankHud.transform, _camera);
             }
             
             Radar.Instance.OnDetectableObjectAdded = o =>
             {
-                _inScreenTanks.Add(o);
-                o.InitTrackerImage(_tankHud.transform, _camera);
+                if (!_inScreenTanks.Contains(o))
+                {
+                    _inScreenTanks.Add(o);
+                    o.InitTrackerImage(_tankHud.transform, _camera);
+                }
             };
             
             Radar.Instance.OnDetectableObjectRemoved = o => _inScreenTanks.Remove(o);
@@ -161,7 +183,6 @@ namespace TankBattle.Tanks
             if ((_photonView.IsMine || !PhotonNetwork.IsConnected) && !IsDummy)
             {
                 Plane[] planes = GeometryUtility.CalculateFrustumPlanes(_camera);
-                
                 
                 for (int i = _inScreenTanks.Count - 1; i >= 0 ; i--)
                 {
@@ -203,7 +224,6 @@ namespace TankBattle.Tanks
         private void SelectNextEnemy()
         {
             int currentTankIndex = 0;
-            DetectableObject currentTrackedTank = _trackedTank;
             DetectableObject tank;
             
             if (_trackedTank != null)
@@ -216,16 +236,41 @@ namespace TankBattle.Tanks
                 currentTankIndex = (currentTankIndex + 1) % _inScreenTanks.Count;
                 tank = _inScreenTanks[currentTankIndex];
                 
+                // Debug.Log($"Trying to track {tank.name}: Visible({tank.Visible}) Tracked({tank.Tracked})");
+                
                 if (tank.Visible && tank.Tracked)
                 {
-                    _trackedTank = tank;
-                    _trackedTank.Locked = true;
-                    if (_secondaryGun is MissileLauncher) ((MissileLauncher)_secondaryGun).TrackedTank = _trackedTank.gameObject;
-                    
-                    if (currentTrackedTank) currentTrackedTank.Locked = false;
+                    if (PhotonNetwork.IsConnected)
+                    {
+                        int tankViewId = tank.GetComponent<PhotonView>().ViewID;
+                        // Debug.Log($"Locking tank {tank.name} with id {tankViewId}");
+                        _photonView.RPC("RemoteTankLock", RpcTarget.All, tankViewId);
+                    }
+                    else
+                    {
+                        TankLock(tank);
+                    }
                     break;
                 }
             }
+        }
+
+        [PunRPC]
+        public void RemoteTankLock(int tankViewId)
+        {
+            // Debug.Log($"{gameObject.name} recevied message to lock view {tankViewId}");
+            PhotonView tankView = PhotonNetwork.GetPhotonView(tankViewId);
+            DetectableObject tank = tankView.GetComponent<DetectableObject>();
+            TankLock(tank);
+        }
+        
+        public void TankLock(DetectableObject tank)
+        {
+            if (_trackedTank) _trackedTank.Locked = false;
+            _trackedTank = tank;
+            _trackedTank.Locked = true;
+            
+            if (_secondaryGun is MissileLauncher) ((MissileLauncher)_secondaryGun).TrackedTank = _trackedTank.gameObject;
         }
         #endregion
         
@@ -235,12 +280,12 @@ namespace TankBattle.Tanks
         {
             if (_primaryGunPrefab)
             {
-                PrimaryGun = _primaryGunPrefab;
+                PickWeapon(_primaryGunPrefab.name, TankWeapon.Primary);
             }
 
             if (_secondaryGunPrefab)
             {
-                SecondaryGun = _secondaryGunPrefab;
+                PickWeapon(_secondaryGunPrefab.name, TankWeapon.Secondary);
             }
         }
         
@@ -259,8 +304,11 @@ namespace TankBattle.Tanks
             get => _primaryGun;
             set
             {
+                _primaryGun = value;
+                
+                Debug.Log($"{name}: Set gun {value.name}");
                 Transform firePoint = transform.FirstOrDefault(t => t.name == "FirePoint");
-                _primaryGun = Instantiate(value, firePoint ? firePoint : transform);
+                _primaryGun.transform.SetParent(firePoint, false);
                 _onTankWeaponEnabled?.Invoke(_primaryGun, TankWeapon.Primary);
             }
         }
@@ -274,8 +322,10 @@ namespace TankBattle.Tanks
             get => _secondaryGun;
             set
             {
+                _secondaryGun = value;
+                
                 Transform missilePoint = transform.FirstOrDefault(t => t.name == "LaunchPoint");
-                _secondaryGun = Instantiate(value, missilePoint ? missilePoint : transform);
+                _secondaryGun.transform.SetParent(missilePoint, false);
                 _onTankWeaponEnabled?.Invoke(_secondaryGun, TankWeapon.Secondary);
             }
         }
@@ -302,6 +352,30 @@ namespace TankBattle.Tanks
             remove
             {
                 _onTankWeaponEnabled -= value;
+            }
+        }
+
+        public void PickWeapon(string weaponName, TankWeapon weapon)
+        {
+            string resource = $"Guns/{weaponName}";
+
+            if (PhotonNetwork.IsConnected)
+            {
+                GameObject gun = PhotonNetwork.Instantiate(resource, Vector3.zero, Quaternion.identity, 0, 
+                    new object[] { _photonView.ViewID, weapon });
+            }
+            else
+            {
+                ATankGun gun = Resources.Load<ATankGun>(resource);
+                
+                if (weapon == TankWeapon.Primary)
+                {
+                    PrimaryGun = gun;
+                }
+                else
+                {
+                    SecondaryGun = gun;
+                }
             }
         }
         #endregion

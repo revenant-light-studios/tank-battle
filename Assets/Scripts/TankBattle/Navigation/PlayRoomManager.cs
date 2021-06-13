@@ -147,6 +147,9 @@ namespace TankBattle.Navigation
 
         private void SpawnDummyTanks(int numberOfTanks)
         {
+            // Only the master client spawns dummies
+            if (PhotonNetwork.IsConnected && !PhotonNetwork.IsMasterClient) return;
+            
             for (int i = 0; i < numberOfTanks; i++)
             {
                 Vector3 position = _spawnPoints[_spawnPoints.Length - 1 - i];
@@ -154,7 +157,7 @@ namespace TankBattle.Navigation
                 GameObject dummyTank;
                 if (PhotonNetwork.IsConnected)
                 {
-                    dummyTank = PhotonNetwork.Instantiate(Path.Combine("Tanks", _tankPrefab.name), position, Quaternion.identity);
+                    dummyTank = PhotonNetwork.InstantiateRoomObject(Path.Combine("Tanks", _tankPrefab.name), position, Quaternion.identity);
                 }
                 else
                 {

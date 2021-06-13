@@ -34,7 +34,8 @@ namespace TankBattle.Tanks.Bullets
                 int numCollisionEvents = _particleSystem.GetCollisionEvents(other, collisionEvents);
                 if (numCollisionEvents > 0)
                 {
-                    _impactEffect.transform.position = transform.InverseTransformVector(collisionEvents[0].intersection);    
+                    _impactEffect.transform.position = collisionEvents[0].intersection;
+                    // _impactEffect.transform.rotation = Quaternion.Euler(collisionEvents[0].normal);
                 }
                 _impactEffect.Play();
                 // Debug.Log($"ImpactEffect played");

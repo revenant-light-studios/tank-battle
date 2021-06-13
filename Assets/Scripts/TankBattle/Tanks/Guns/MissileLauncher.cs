@@ -1,4 +1,6 @@
 using System;
+using ExtensionMethods;
+using Photon.Pun;
 using TankBattle.Global;
 using TankBattle.InGameGUI;
 using TankBattle.Tanks.Bullets;
@@ -16,13 +18,18 @@ namespace TankBattle.Tanks.Guns
         [SerializeField, FormerlySerializedAs("TrackedTank")]
         private GameObject _trackedTank;
 
-        private void Awake()
+        private Transform _launcher;
+
+        protected override void Awake()
         {
+            base.Awake();
+            
             if (!_missile)
             {
                 _missile = Resources.Load<Missile>("Bullets/Missile");    
             }
 
+            _launcher = transform.FirstOrDefault(t => t.name == "Launcher");
             _launchSound = GetComponent<AudioSource>();
         }
         
@@ -37,6 +44,7 @@ namespace TankBattle.Tanks.Guns
             }
         }
 
+        [PunRPC]
         public override void NetworkFire()
         {
             if (!_missile) return;
@@ -45,8 +53,8 @@ namespace TankBattle.Tanks.Guns
             
             if(_trackedTank) missileInstance.target = _trackedTank;
             missileInstance.OnBulletHit = OnBulletHit;
-            missileInstance.transform.position = transform.position;
-            missileInstance.transform.rotation = transform.rotation;
+            missileInstance.transform.position = _launcher.transform.position;
+            missileInstance.transform.rotation = _launcher.transform.rotation;
             missileInstance.Fire(transform);
 
             if (_launchSound)

@@ -26,11 +26,12 @@ namespace TankBattle.Tanks.Guns
         private CrossHair _crossHair;
         private AudioSource _gunAudio;
 
-        private void Awake()
+        protected override void Awake()
         {
-            _muzzleParticleSystem = transform.FirstOrDefault(t => t.name == "TankMuzzleFlash").GetComponent<ParticleSystem>();
-            _photonView = GetComponent<PhotonView>();
+            base.Awake();
             
+            _muzzleParticleSystem = transform.FirstOrDefault(t => t.name == "TankMuzzleFlash").GetComponent<ParticleSystem>();
+
             _bullet = Instantiate(TankBullet, transform);
             _bullet.OnBulletHit = OnBulletHit;
                 

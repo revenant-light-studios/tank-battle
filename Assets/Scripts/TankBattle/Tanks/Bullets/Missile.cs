@@ -33,6 +33,13 @@ namespace TankBattle.Tanks.Bullets
 
         public override void Fire(Transform parent)
         {
+            Transform tankTransform = parent.root;
+            
+            foreach(Collider collider in tankTransform.GetComponentsInChildren<Collider>())
+            {
+                Physics.IgnoreCollision(collider, _projectile.GetComponent<Collider>());    
+            }
+            
             _started = true;
         }
 
