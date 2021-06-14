@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using ExtensionMethods;
+using Photon.Pun;
+using TankBattle.Navigation;
 using TankBattle.Tanks.Bullets.Effects;
 using UnityEngine;
 
@@ -14,9 +16,13 @@ namespace TankBattle.Tanks.Bullets
 
         private void Start()
         {
+            // The particle system must be deterministic to work well in networked environment
+            _particleSystem = GetComponent<ParticleSystem>();
+            PlayRoomManager roomManager = FindObjectOfType<PlayRoomManager>();
+            _particleSystem.randomSeed = (uint)roomManager.RandomSeed;
+
             _impactEffect = transform.FirstOrDefault(t => t.name == "Impact")?.GetComponent<Impact>();
             _impactEffect.gameObject.SetActive(false);
-            _particleSystem = GetComponent<ParticleSystem>();
             collisionEvents = new List<ParticleCollisionEvent>();
         }
 

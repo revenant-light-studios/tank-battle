@@ -2,19 +2,15 @@ using System;
 using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Tanks.Bullets;
-using TankBattle.Tanks.Bullets.Effects;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace TankBattle.Tanks.Guns
 {
     public class SpreadBombLauncher : ATankGun
     {
-        private float _lastFire;
-        private bool _canFire;
-        
         private ATankBullet _bullet;
         private Transform _launchPoint;
+        private GameObject _aim;
         
         protected override void Awake()
         {
@@ -23,8 +19,49 @@ namespace TankBattle.Tanks.Guns
             _launchPoint = transform.FirstOrDefault(t => t.name == "LaunchPoint");
             _bullet = Instantiate(TankBullet, _launchPoint ? _launchPoint : transform);
             _bullet.OnBulletHit = OnBulletHit;
+            _aim = _bullet.transform.FirstOrDefault(t => t.name == "Aim")?.gameObject;
+            _aim.transform.SetParent(null, true);
         }
-        
+
+        public override void RegisterInput(PlayerInput input)
+        {
+            _playerInput = input;
+            _playerInput.OnTrigger2Pressed += OnTrigger2Pressed;
+            _playerInput.OnTrigger2Released += OnTrigger2Released;
+        }
+
+        protected override void Update()
+        {
+            if (_aim.activeSelf)
+            {
+                Vector3 aimPosition = transform.position;
+                aimPosition.y = 0;
+                _aim.transform.position = aimPosition;
+            }
+            
+            if (TriggerPressed)
+            {
+                CanFire = true;
+                TriggerPressed = false;
+                Fire();
+            }
+        }
+
+        private void OnTrigger2Released()
+        {
+            TriggerPressed = true;
+            ShowAim(false);
+        }
+        private void OnTrigger2Pressed()
+        {
+            ShowAim(true);
+        }
+
+        private void ShowAim(bool show)
+        {
+            _aim.SetActive(show);
+        }
+
         [PunRPC]
         public override void NetworkFire()
         {

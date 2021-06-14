@@ -309,6 +309,7 @@ namespace TankBattle.Tanks
                 Debug.Log($"{name}: Set gun {value.name}");
                 Transform firePoint = transform.FirstOrDefault(t => t.name == "FirePoint");
                 _primaryGun.transform.SetParent(firePoint, false);
+                _primaryGun.RegisterInput(_playerInput);
                 _onTankWeaponEnabled?.Invoke(_primaryGun, TankWeapon.Primary);
             }
         }
@@ -326,6 +327,7 @@ namespace TankBattle.Tanks
                 
                 Transform missilePoint = transform.FirstOrDefault(t => t.name == "LaunchPoint");
                 _secondaryGun.transform.SetParent(missilePoint, false);
+                _secondaryGun.RegisterInput(_playerInput);
                 _onTankWeaponEnabled?.Invoke(_secondaryGun, TankWeapon.Secondary);
             }
         }

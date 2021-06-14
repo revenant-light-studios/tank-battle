@@ -29,7 +29,28 @@ namespace TankBattle.Navigation
         
         public Random RandomGenerator
         {
-            get => _randomGenerator;
+            get
+            {
+                if (_randomGenerator == null)
+                {
+                    _randomGenerator = new Random(RandomSeed);        
+                }
+
+                return _randomGenerator;
+            }
+        }
+
+        public int RandomSeed
+        {
+            get
+            {
+                if (_randomSeed==0)
+                {
+                    _randomSeed = (PhotonNetwork.InRoom) ? (int)PhotonNetwork.CurrentRoom.CustomProperties[RoomOptionsKeys.Seed] : Guid.NewGuid().GetHashCode();
+                }
+
+                return _randomSeed;
+            }
         }
 
         private Text _debugSeedText;
@@ -70,14 +91,11 @@ namespace TankBattle.Navigation
             
             Cursor.lockState = CursorLockMode.Confined;
             
-            _randomSeed = (PhotonNetwork.InRoom) ? (int)PhotonNetwork.CurrentRoom.CustomProperties[RoomOptionsKeys.Seed] : Guid.NewGuid().GetHashCode();
-            _randomGenerator = new Random(_randomSeed);
-            
             Canvas canvas = FindObjectOfType<Canvas>();
             _debugSeedText = canvas.transform.FirstOrDefault(t => t.name == "DebugSeed").GetComponent<Text>();
 
             _terrain = FindObjectOfType<MeshTerrain>();
-            _terrain.Generate(_randomSeed);
+            _terrain.Generate(RandomSeed);
             _debugSeedText.text = $"Terrain random seed: {_terrain.TerrainParameters.seed}";
 
             int numberOfDummySpawnPoints = _spawnDummies ? _numberOfDummies : 0; 
@@ -110,7 +128,7 @@ namespace TankBattle.Navigation
 
         private void GenerateSpawnPoints(int playerCount)
         {
-            Random generator = new Random(_randomSeed);
+            Random generator = new Random(RandomSeed);
             _spawnPoints = new Vector3[playerCount];
             int sectors = 360 / playerCount;
             int xCenter = _terrain.TerrainParameters.xSize / 2;

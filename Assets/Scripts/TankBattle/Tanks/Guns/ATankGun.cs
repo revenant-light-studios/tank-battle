@@ -1,5 +1,3 @@
-using System;
-using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Tanks.Bullets;
 using UnityEditor;
@@ -24,6 +22,8 @@ namespace TankBattle.Tanks.Guns
 
         protected virtual void Update()
         {
+            if(TriggerPressed) Fire();
+            
             LastFired += Time.deltaTime;
             
             if(!CanFire && LastFired >= _firingRate)
@@ -78,6 +78,26 @@ namespace TankBattle.Tanks.Guns
                 }
             }
         }
+
+        protected PlayerInput _playerInput;
+        protected bool TriggerPressed;
+
+        /// <summary>
+        /// Associates this gun to input trigger
+        /// </summary>
+        /// <param name="input"></param>
+        public virtual void RegisterInput(PlayerInput input)
+        {
+            _playerInput = input;
+            _playerInput.OnTrigger1Pressed += () => TriggerPressed = true;
+            _playerInput.OnTrigger1Released += () => TriggerPressed = false;
+        }
+        
+        
+        /// <summary>
+        /// Called when the weapon is instantiated through network
+        /// </summary>
+        /// <param name="info"></param>
         public void OnPhotonInstantiate(PhotonMessageInfo info)
         {
             // Read instantiation data

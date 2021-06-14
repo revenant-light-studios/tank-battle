@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ExtensionMethods;
+using TankBattle.Navigation;
 using TankBattle.Tanks.Bullets.Effects;
 using UnityEngine;
 
@@ -16,6 +17,9 @@ namespace TankBattle.Tanks.Bullets
         private void Start()
         {
             _spreadBombParticleSystem = GetComponent<ParticleSystem>();
+            PlayRoomManager roomManager = FindObjectOfType<PlayRoomManager>();
+            _spreadBombParticleSystem.randomSeed = (uint)roomManager.RandomSeed;
+            
             _impactEffect = transform.FirstOrDefault(t => t.name == "Impact")?.GetComponent<Impact>();
             _impactEffect.gameObject.SetActive(false);
             _collisionEvents = new List<ParticleCollisionEvent>();
