@@ -1,4 +1,5 @@
 using Cinemachine;
+using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Global;
 using TankBattle.InputManagers;
@@ -13,8 +14,9 @@ namespace TankBattle.Tanks
     public class PlayerInput : MonoBehaviour
     {
         private PhotonView _photonView;
+        private ATankGun _primaryGun;
+        private ATankGun _secondaryGun;
         private ATankEngine _engine;
-        private ATankGun _gun;
         private ATankTurret _turret;
 
         [SerializeField, FormerlySerializedAs("AxisStateX")]
@@ -28,6 +30,7 @@ namespace TankBattle.Tanks
 
         public void InitInput(VirtualJoystick movement, VirtualJoystick aim, VirtualButton shoot, VirtualButton specialShoot)
         {
+            // Aiming is controlled by cinemachine camera module
             if (aim)
             {
                 Cursor.visible = true;
@@ -61,9 +64,23 @@ namespace TankBattle.Tanks
         private void Start()
         {
             _photonView = GetComponent<PhotonView>();
-            _gun = GetComponentInChildren<ATankGun>();
             _engine = GetComponentInChildren<ATankEngine>();
             _turret = GetComponentInChildren<ATankTurret>();
+
+            TankManager tankManager = GetComponent<TankManager>();
+            if (tankManager)
+            {
+                tankManager.OnTankWeaponEnabled += (gun, weapon) =>
+                {
+                    if (weapon == TankManager.TankWeapon.Primary)
+                    {
+                        _primaryGun = gun;
+                    } else if (weapon == TankManager.TankWeapon.Secondary)
+                    {
+                        _secondaryGun = gun;
+                    }
+                };
+            }
         }
 
         private void Update()
@@ -113,28 +130,104 @@ namespace TankBattle.Tanks
         /// <summary>
         /// Gun input management
         /// </summary>
+        // private void GunInput()
+        // {
+        //     if (GlobalMethods.IsDesktop())
+        //     {
+        //         if (Input.GetButton("Fire1") && _primaryGun)
+        //         {
+        //             _primaryGun.Fire();
+        //         }
+        //
+        //         if (Input.GetButton("Fire2") && _secondaryGun)
+        //         {
+        //             if (_secondaryGun && _secondaryGun.isActiveAndEnabled)
+        //             {
+        //                 _secondaryGun.Fire();
+        //             }
+        //         }
+        //         
+        //     }
+        //     else
+        //     {
+        //         if (_shootButton.IsPressed())
+        //         {
+        //             _primaryGun.Fire();
+        //         }
+        //
+        //         if (_secondaryShootButton.IsPressed())
+        //         {
+        //             _secondaryGun.Fire();
+        //         }
+        //     }
+        // }
+
+        #region Weapon triggers management
+        private bool _primaryTriggerPressed;
+        private bool _secondaryTriggerPressed;
+
+        public delegate void OnTrigger1PressedDelegate();
+        public event OnTrigger1PressedDelegate OnTrigger1Pressed;
+
+        public delegate void OnTrigger1ReleasedDelegate();
+        public event OnTrigger1ReleasedDelegate OnTrigger1Released;
+
+        public bool Trigger1
+        {
+            get => _primaryTriggerPressed;
+            set
+            {
+                if (value && !_primaryTriggerPressed)
+                {
+                    _primaryTriggerPressed = value;
+                    OnTrigger1Pressed?.Invoke();
+                } else if (!value && _primaryTriggerPressed)
+                {
+                    _primaryTriggerPressed = value;
+                    OnTrigger1Released?.Invoke();
+                }
+                
+            }
+        }
+
+        public delegate void OnTrigger2PressedDelegate();
+        public event OnTrigger2PressedDelegate OnTrigger2Pressed;
+
+        public delegate void OnTrigger2ReleasedDelegate();
+        public event OnTrigger2ReleasedDelegate OnTrigger2Released;
+
+        public bool Trigger2
+        {
+            get => _secondaryTriggerPressed;
+
+            set
+            {
+                if (value && !_secondaryTriggerPressed)
+                {
+                    _secondaryTriggerPressed = value;
+                    OnTrigger2Pressed?.Invoke();
+                } else if (!value && _secondaryTriggerPressed)
+                {
+                    _secondaryTriggerPressed = value;
+                    OnTrigger2Released?.Invoke();
+                }
+                
+            }
+        }
+
         private void GunInput()
         {
-            //Si es desktop
             if (GlobalMethods.IsDesktop())
             {
-                if (Input.GetButton("Fire1"))
-                {
-                    _gun.Fire();
-                }
+                Trigger1 = Input.GetButton("Fire1");
+                Trigger2 = Input.GetButton("Fire2");
             }
             else
             {
-                if (_shootButton.IsPressed())
-                {
-                    _gun.Fire();    
-                }
-
-                if(_secondaryShootButton.IsPressed())
-                {
-                    
-                }
+                Trigger1 = _shootButton.IsPressed();
+                Trigger2 = _secondaryShootButton.IsPressed();
             }
         }
+        #endregion
     }
 }

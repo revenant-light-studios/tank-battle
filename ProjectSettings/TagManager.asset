@@ -21,8 +21,8 @@ TagManager:
   - MiniMap
   - RenderedTank
   - ForceFields
-  - 
-  - 
+  - SelfTank
+  - Projectiles
   - 
   - 
   - 

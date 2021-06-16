@@ -1,9 +1,16 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace TankBattle.Global
 {
     public class Radar
     {
+        public delegate void OnDetectableObjectAddedDelegate(DetectableObject obj);
+        public OnDetectableObjectAddedDelegate OnDetectableObjectAdded;
+
+        public delegate void OnDetectableObjectRemovedDelegate(DetectableObject obj);
+        public OnDetectableObjectAddedDelegate OnDetectableObjectRemoved;
+
         private static Radar _instance;
 
         public static Radar Instance
@@ -30,6 +37,8 @@ namespace TankBattle.Global
                 DetectableObjects.Add(_detectableObject);
                 // Debug.LogFormat($"Detectable {_detectableObject.name} added to DetectableObjects");
             }
+            
+            OnDetectableObjectAdded?.Invoke(_detectableObject);
         }
 
         public void RemoveDetectableObject(DetectableObject _detectableObject)
@@ -39,6 +48,7 @@ namespace TankBattle.Global
                 DetectableObjects.Remove(_detectableObject);    
                 // Debug.LogFormat($"Detectable {_detectableObject.name} removed from DetectableObjects");
             }
+            OnDetectableObjectRemoved?.Invoke(_detectableObject);
         }
     }
 }

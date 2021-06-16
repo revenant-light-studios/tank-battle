@@ -5,6 +5,7 @@ using Networking.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
 using TankBattle.Global;
+using TankBattle.Items;
 using TankBattle.Tanks;
 using TankBattle.Terrain;
 using UnityEngine;
@@ -23,13 +24,35 @@ namespace TankBattle.Navigation
         private Vector3[] _spawnPoints;
 
         [SerializeField] private GameObject _tankPrefab;
+        [SerializeField] private GameObject[] _tankAddOns;
         
         private int _numberOfDummies = 10;
         private bool _spawnDummies = false;
         
         public Random RandomGenerator
         {
-            get => _randomGenerator;
+            get
+            {
+                if (_randomGenerator == null)
+                {
+                    _randomGenerator = new Random(RandomSeed);        
+                }
+
+                return _randomGenerator;
+            }
+        }
+
+        public int RandomSeed
+        {
+            get
+            {
+                if (_randomSeed==0)
+                {
+                    _randomSeed = (PhotonNetwork.InRoom) ? (int)PhotonNetwork.CurrentRoom.CustomProperties[RoomOptionsKeys.Seed] : Guid.NewGuid().GetHashCode();
+                }
+
+                return _randomSeed;
+            }
         }
 
         private Text _debugSeedText;
@@ -70,14 +93,11 @@ namespace TankBattle.Navigation
             
             Cursor.lockState = CursorLockMode.Confined;
             
-            _randomSeed = (PhotonNetwork.InRoom) ? (int)PhotonNetwork.CurrentRoom.CustomProperties[RoomOptionsKeys.Seed] : Guid.NewGuid().GetHashCode();
-            _randomGenerator = new Random(_randomSeed);
-            
             Canvas canvas = FindObjectOfType<Canvas>();
             _debugSeedText = canvas.transform.FirstOrDefault(t => t.name == "DebugSeed").GetComponent<Text>();
 
             _terrain = FindObjectOfType<MeshTerrain>();
-            _terrain.Generate(_randomSeed);
+            _terrain.Generate(RandomSeed);
             _debugSeedText.text = $"Terrain random seed: {_terrain.TerrainParameters.seed}";
 
             int numberOfDummySpawnPoints = _spawnDummies ? _numberOfDummies : 0; 
@@ -110,7 +130,7 @@ namespace TankBattle.Navigation
 
         private void GenerateSpawnPoints(int playerCount)
         {
-            Random generator = new Random(_randomSeed);
+            Random generator = new Random(RandomSeed);
             _spawnPoints = new Vector3[playerCount];
             int sectors = 360 / playerCount;
             int xCenter = _terrain.TerrainParameters.xSize / 2;
@@ -147,6 +167,9 @@ namespace TankBattle.Navigation
 
         private void SpawnDummyTanks(int numberOfTanks)
         {
+            // Only the master client spawns dummies
+            if (PhotonNetwork.IsConnected && !PhotonNetwork.IsMasterClient) return;
+            
             for (int i = 0; i < numberOfTanks; i++)
             {
                 Vector3 position = _spawnPoints[_spawnPoints.Length - 1 - i];
@@ -154,7 +177,7 @@ namespace TankBattle.Navigation
                 GameObject dummyTank;
                 if (PhotonNetwork.IsConnected)
                 {
-                    dummyTank = PhotonNetwork.Instantiate(Path.Combine("Tanks", _tankPrefab.name), position, Quaternion.identity);
+                    dummyTank = PhotonNetwork.InstantiateRoomObject(Path.Combine("Tanks", _tankPrefab.name), position, Quaternion.identity);
                 }
                 else
                 {
@@ -163,6 +186,46 @@ namespace TankBattle.Navigation
                 
                 dummyTank.name = $"Dummy{i}";
                 dummyTank.GetComponent<TankManager>().IsDummy = true;
+            }
+        }
+
+        private void SpawnPickableItems(int numberOfItems)
+        {
+            if (PhotonNetwork.IsConnected && !PhotonNetwork.IsMasterClient) return;
+            
+            Random generator = new Random(Guid.NewGuid().GetHashCode());
+            int sectors = 360 / numberOfItems;
+            int xCenter = _terrain.TerrainParameters.xSize / 2;
+            int zCenter = _terrain.TerrainParameters.zSize / 2;
+
+            
+            for (int i = 0; i < numberOfItems; i++)
+            {
+                int maxProbes = 1000;
+                float x;
+                float z;
+                
+                do
+                {
+                    float randomAngle = generator.Next(i * sectors, i * sectors + sectors) * Mathf.Deg2Rad;
+                    float randomRadius = generator.Next((int)(xCenter * 0.5), (int)(xCenter * 0.9));
+                    x = Mathf.Cos(randomAngle) * randomRadius;
+                    z = Mathf.Sin(randomAngle) * randomRadius;
+                } while (!IsFreeSpot(x, z, xCenter, zCenter) && --maxProbes > 0);
+                                
+                
+            }
+        }
+
+        private void SpawnPickableItem(PickableItem item, Vector3 position)
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                PhotonNetwork.InstantiateRoomObject("Item/" + item.name, position, Quaternion.identity);
+            }
+            else
+            {
+                Instantiate(item, position, Quaternion.identity);
             }
         }
     }

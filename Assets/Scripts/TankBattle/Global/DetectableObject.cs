@@ -1,7 +1,12 @@
+using System;
 using System.Collections.Generic;
+using ExitGames.Client.Photon.StructWrapping;
+using Photon.Pun;
 using TankBattle.InGameGUI;
 using TankBattle.Tanks;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace TankBattle.Global
 {
@@ -29,8 +34,55 @@ namespace TankBattle.Global
                 return bounds;
             }
         }
+
+        #region Visibility, tracking and locking states
+        private bool _visible = false;
+        public bool Visible
+        {
+            get => _visible;
+            set
+            {
+                _visible = value;
+                
+                if (!_visible)
+                {
+                    Tracked = false;
+                }
+            } 
+        }
         
-        public bool IsVisibleInCamera = false;
+        private bool _tracked = false;
+        public bool Tracked
+        {
+            get => _tracked;
+            set
+            {
+                if (value)
+                {
+                    ShowTrackerImage();
+                }
+                else
+                {
+                    HideTrackerImage();
+                }
+                
+                _tracked = value;  
+            } 
+        }
+
+        private bool _locked = false;
+        public bool Locked
+        {
+            get => _locked;
+
+            set
+            {
+                Debug.Log($"{name}: I was locked");
+                _locked = value;
+                if(_radarTrack) _radarTrack.SetTrackingState(_locked ? RadarTrack.LockedState.Locked : RadarTrack.LockedState.None);
+            }
+        }
+        #endregion
         
         private void Start()
         {
@@ -52,36 +104,62 @@ namespace TankBattle.Global
             }
         }
 
-        public void ShowTrackerImage(Transform canvas, GameObject trackedTank)
+        private Camera _currentCamera;
+        private TankValues _tankValues;
+
+        public void InitTrackerImage(Transform canvas, Camera _camera)
         {
+            _currentCamera = _camera;
+            _tankValues = gameObject.GetComponent<TankValues>();
+
+            string playerName = gameObject.name;
+            
+            if (PhotonNetwork.IsConnected)
+            {
+                PhotonView view = GetComponent<PhotonView>();
+
+                if (view != null && view.Owner != null)
+                {
+                    playerName = view.Owner.NickName;
+                }
+            }
+            
             if (_radarTrack == null)
             {
                 GameObject go = Instantiate(Resources.Load<GameObject>("Tanks/Hud/RadarTracker"), canvas);
-                go.name = $"RadarTrack-{trackedTank.name}";
+                go.name = $"RadarTrack-{playerName}";
                 _radarTrack = go.GetComponent<RadarTrack>();
-                _radarTrack.SetName(gameObject.name);
+                _radarTrack.SetName(playerName);
             }
-            
-            _radarTrack.gameObject.SetActive(true);
+        }
+        
+        public void UpdateTrackerImage()
+        {
+            if (_radarTrack != null && _radarTrack.gameObject.activeSelf)
+            {
+                _radarTrack.UpdateTrackingImage(_currentCamera, Bounds);
+                
+                if (_tankValues)
+                {
+                    _radarTrack.SetLifeValue(_tankValues.ArmorAmount / _tankValues.TotalArmor);
+                    _radarTrack.SetShieldValue(_tankValues.ShieldAmount / _tankValues.TotalShield);
+                }
+            }
+        }
+
+        private void Update()
+        {
+            UpdateTrackerImage();
+        }
+
+        public void ShowTrackerImage()
+        {
+            _radarTrack?.gameObject.SetActive(true);
         }
 
         public void HideTrackerImage()
         {
             _radarTrack?.gameObject.SetActive(false);    
-        }
-        
-        public void UpdateTrackerImage(Camera currentCamera)
-        {
-            if (_radarTrack != null && _radarTrack.gameObject.activeSelf)
-            {
-                _radarTrack.UpdateTrackingImage(currentCamera, Bounds);
-                TankValues _values = GetComponent<TankValues>();
-                if (_values)
-                {
-                    _radarTrack.SetLifeValue(_values.ArmorAmount / _values.TotalArmor);
-                    _radarTrack.SetShieldValue(_values.ShieldAmount / _values.TotalShield);
-                }
-            }
         }
         
         private void OnDrawGizmos()
