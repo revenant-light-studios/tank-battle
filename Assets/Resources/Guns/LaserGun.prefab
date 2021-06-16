@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3879662666884796133}
-  - component: {fileID: 4268372034416210600}
   - component: {fileID: 4291955600809120960}
   - component: {fileID: 7888473754093796788}
+  - component: {fileID: 4577451774820380537}
   m_Layer: 0
   m_Name: LaserGun
   m_TagString: Untagged
@@ -34,24 +34,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4268372034416210600
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3035056551652829590}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 519cbe1d8c774ebcb198bb52b4acaf84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _firingRate: 0.75
-  TankBullet: {fileID: 2577449839175722021, guid: 30265f97304d04e33965040e041d0735,
-    type: 3}
-  _maxEnergy: 1
-  _unloadRate: 0.1
-  _reloadTime: 3
 --- !u!82 &4291955600809120960
 AudioSource:
   m_ObjectHideFlags: 0
@@ -170,6 +152,24 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &4577451774820380537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3035056551652829590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91732994c86b45249b27689af9812dbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _firingRate: 2
+  TankBullet: {fileID: 4408492439162259541, guid: f266dedbd028b4894b22077b98d77757,
+    type: 3}
+  _maxEnergy: 1
+  _unloadRate: 0.1
+  _reloadTime: 3
 --- !u!1001 &632358217967698044
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -180,11 +180,11 @@ namespace TankBattle.Tanks
                 if (value && !_primaryTriggerPressed)
                 {
                     _primaryTriggerPressed = value;
-                    OnTrigger1Pressed.Invoke();
+                    OnTrigger1Pressed?.Invoke();
                 } else if (!value && _primaryTriggerPressed)
                 {
                     _primaryTriggerPressed = value;
-                    OnTrigger1Released.Invoke();
+                    OnTrigger1Released?.Invoke();
                 }
                 
             }
@@ -205,11 +205,11 @@ namespace TankBattle.Tanks
                 if (value && !_secondaryTriggerPressed)
                 {
                     _secondaryTriggerPressed = value;
-                    OnTrigger2Pressed.Invoke();
+                    OnTrigger2Pressed?.Invoke();
                 } else if (!value && _secondaryTriggerPressed)
                 {
                     _secondaryTriggerPressed = value;
-                    OnTrigger2Released.Invoke();
+                    OnTrigger2Released?.Invoke();
                 }
                 
             }

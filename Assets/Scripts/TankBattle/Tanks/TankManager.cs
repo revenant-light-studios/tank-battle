@@ -3,11 +3,10 @@ using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Global;
 using TankBattle.InGameGUI;
-using TankBattle.Tanks.Bullets;
 using TankBattle.Tanks.Camera;
+using TankBattle.Tanks.ForceFields;
 using TankBattle.Tanks.Guns;
 using TankBattle.Tanks.Turrets;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -28,6 +27,10 @@ namespace TankBattle.Tanks
         private TankValues _tankValues;
         private DetectableObject _detectableObject;
         
+        [SerializeField, FormerlySerializedAs("ForceField")] private ForceField _forceFieldPrefab;
+        private ForceField _forceField;
+        public ForceField ForceField => _forceField;
+
         public bool IsDummy = false;
         
         #region Public properties
@@ -46,10 +49,23 @@ namespace TankBattle.Tanks
             _playerInput = GetComponent<PlayerInput>();
             _detectableObject = GetComponent<DetectableObject>();
             _turret = GetComponentInChildren<ATankTurret>();
+
+            if (!_forceFieldPrefab)
+            {
+                _forceFieldPrefab = Resources.Load<ForceField>("Tanks/ForceFields/ForceField");
+            }
         }
 
         private void Start()
         {
+            // All tanks
+            if (_forceFieldPrefab)
+            {
+                _forceField = Instantiate(_forceFieldPrefab);
+                _forceField.ParentTank = this;
+                _tankValues.ForceField = _forceField.GetComponent<ForceField>();
+            }
+            
             // All network tanks
             if (PhotonNetwork.IsConnected)
             {
@@ -99,6 +115,11 @@ namespace TankBattle.Tanks
                     SelectNextEnemy();
                 }
             }
+        }
+
+        private void FixedUpdate()
+        {
+            _forceField.transform.position = transform.position;
         }
 
         public void OnPhotonInstantiate(PhotonMessageInfo info)
@@ -182,6 +203,14 @@ namespace TankBattle.Tanks
         {
             if ((_photonView.IsMine || !PhotonNetwork.IsConnected) && !IsDummy)
             {
+                int layerMask = LayerMask.GetMask("SelfTank", "Ground");
+
+                if (!_camera)
+                {
+                    Debug.Log($"{name}: Camera is null");
+                    return;
+                }
+                
                 Plane[] planes = GeometryUtility.CalculateFrustumPlanes(_camera);
                 
                 for (int i = _inScreenTanks.Count - 1; i >= 0 ; i--)
@@ -202,7 +231,7 @@ namespace TankBattle.Tanks
                             Vector3 direction = dObj.Bounds.center - _detectableObject.Bounds.center;
                             bool tracked = false;
 
-                            if (Physics.Raycast(_detectableObject.Bounds.center, direction, out RaycastHit hit))
+                            if (Physics.Raycast(_detectableObject.Bounds.center, direction, out RaycastHit hit, Mathf.Infinity, layerMask))
                             {
                                 dObj.Tracked = (hit.transform.gameObject == dObj.gameObject);
                             }
@@ -310,6 +339,7 @@ namespace TankBattle.Tanks
                 Transform firePoint = transform.FirstOrDefault(t => t.name == "FirePoint");
                 _primaryGun.transform.SetParent(firePoint, false);
                 _primaryGun.RegisterInput(_playerInput);
+                _primaryGun.ParentTank = this;
                 _onTankWeaponEnabled?.Invoke(_primaryGun, TankWeapon.Primary);
             }
         }
@@ -328,7 +358,9 @@ namespace TankBattle.Tanks
                 Transform missilePoint = transform.FirstOrDefault(t => t.name == "LaunchPoint");
                 _secondaryGun.transform.SetParent(missilePoint, false);
                 _secondaryGun.RegisterInput(_playerInput);
+                _secondaryGun.ParentTank = this;
                 _onTankWeaponEnabled?.Invoke(_secondaryGun, TankWeapon.Secondary);
+                
             }
         }
         

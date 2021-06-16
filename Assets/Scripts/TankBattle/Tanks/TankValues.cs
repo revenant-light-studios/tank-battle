@@ -1,6 +1,7 @@
 using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Tanks.Bullets;
+using TankBattle.Tanks.ForceFields;
 using UnityEditor;
 using UnityEngine;
 
@@ -28,7 +29,7 @@ namespace TankBattle.Tanks
 
         private PhotonView _photonView;
 
-        private ForceField.ForceField _forceField;
+        public ForceField ForceField;
 
         private void Awake()
         {
@@ -44,9 +45,7 @@ namespace TankBattle.Tanks
 
         private void Start()
         {
-            _forceField = GetComponentInChildren<ForceField.ForceField>();
             _photonView = GetComponent<PhotonView>();
-            
             _shieldAmount = TotalShield;
             _armorAmount = TotalArmor;
         }
@@ -65,12 +64,12 @@ namespace TankBattle.Tanks
             // This only happens for me
             if (_shieldAmount > 0f)
             {
-                _forceField.ForceFieldHit();
+                ForceField.ForceFieldHit();
                 _shieldAmount -= TotalShield * (bullet ? bullet.Damage : 0.1f);
 
                 if (_shieldAmount <= 0f)
                 {
-                    _forceField.enabled = false;
+                    ForceField.gameObject.SetActive(false);
                 }
             }
             else if(_armorAmount > 0f)

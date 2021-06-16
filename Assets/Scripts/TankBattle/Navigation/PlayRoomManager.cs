@@ -5,6 +5,7 @@ using Networking.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
 using TankBattle.Global;
+using TankBattle.Items;
 using TankBattle.Tanks;
 using TankBattle.Terrain;
 using UnityEngine;
@@ -23,6 +24,7 @@ namespace TankBattle.Navigation
         private Vector3[] _spawnPoints;
 
         [SerializeField] private GameObject _tankPrefab;
+        [SerializeField] private GameObject[] _tankAddOns;
         
         private int _numberOfDummies = 10;
         private bool _spawnDummies = false;
@@ -184,6 +186,46 @@ namespace TankBattle.Navigation
                 
                 dummyTank.name = $"Dummy{i}";
                 dummyTank.GetComponent<TankManager>().IsDummy = true;
+            }
+        }
+
+        private void SpawnPickableItems(int numberOfItems)
+        {
+            if (PhotonNetwork.IsConnected && !PhotonNetwork.IsMasterClient) return;
+            
+            Random generator = new Random(Guid.NewGuid().GetHashCode());
+            int sectors = 360 / numberOfItems;
+            int xCenter = _terrain.TerrainParameters.xSize / 2;
+            int zCenter = _terrain.TerrainParameters.zSize / 2;
+
+            
+            for (int i = 0; i < numberOfItems; i++)
+            {
+                int maxProbes = 1000;
+                float x;
+                float z;
+                
+                do
+                {
+                    float randomAngle = generator.Next(i * sectors, i * sectors + sectors) * Mathf.Deg2Rad;
+                    float randomRadius = generator.Next((int)(xCenter * 0.5), (int)(xCenter * 0.9));
+                    x = Mathf.Cos(randomAngle) * randomRadius;
+                    z = Mathf.Sin(randomAngle) * randomRadius;
+                } while (!IsFreeSpot(x, z, xCenter, zCenter) && --maxProbes > 0);
+                                
+                
+            }
+        }
+
+        private void SpawnPickableItem(PickableItem item, Vector3 position)
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                PhotonNetwork.InstantiateRoomObject("Item/" + item.name, position, Quaternion.identity);
+            }
+            else
+            {
+                Instantiate(item, position, Quaternion.identity);
             }
         }
     }

@@ -7,7 +7,7 @@ namespace TankBattle.Tanks.Bullets
     {
         [SerializeField, FormerlySerializedAs("Damage"), InspectorName("Bullet damage"), Tooltip("Damage caused by this bullet")]
         protected float _damage;
-        public delegate void OnBulletHitDelegate(GameObject other);
+        public delegate bool OnBulletHitDelegate(GameObject other);
         public OnBulletHitDelegate OnBulletHit;
         
         public abstract void Fire(Transform parent);

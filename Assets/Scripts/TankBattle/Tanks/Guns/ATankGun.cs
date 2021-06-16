@@ -1,5 +1,6 @@
 using Photon.Pun;
 using TankBattle.Tanks.Bullets;
+using TankBattle.Tanks.ForceFields;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -14,6 +15,13 @@ namespace TankBattle.Tanks.Guns
 
         protected float LastFired;
         protected bool CanFire;
+
+        protected TankManager _parentTank;
+        public TankManager ParentTank
+        {
+            get => _parentTank;
+            set => _parentTank = value;
+        }
 
         protected virtual void Awake()
         {
@@ -62,12 +70,26 @@ namespace TankBattle.Tanks.Guns
         public delegate void OnTankHitDelegate(TankValues other, ATankBullet bullet);
         public OnTankHitDelegate OnTankHit;
         
-        protected void OnBulletHit(GameObject other)
+        protected bool OnBulletHit(GameObject other)
         {
             TankValues tankValues = other.GetComponent<TankValues>();
-            if (tankValues != null)
+            
+            // If it's a force field then get parent tank values
+            if (!tankValues)
             {
-                // Debug.Log($"Hit {other.name}");
+                ForceField forceField = other.GetComponent<ForceField>();
+                if (forceField)
+                {
+                    tankValues = forceField.ParentTank.GetComponent<TankValues>();
+                }
+            }
+
+            // Return true if collides with own object
+            if (tankValues && ParentTank && tankValues.gameObject == ParentTank.gameObject) return true;
+            
+            if (tankValues)
+            {
+                Debug.Log($"Hit {other.name}");
                 if (OnTankHit != null)
                 {
                     OnTankHit?.Invoke(tankValues, TankBullet);    
@@ -77,6 +99,8 @@ namespace TankBattle.Tanks.Guns
                     tankValues.WasHit(TankBullet);
                 }
             }
+
+            return false;
         }
 
         protected PlayerInput _playerInput;
@@ -130,8 +154,8 @@ namespace TankBattle.Tanks.Guns
 
             if (GUILayout.Button("Fire"))
             {
-                ATankGun missile = (ATankGun)target;
-                missile.Fire();
+                ATankGun gun = (ATankGun)target;
+                gun.Fire();
             }
         }
     }

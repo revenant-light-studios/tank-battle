@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace TankBattle.Tanks.ForceField.Editor
+namespace TankBattle.Tanks.ForceFields.Editor
 {
     [CustomEditor(typeof(ForceField))]
     public class ForceFieldEditor : UnityEditor.Editor

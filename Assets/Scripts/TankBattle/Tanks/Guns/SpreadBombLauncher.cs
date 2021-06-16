@@ -17,14 +17,13 @@ namespace TankBattle.Tanks.Guns
             base.Awake();
             
             _launchPoint = transform.FirstOrDefault(t => t.name == "LaunchPoint");
-            _bullet = Instantiate(TankBullet, _launchPoint ? _launchPoint : transform);
-            _bullet.OnBulletHit = OnBulletHit;
-            _aim = _bullet.transform.FirstOrDefault(t => t.name == "Aim")?.gameObject;
-            _aim.transform.SetParent(null, true);
         }
 
         public override void RegisterInput(PlayerInput input)
         {
+            _aim = transform.FirstOrDefault(t => t.name == "Aim")?.gameObject;
+            _aim.transform.SetParent(null, true);
+
             _playerInput = input;
             _playerInput.OnTrigger2Pressed += OnTrigger2Pressed;
             _playerInput.OnTrigger2Released += OnTrigger2Released;
@@ -32,11 +31,14 @@ namespace TankBattle.Tanks.Guns
 
         protected override void Update()
         {
-            if (_aim.activeSelf)
+            if(_aim)
             {
-                Vector3 aimPosition = transform.position;
-                aimPosition.y = 0;
-                _aim.transform.position = aimPosition;
+                if (_aim.activeSelf)
+                {
+                    Vector3 aimPosition = transform.position;
+                    aimPosition.y = 0;
+                    _aim.transform.position = aimPosition;
+                }
             }
             
             if (TriggerPressed)
@@ -59,12 +61,14 @@ namespace TankBattle.Tanks.Guns
 
         private void ShowAim(bool show)
         {
-            _aim.SetActive(show);
+            if(_aim) _aim.SetActive(show);
         }
 
         [PunRPC]
         public override void NetworkFire()
         {
+            _bullet = Instantiate(TankBullet, _launchPoint ? _launchPoint : transform);
+            _bullet.OnBulletHit = OnBulletHit;
             _bullet.Fire(transform);    
         }
     }

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using ExtensionMethods;
-using Photon.Pun;
 using TankBattle.Navigation;
 using TankBattle.Tanks.Bullets.Effects;
+using TankBattle.Tanks.ForceFields;
 using UnityEngine;
 
 namespace TankBattle.Tanks.Bullets
@@ -13,6 +13,7 @@ namespace TankBattle.Tanks.Bullets
         
         private ParticleSystem _particleSystem;
         public List<ParticleCollisionEvent> collisionEvents;
+        public ParticleSystem.Particle[] particles;
 
         private void Start()
         {
@@ -24,6 +25,7 @@ namespace TankBattle.Tanks.Bullets
             _impactEffect = transform.FirstOrDefault(t => t.name == "Impact")?.GetComponent<Impact>();
             _impactEffect.gameObject.SetActive(false);
             collisionEvents = new List<ParticleCollisionEvent>();
+            particles = new ParticleSystem.Particle[1];
         }
 
         public override void Fire(Transform parent)
@@ -34,19 +36,33 @@ namespace TankBattle.Tanks.Bullets
 
         private void OnParticleCollision(GameObject other)
         {
-            OnBulletHit?.Invoke(other);
-            if (_impactEffect)
-            {
-                int numCollisionEvents = _particleSystem.GetCollisionEvents(other, collisionEvents);
-                if (numCollisionEvents > 0)
-                {
-                    _impactEffect.transform.position = collisionEvents[0].intersection;
-                    // _impactEffect.transform.rotation = Quaternion.Euler(collisionEvents[0].normal);
-                }
-                _impactEffect.Play();
-                // Debug.Log($"ImpactEffect played");
-            }
+            bool hitSelf = false;
             
+            if (OnBulletHit != null)
+            {
+                hitSelf = OnBulletHit.Invoke(other);
+            }
+
+            if (!hitSelf)
+            {
+                _particleSystem.GetParticles(particles);
+                particles[0].remainingLifetime = -1;
+                _particleSystem.SetParticles(particles);
+                
+                if (_impactEffect)
+                {
+                    int numCollisionEvents = _particleSystem.GetCollisionEvents(other, collisionEvents);
+                    if (numCollisionEvents > 0)
+                    {
+                        _impactEffect.transform.position = collisionEvents[0].intersection;
+                    }
+                    _impactEffect.Play();
+                }
+            }
+            else
+            {
+                Debug.Log($"{name} detected hit with self tank");
+            }
         }
     }
 }

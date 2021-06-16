@@ -1,8 +1,11 @@
+using System;
 using System.Collections;
+using ExtensionMethods;
+using TankBattle.Tanks.Bullets;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace TankBattle.Tanks.ForceField
+namespace TankBattle.Tanks.ForceFields
 {
     public class ForceField : MonoBehaviour
     {
@@ -17,6 +20,8 @@ namespace TankBattle.Tanks.ForceField
 
         private Material _material;
         private Coroutine _materialFlashCoroutine;
+
+        public TankManager ParentTank;
 
         private void Awake()
         {

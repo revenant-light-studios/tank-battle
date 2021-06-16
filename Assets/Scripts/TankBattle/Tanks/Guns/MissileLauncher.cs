@@ -1,10 +1,6 @@
-using System;
 using ExtensionMethods;
 using Photon.Pun;
-using TankBattle.Global;
-using TankBattle.InGameGUI;
 using TankBattle.Tanks.Bullets;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -57,6 +53,12 @@ namespace TankBattle.Tanks.Guns
             if (!_missile) return;
             
             Missile missileInstance = (Missile)Instantiate(_missile);
+            if(_parentTank)
+            {
+                Debug.Log($"Ignore self collissions");
+                Physics.IgnoreCollision(missileInstance.GetComponentInChildren<Collider>(), _parentTank.ForceField.GetComponent<Collider>());
+                
+            }
             
             if(_trackedTank) missileInstance.target = _trackedTank;
             missileInstance.OnBulletHit = OnBulletHit;
