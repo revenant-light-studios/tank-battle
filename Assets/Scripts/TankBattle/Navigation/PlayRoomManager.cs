@@ -130,12 +130,14 @@ namespace TankBattle.Navigation
 
         private void GenerateSpawnPoints(int playerCount)
         {
-            Random generator = new Random(RandomSeed);
+            Random generator = RandomGenerator;
             _spawnPoints = new Vector3[playerCount];
             int sectors = 360 / playerCount;
             int xCenter = _terrain.TerrainParameters.xSize / 2;
             int zCenter = _terrain.TerrainParameters.zSize / 2;
 
+            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            
             for (int i = 0; i < _spawnPoints.Length; i++)
             {
                 int maxProbes = 1000;
@@ -148,19 +150,23 @@ namespace TankBattle.Navigation
                     float randomRadius = generator.Next((int)(xCenter * 0.5), (int)(xCenter * 0.9));
                     x = Mathf.Cos(randomAngle) * randomRadius;
                     z = Mathf.Sin(randomAngle) * randomRadius;
+                    
                     // Debug.Log($"Trying spawnpoint {i} at angle: {randomAngle * Mathf.Rad2Deg}, radius: {randomRadius}");
                 } while (!IsFreeSpot(x, z, xCenter, zCenter) && --maxProbes > 0);
 
                 // TODO: Spawn point y depends on height?
                 // Debug.Log($"Spawning {i} at ({x},1f,{z})");
-                _spawnPoints[i] = new Vector3(x * 2, 1f, z * 2);
+                GameObject s = Instantiate(sphere, 
+                    new Vector3((x + xCenter) * _terrain.transform.localScale.x, 1f, (z + zCenter) * _terrain.transform.localScale.z), 
+                    Quaternion.identity);
+                _spawnPoints[i] = new Vector3(x * _terrain.transform.localScale.x , 1f, z * _terrain.transform.localScale.z);
             }
         }
 
         private bool IsFreeSpot(float x, float z, int xCenter, int zCenter)
         {
-            Vector3 center = new Vector3(x * 2, 1f, z * 2);
-            Vector3 extents = new Vector3(15f, 0.2f, 15f);
+            Vector3 center = new Vector3(x * _terrain.transform.localScale.x , 1f, z * _terrain.transform.localScale.z);
+            Vector3 extents = new Vector3(30f, 0.2f, 30f);
             Collider[] hits = Physics.OverlapBox(center, extents, Quaternion.identity);
             return hits.Length == 0 && _terrain.GetHeight((int)x + xCenter, (int)z + zCenter) <= 0.0f;
         }
@@ -189,15 +195,23 @@ namespace TankBattle.Navigation
             }
         }
 
-        private void SpawnPickableItems(int numberOfItems)
+        #region Pickable items management
+
+        private void SpawnPickableItems()
         {
             if (PhotonNetwork.IsConnected && !PhotonNetwork.IsMasterClient) return;
             
-            Random generator = new Random(Guid.NewGuid().GetHashCode());
+            GameSettings settings = Resources.Load<GameSettings>("Settings/GameSettings");
+
+            if (!settings.spawnSecondaryWeapons) return;
+            
+            int numberOfItems = settings.numberOfSecondaryWeapons;
+            PickableItem[] items = settings.secondaryWeapons;
+
+            Random generator = RandomGenerator;
             int sectors = 360 / numberOfItems;
             int xCenter = _terrain.TerrainParameters.xSize / 2;
             int zCenter = _terrain.TerrainParameters.zSize / 2;
-
             
             for (int i = 0; i < numberOfItems; i++)
             {
@@ -208,7 +222,7 @@ namespace TankBattle.Navigation
                 do
                 {
                     float randomAngle = generator.Next(i * sectors, i * sectors + sectors) * Mathf.Deg2Rad;
-                    float randomRadius = generator.Next((int)(xCenter * 0.5), (int)(xCenter * 0.9));
+                    float randomRadius = generator.Next((int)(xCenter * 0.3), (int)(xCenter * 0.9));
                     x = Mathf.Cos(randomAngle) * randomRadius;
                     z = Mathf.Sin(randomAngle) * randomRadius;
                 } while (!IsFreeSpot(x, z, xCenter, zCenter) && --maxProbes > 0);
@@ -228,5 +242,6 @@ namespace TankBattle.Navigation
                 Instantiate(item, position, Quaternion.identity);
             }
         }
+        #endregion
     }
 }
