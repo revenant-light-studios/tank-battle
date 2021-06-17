@@ -333,6 +333,11 @@ namespace TankBattle.Tanks
             get => _primaryGun;
             set
             {
+                if (_primaryGun != null)
+                {
+                    Destroy(_primaryGun.gameObject);    
+                }
+                
                 _primaryGun = value;
                 
                 Debug.Log($"{name}: Set gun {value.name}");
@@ -353,6 +358,11 @@ namespace TankBattle.Tanks
             get => _secondaryGun;
             set
             {
+                if (_secondaryGun != null)
+                {
+                    Destroy(_secondaryGun.gameObject);
+                }
+                
                 _secondaryGun = value;
                 
                 Transform missilePoint = transform.FirstOrDefault(t => t.name == "LaunchPoint");

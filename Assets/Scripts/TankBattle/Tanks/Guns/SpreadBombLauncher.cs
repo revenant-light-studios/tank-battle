@@ -19,6 +19,11 @@ namespace TankBattle.Tanks.Guns
             _launchPoint = transform.FirstOrDefault(t => t.name == "LaunchPoint");
         }
 
+        private void OnDestroy()
+        {
+            if(_aim) Destroy(_aim.gameObject);
+        }
+
         public override void RegisterInput(PlayerInput input)
         {
             _aim = transform.FirstOrDefault(t => t.name == "Aim")?.gameObject;
