@@ -1,4 +1,5 @@
 using TankBattle.InputManagers;
+using TankBattle.Tanks;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -25,10 +26,5 @@ namespace TankBattle.InGameGUI
         public VirtualButton ShootBtn { get => _shootBtn; }
 
         public VirtualButton SpecialShootBtn { get => _specialShootBtn; }
-        
-        public override void RegisterTank(GameObject tank)
-        {
-            base.RegisterTank(tank);
-        }
     }
 }

@@ -1,3 +1,4 @@
+using TankBattle.Navigation;
 using UnityEngine;
 
 namespace TankBattle.Global
@@ -19,6 +20,5 @@ namespace TankBattle.Global
             
             return settings ? !settings.forceMobile : true;
         }
-       
     }
 }

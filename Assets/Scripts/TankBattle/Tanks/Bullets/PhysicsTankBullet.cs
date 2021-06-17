@@ -1,3 +1,6 @@
+using System;
+using ExtensionMethods;
+using TankBattle.Tanks.Bullets.Effects;
 using UnityEngine;
 
 namespace TankBattle.Tanks.Bullets
@@ -7,19 +10,45 @@ namespace TankBattle.Tanks.Bullets
         [SerializeField] private float _force = 1f;
         private Rigidbody _rigidBody;
         
-        private void OnTriggerEnter(Collider other)
+        private Impact _impactEffect;
+        private GameObject _projectile;
+        private bool _started;
+
+        private void Awake()
         {
-            // Debug.Log($"Hit {other.name}");
-            Destroy(gameObject);
+            _rigidBody = GetComponent<Rigidbody>();
+            _impactEffect = transform.FirstOrDefault(t => t.name == "Impact")?.GetComponent<Impact>();
+            _projectile = transform.FirstOrDefault(t => t.name == "Projectile")?.gameObject;        
         }
+
         public override void Fire(Transform parent)
         {
-            PhysicsTankBullet bullet = Instantiate(this);
-            _rigidBody = bullet.GetComponent<Rigidbody>();
-            bullet.transform.rotation = parent.rotation;
-            bullet.transform.position = parent.position + parent.forward * 4f;
-            _rigidBody.AddForce(parent.forward.normalized * _force, ForceMode.Impulse);
-            // Debug.Log("Fire");
+            _started = true;
+        }
+
+        private void FixedUpdate()
+        {
+            if(_started)
+            {
+                _rigidBody.velocity = transform.forward * _force;
+            }
+        }
+
+        private void OnCollisionEnter(Collision other)
+        {
+            Debug.Log($"{name}: collided with {other.gameObject.name}");
+            if(_projectile) _projectile.SetActive(false);
+            
+            OnBulletHit?.Invoke(other.gameObject);
+            
+            float timeToDestroy = 0f;
+            if (_impactEffect)
+            {
+                _impactEffect.Play();
+                timeToDestroy = _impactEffect.Duration;
+            }
+
+            Destroy(gameObject, timeToDestroy);
         }
     }
 }

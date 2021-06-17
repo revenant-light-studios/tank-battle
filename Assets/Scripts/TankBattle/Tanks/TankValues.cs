@@ -1,6 +1,7 @@
 using ExtensionMethods;
 using Photon.Pun;
-using TankBattle.Tanks.Guns;
+using TankBattle.Tanks.Bullets;
+using TankBattle.Tanks.ForceFields;
 using UnityEditor;
 using UnityEngine;
 
@@ -28,45 +29,52 @@ namespace TankBattle.Tanks
 
         private PhotonView _photonView;
 
-        private ForceField.ForceField _forceField;
+        public ForceField ForceField;
+
+        private void Awake()
+        {
+            TankManager tankManager = GetComponent<TankManager>();
+            if (tankManager)
+            {
+                tankManager.OnTankWeaponEnabled += (gun, weapon) =>
+                {
+                    gun.OnTankHit = OnBulletHit;
+                };
+            }
+        }
 
         private void Start()
         {
-            _forceField = GetComponentInChildren<ForceField.ForceField>();
             _photonView = GetComponent<PhotonView>();
-            
             _shieldAmount = TotalShield;
             _armorAmount = TotalArmor;
-
-            ATankGun _gun = GetComponent<ATankGun>();
-            if(_gun) _gun.OnTankHit = OnBulletHit;
         }
-        private void OnBulletHit(TankValues otherValues)
+        private void OnBulletHit(TankValues otherValues, ATankBullet bullet)
         {
                 // other is a tank
-                otherValues.WasHit();
+                otherValues.WasHit(bullet);
                 HitOther();
                 
                 // Debug.LogFormat("{0} hit {4} tank. {0} hits: {1}, {4} shield: {2}, {4} armor: {3}", 
                 //     name, _totalHits, otherValues._shieldAmount, otherValues._armorAmount, otherValues.transform.name);
         }
 
-        public void WasHit()
+        public void WasHit(ATankBullet bullet)
         {
             // This only happens for me
             if (_shieldAmount > 0f)
             {
-                _forceField.ForceFieldHit();
-                _shieldAmount -= TotalShield * .1f;
+                ForceField.ForceFieldHit();
+                _shieldAmount -= TotalShield * (bullet ? bullet.Damage : 0.1f);
 
                 if (_shieldAmount <= 0f)
                 {
-                    _forceField.enabled = false;
+                    ForceField.gameObject.SetActive(false);
                 }
             }
             else if(_armorAmount > 0f)
             {
-                _armorAmount -= TotalArmor * 0.05f;
+                _armorAmount -= TotalArmor * (bullet ? bullet.Damage : 0.1f);
                 OnTankWasHit?.Invoke(this);
             }
             else
@@ -127,7 +135,7 @@ namespace TankBattle.Tanks
             if (GUILayout.Button("Take hit"))
             {
                 TankValues values = (TankValues)target;
-                values.WasHit();
+                values.WasHit(null);
             }
         }
     }

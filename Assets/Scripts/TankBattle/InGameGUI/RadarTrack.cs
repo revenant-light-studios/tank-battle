@@ -6,6 +6,15 @@ namespace TankBattle.InGameGUI
 {
     public class RadarTrack : MonoBehaviour
     {
+        public enum LockedState
+        {
+            Locked,
+            None
+        }
+
+        public Color LockedColor;
+        public Color TrackerColor;
+        
         private Canvas _parentCanvas;
         private Image _trackingImage;
         private Image _lifeBar;
@@ -19,7 +28,8 @@ namespace TankBattle.InGameGUI
         {
             _parentCanvas = transform.parent.GetComponent<Canvas>();
             _rectTransform = GetComponent<RectTransform>();
-            _trackingImage = transform.FirstOrDefault(t => t.name == "TrackingImage")?.GetComponent<Image>();
+            _trackingImage = transform.FirstOrDefault(t => t.name == "TrackerImage")?.GetComponent<Image>();
+            if (_trackingImage) _trackingImage.color = TrackerColor;
             
             _lifeBar = transform.FirstOrDefault(t => t.name == "LifeBar")?.GetComponent<Image>();
             _maxLife = _lifeBar.GetComponent<RectTransform>().sizeDelta;
@@ -75,6 +85,22 @@ namespace TankBattle.InGameGUI
         public void SetName(string objName)
         {
             if (_name) _name.text = objName;
+        }
+
+        public void SetTrackingState(LockedState state)
+        {
+            if (!_trackingImage) return;
+            
+            if (state == LockedState.None)
+            {
+                _trackingImage.color = TrackerColor;
+            }
+            else
+            {
+                _trackingImage.color = LockedColor;
+            }
+            
+            // Debug.Log($"Tracker for {_name.text} color set to {_trackingImage.color}");
         }
     }
 }
