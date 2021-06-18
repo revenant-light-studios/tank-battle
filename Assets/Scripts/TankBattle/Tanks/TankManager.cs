@@ -370,7 +370,7 @@ namespace TankBattle.Tanks
                 _secondaryGun.RegisterInput(_playerInput);
                 _secondaryGun.ParentTank = this;
                 _onTankWeaponEnabled?.Invoke(_secondaryGun, TankWeapon.Secondary);
-                
+                if (_trackedTank) _trackedTank.Locked = false;
             }
         }
         

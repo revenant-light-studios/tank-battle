@@ -16,9 +16,9 @@ MonoBehaviour:
   maximumNumberOfPlayers: 20
   startWaitTime: 10
   spawnDummyTanks: 1
-  numberOfDummies: 10
+  numberOfDummies: 3
   spawnSecondaryWeapons: 1
-  numberOfSecondaryWeapons: 4
+  numberOfSecondaryWeapons: 20
   secondaryWeapons:
   - {fileID: 1162825868874876437, guid: 67303218b007d4c998255c5124cd829e, type: 3}
   forceMobile: 0

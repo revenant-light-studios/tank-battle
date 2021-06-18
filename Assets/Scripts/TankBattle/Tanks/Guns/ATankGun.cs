@@ -15,6 +15,9 @@ namespace TankBattle.Tanks.Guns
 
         protected float LastFired;
         protected bool CanFire;
+        protected bool _canTrack;
+
+        public bool CanTrack => _canTrack; 
 
         protected TankManager _parentTank;
         public TankManager ParentTank
@@ -113,8 +116,8 @@ namespace TankBattle.Tanks.Guns
         public virtual void RegisterInput(PlayerInput input)
         {
             _playerInput = input;
-            _playerInput.OnTrigger1Pressed += () => TriggerPressed = true;
-            _playerInput.OnTrigger1Released += () => TriggerPressed = false;
+            _playerInput.Trigger1.OnTriggerPressed += () => TriggerPressed = true;
+            _playerInput.Trigger1.OnTriggerReleased += () => TriggerPressed = false;
         }
         
         

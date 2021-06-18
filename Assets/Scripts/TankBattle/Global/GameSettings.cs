@@ -30,7 +30,7 @@ namespace TankBattle.Global
         public bool spawnSecondaryWeapons;
 
         [FormerlySerializedAs("NumberOfSecondaryWeapons"), InspectorName("Number of secondary weapons"),
-         Tooltip("Number of secondary weapons per player to spawn"), Range(1, 5)]
+         Tooltip("Number of secondary weapons per player to spawn"), Range(1, 20)]
         public int numberOfSecondaryWeapons;
 
         [FormerlySerializedAs("SecondaryWeapons"), InspectorName("Secondary weapons"), Tooltip("Allowed secondary weapons")]

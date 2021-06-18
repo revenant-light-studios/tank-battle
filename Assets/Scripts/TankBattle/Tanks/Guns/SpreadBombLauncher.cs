@@ -30,8 +30,8 @@ namespace TankBattle.Tanks.Guns
             _aim.transform.SetParent(null, true);
 
             _playerInput = input;
-            _playerInput.OnTrigger2Pressed += OnTrigger2Pressed;
-            _playerInput.OnTrigger2Released += OnTrigger2Released;
+            _playerInput.Trigger2.OnTriggerPressed += OnTrigger2Pressed;
+            _playerInput.Trigger2.OnTriggerReleased += OnTrigger2Released;
         }
 
         protected override void Update()
