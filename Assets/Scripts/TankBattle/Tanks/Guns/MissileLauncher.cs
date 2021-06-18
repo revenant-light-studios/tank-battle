@@ -27,6 +27,7 @@ namespace TankBattle.Tanks.Guns
 
             _launcher = transform.FirstOrDefault(t => t.name == "Launcher");
             _launchSound = GetComponent<AudioSource>();
+            _canTrack = true;
         }
         
         public GameObject TrackedTank
@@ -43,8 +44,8 @@ namespace TankBattle.Tanks.Guns
         public override void RegisterInput(PlayerInput input)
         {
             _playerInput = input;
-            _playerInput.OnTrigger2Pressed += () => TriggerPressed = true;
-            _playerInput.OnTrigger2Released += () => TriggerPressed = false;
+            _playerInput.Trigger2.OnTriggerPressed += () => TriggerPressed = true;
+            _playerInput.Trigger2.OnTriggerReleased += () => TriggerPressed = false;
         }
 
         [PunRPC]
@@ -55,7 +56,7 @@ namespace TankBattle.Tanks.Guns
             Missile missileInstance = (Missile)Instantiate(_missile);
             if(_parentTank)
             {
-                Debug.Log($"Ignore self collissions");
+                // Debug.Log($"Ignore self collissions");
                 Physics.IgnoreCollision(missileInstance.GetComponentInChildren<Collider>(), _parentTank.ForceField.GetComponent<Collider>());
                 
             }

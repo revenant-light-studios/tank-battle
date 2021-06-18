@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8916951489947509266}
   - component: {fileID: 1162825868874876437}
   - component: {fileID: 1021230526440025776}
+  - component: {fileID: -1423827320441474638}
   m_Layer: 0
   m_Name: MissilePick
   m_TagString: Untagged
@@ -64,6 +65,28 @@ CapsuleCollider:
   m_Height: 7.37
   m_Direction: 1
   m_Center: {x: 0, y: 1.62, z: 0}
+--- !u!114 &-1423827320441474638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 793829117564201237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  observableSearch: 2
+  Synchronization: 3
+  OwnershipTransfer: 0
+  ObservedComponents: []
+  viewIdField: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &5664805797632598187
 GameObject:
   m_ObjectHideFlags: 0

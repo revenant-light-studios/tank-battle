@@ -45,16 +45,7 @@ namespace TankBattle.Terrain
             _meshCollider = GetComponent<MeshCollider>();
             _meshCollider.sharedMesh = _meshFilter.mesh;
         }
-
-        public Vector3 getEmptyRandomSpot()
-        {
-            Vector3 emptyRandomSpot = Vector3.zero;
-            
-            
-            
-            return emptyRandomSpot;
-        }
-
+        
         public float GetHeight(int x, int z)
         {
             Vector3 vertex = _meshData.vertices[x + z * _parameters.zSize];

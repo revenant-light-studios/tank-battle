@@ -99,7 +99,7 @@ namespace TankBattle.Tanks
             if (!_photonView.IsMine && PhotonNetwork.IsConnected) return;
             _totalHits += 1;
         }
-
+ 
         [PunRPC]
         private void DestroyTank()
         {

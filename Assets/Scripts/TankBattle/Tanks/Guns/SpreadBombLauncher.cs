@@ -19,14 +19,19 @@ namespace TankBattle.Tanks.Guns
             _launchPoint = transform.FirstOrDefault(t => t.name == "LaunchPoint");
         }
 
+        private void OnDestroy()
+        {
+            if(_aim) Destroy(_aim.gameObject);
+        }
+
         public override void RegisterInput(PlayerInput input)
         {
             _aim = transform.FirstOrDefault(t => t.name == "Aim")?.gameObject;
             _aim.transform.SetParent(null, true);
 
             _playerInput = input;
-            _playerInput.OnTrigger2Pressed += OnTrigger2Pressed;
-            _playerInput.OnTrigger2Released += OnTrigger2Released;
+            _playerInput.Trigger2.OnTriggerPressed += OnTrigger2Pressed;
+            _playerInput.Trigger2.OnTriggerReleased += OnTrigger2Released;
         }
 
         protected override void Update()
