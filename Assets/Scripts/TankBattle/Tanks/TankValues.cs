@@ -51,23 +51,23 @@ namespace TankBattle.Tanks
             _armorAmount = TotalArmor;
         }
         
-        private void OnBulletHit(TankValues otherValues, ATankBullet bullet)
+        private void OnBulletHit(TankValues otherValues, float damage)
         {
                 // other is a tank
-                otherValues.WasHit(bullet);
+                otherValues.WasHit(damage);
                 HitOther();
                 
                 // Debug.LogFormat("{0} hit {4} tank. {0} hits: {1}, {4} shield: {2}, {4} armor: {3}", 
                 //     name, _totalHits, otherValues._shieldAmount, otherValues._armorAmount, otherValues.transform.name);
         }
 
-        public void WasHit(ATankBullet bullet)
+        public void WasHit(float damage)
         {
             // This only happens for me
             if (_shieldAmount > 0f)
             {
                 ForceField.ForceFieldHit();
-                _shieldAmount -= TotalShield * (bullet ? bullet.Damage : 0.1f);
+                _shieldAmount -= TotalShield * damage;
 
                 if (_shieldAmount <= 0f)
                 {
@@ -76,7 +76,7 @@ namespace TankBattle.Tanks
             }
             else if(_armorAmount > 0f)
             {
-                _armorAmount -= TotalArmor * (bullet ? bullet.Damage : 0.1f);
+                _armorAmount -= TotalArmor * damage;
                 OnTankWasHit?.Invoke(this);
             }
             else
@@ -92,7 +92,6 @@ namespace TankBattle.Tanks
             }
             
             // Debug.LogFormat("Shield: {0}, Armor: {1}", _shieldAmount, _armorAmount);
-            
             OnValuesChanged?.Invoke(this);
         }
 
@@ -137,7 +136,7 @@ namespace TankBattle.Tanks
             if (GUILayout.Button("Take hit"))
             {
                 TankValues values = (TankValues)target;
-                values.WasHit(null);
+                values.WasHit(0.5f);
             }
         }
     }

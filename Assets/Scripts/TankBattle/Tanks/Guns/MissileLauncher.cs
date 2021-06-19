@@ -62,10 +62,11 @@ namespace TankBattle.Tanks.Guns
             }
             
             if(_trackedTank) missileInstance.target = _trackedTank;
-            missileInstance.OnBulletHit = OnBulletHit;
             missileInstance.transform.position = _launcher.transform.position;
             missileInstance.transform.rotation = _launcher.transform.rotation;
             missileInstance.Fire(transform);
+            
+            missileInstance.OnBulletHit = OnBulletHit;
 
             if (_launchSound)
             {
