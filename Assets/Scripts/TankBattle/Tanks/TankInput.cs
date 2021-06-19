@@ -15,20 +15,34 @@ namespace TankBattle.Tanks
         private PhotonView _photonView;
         private ATankEngine _engine;
         private ATankTurret _turret;
+        
+        // Triggers
+        public Trigger Trigger1 = new Trigger();
+        public Trigger Trigger2 = new Trigger();
+        public Trigger LockTrigger = new Trigger();
 
         [SerializeField, FormerlySerializedAs("AxisStateX")]
         private AxisState _axisStateX;
         [SerializeField, FormerlySerializedAs("AxisStateY")]
         private AxisState _axisStateY;
 
-        private VirtualJoystick _movementJoystick;
-        private VirtualButton _shootButton;
-        private VirtualButton _secondaryShootButton;
-        private VirtualButton _secondaryTrackButton;
+        // private VirtualJoystick _movementJoystick;
+        // private VirtualButton _shootButton;
+        // private VirtualButton _secondaryShootButton;
+        // private VirtualButton _secondaryTrackButton;
+        //
+        // public void InitInput(VirtualJoystick movement, VirtualJoystick aim, VirtualButton shoot, VirtualButton specialShoot)
+        // {
+        //     PlayerInputManager.instance.JoinPlayer();    
+        //     Cursor.lockState = CursorLockMode.Locked;
+        // }
 
-        public void InitInput(VirtualJoystick movement, VirtualJoystick aim, VirtualButton shoot, VirtualButton specialShoot)
+        public void InitInput()
         {
-            PlayerInputManager.instance.JoinPlayer();    
+            PlayerInputManager.instance.JoinPlayer();
+            PlayerInput playerInput = GetComponent<PlayerInput>();
+            playerInput.user.ActivateControlScheme(GlobalMethods.IsDesktop() ? "Desktop" : "Mobile");
+            
             Cursor.lockState = CursorLockMode.Locked;
         }
         
@@ -72,7 +86,7 @@ namespace TankBattle.Tanks
 
         public void OnLock(InputValue inputValue)
         {
-            Trigger3.IsPressed = inputValue.isPressed;
+            LockTrigger.IsPressed = inputValue.isPressed;
         }
         
         private void LateUpdate()
@@ -93,27 +107,6 @@ namespace TankBattle.Tanks
             _axisStateY.Update(Time.fixedDeltaTime);
             _axisStateX.Update(Time.fixedDeltaTime);
         }
-
-        #region Weapon triggers management
-        public Trigger Trigger1 = new Trigger();
-        public Trigger Trigger2 = new Trigger();
-        public Trigger Trigger3 = new Trigger();
-
-        private void GunInput()
-        {
-            if (GlobalMethods.IsDesktop())
-            {
-                Trigger1.IsPressed = Input.GetButton("Trigger1");
-                Trigger2.IsPressed = Input.GetButton("Trigger2");
-                Trigger3.IsPressed = Input.GetButton("Lock");
-            }
-            else
-            {
-                Trigger1.IsPressed = _shootButton.IsPressed();
-                Trigger2.IsPressed = _secondaryShootButton.IsPressed();
-            }
-        }
-        #endregion
     }
 
     public class Trigger

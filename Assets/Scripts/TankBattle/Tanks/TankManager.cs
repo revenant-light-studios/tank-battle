@@ -148,16 +148,17 @@ namespace TankBattle.Tanks
         {
             // Init input
             _tankInput.enabled = true;
+            _tankInput.InitInput();
             
-            if (GlobalMethods.IsDesktop())
-            {
-                _tankInput.InitInput(null, null, null, null);
-            }
-            else
-            {
-                TankHudMobile tankHudMobile = (TankHudMobile)_tankHud;
-                _tankInput.InitInput(tankHudMobile.MovementJoystick, tankHudMobile.AimJoystick, tankHudMobile.ShootBtn, tankHudMobile.SpecialShootBtn);
-            }
+            // if (GlobalMethods.IsDesktop())
+            // {
+            //     _tankInput.InitInput(null, null, null, null);
+            // }
+            // else
+            // {
+            //     TankHudMobile tankHudMobile = (TankHudMobile)_tankHud;
+            //     _tankInput.InitInput(tankHudMobile.MovementJoystick, tankHudMobile.AimJoystick, tankHudMobile.ShootBtn, tankHudMobile.SpecialShootBtn);
+            // }
         }
         #endregion
         
@@ -170,7 +171,7 @@ namespace TankBattle.Tanks
         
         private void InitEnemyTracker()
         {
-            _tankInput.Trigger3.OnTriggerPressed += () => SelectNextEnemy();
+            _tankInput.LockTrigger.OnTriggerPressed += () => SelectNextEnemy();
             
             _cameraTransform = GameObject.Find("Camera Position")?.transform;
             _camera = _cameraTransform.FirstOrDefault(t => t.name == "Main Camera").GetComponent<UnityEngine.Camera>();

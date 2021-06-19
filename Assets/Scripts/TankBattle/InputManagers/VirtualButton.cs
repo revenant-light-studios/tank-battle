@@ -1,11 +1,14 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.Layouts;
+using UnityEngine.InputSystem.OnScreen;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace TankBattle.InputManagers
 {
-    public class VirtualButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+    public class VirtualButton : OnScreenControl, IPointerDownHandler, IPointerUpHandler
     {
         private bool _pointerDown;
         private bool _isPressed;
@@ -27,6 +30,7 @@ namespace TankBattle.InputManagers
 
         public void OnPointerDown(PointerEventData eventData)
         {
+            // Debug.Log($"Pointer down");
             _pointerDown = true;
             _pointerDownTimer = 0f;
             _fillImage.fillAmount = 0f;
@@ -34,6 +38,7 @@ namespace TankBattle.InputManagers
 
         public void OnPointerUp(PointerEventData eventData)
         {
+            // Debug.Log($"Pointer up");
             _pointerDown = false;
         }
 
@@ -68,7 +73,17 @@ namespace TankBattle.InputManagers
                 _fillImage.fillAmount = _isPressed ? 1f : 0f;
             }
             
-            // Debug.Log($"{gameObject.name} -> Pressed: {_isPressed}");
-        } 
+            SendValueToControl(_isPressed ? 1.0f : 0.0f);
+        }
+        
+        [InputControl(layout = "Button")]
+        [SerializeField]
+        private string m_ControlPath;
+
+        protected override string controlPathInternal
+        {
+            get => m_ControlPath;
+            set => m_ControlPath = value;
+        }
     }
 }
