@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using ExtensionMethods;
 using TankBattle.Navigation;
 using TankBattle.Tanks.Bullets.Effects;
-using TankBattle.Tanks.ForceFields;
 using UnityEngine;
 
 namespace TankBattle.Tanks.Bullets

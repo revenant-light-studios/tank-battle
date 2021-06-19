@@ -1,5 +1,4 @@
-﻿using System;
-using ExtensionMethods;
+﻿using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Tanks;
 using TankBattle.Tanks.Guns;

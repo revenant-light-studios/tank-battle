@@ -1,4 +1,3 @@
-using System;
 using ExitGames.Client.Photon;
 using ExtensionMethods;
 using Photon.Pun;

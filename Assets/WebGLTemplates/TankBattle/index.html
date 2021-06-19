@@ -3,25 +3,50 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>%UNITY_WEB_NAME%</title>
-    
+
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        
+
         <link rel="stylesheet" href="css/tank-battle.css" />
-    
-        <!-- unity resources -->
-        <script src="%UNITY_WEBGL_LOADER_URL%"></script>
-        <script>
-            var unityInstance = UnityLoader.instantiate("unityContainer", "%UNITY_WEBGL_BUILD_URL%");
-        </script>
     </head>
     <body>
-        <div id="unityContainer"></div>
-    
+      <div id="unityContainer">
+        <canvas id="unity-canvas" />
+      </div>
+
         <!-- check for F key press to toggle full screen -->
         <script>
             var isFullscreen = false;
-    
+
+            var buildUrl = "Build";
+            var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
+
+            var config = {
+              dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+              frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+              codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+#if MEMORY_FILENAME
+              memoryUrl: buildUrl + "/{{{ MEMORY_FILENAME }}}",
+#endif
+#if SYMBOLS_FILENAME
+              symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
+#endif
+              streamingAssetsUrl: "StreamingAssets",
+              companyName: "{{{ COMPANY_NAME }}}",
+              productName: "{{{ PRODUCT_NAME }}}",
+              productVersion: "{{{ PRODUCT_VERSION }}}",
+            };
+
+            var script = document.createElement("script");
+            script.src = loaderUrl;
+            script.onload = () => {
+              var unityInstance = createUnityInstance(document.querySelector("#unity-canvas"), config)
+                .then(function(unityInstance) {
+                  unityInstance.SetFullscreen(1);
+                })
+            };
+            document.body.appendChild(script);
+
             document.addEventListener('keydown', function(event) {
                 if (event.which === 70) {
                     if (!isFullscreen) {

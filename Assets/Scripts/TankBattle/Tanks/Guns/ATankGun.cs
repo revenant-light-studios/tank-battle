@@ -16,9 +16,15 @@ namespace TankBattle.Tanks.Guns
         protected float LastFired;
         protected bool CanFire;
         protected bool _canTrack;
+        public bool CanTrack => _canTrack;
+        
+        protected PhotonView _photonView;
 
-        public bool CanTrack => _canTrack; 
+        [SerializeField] public ATankBullet TankBullet;
 
+        public delegate void OnEnergyUpdateDelegate(float currentEnergy, float minimumEnergy);
+        public OnEnergyUpdateDelegate OnEnergyUpdate;
+        
         protected TankManager _parentTank;
         public TankManager ParentTank
         {
@@ -42,84 +48,6 @@ namespace TankBattle.Tanks.Guns
                 CanFire = true;
             }
         }
-        
-        protected PhotonView _photonView;
-        
-        public virtual void Fire()
-        {
-            if (!CanFire) return;
-            
-            if(PhotonNetwork.IsConnected && _photonView.IsMine)
-            {
-                _photonView.RPC("NetworkFire", RpcTarget.All);
-            }
-            else
-            {
-                NetworkFire();
-            }
-
-            LastFired = 0.0f;
-            CanFire = false;
-        }
-
-        [SerializeField] public ATankBullet TankBullet;
-        
-        [PunRPC]
-        public abstract void NetworkFire();
-
-        public delegate void OnEnergyUpdateDelegate(float currentEnergy, float minimumEnergy);
-        public OnEnergyUpdateDelegate OnEnergyUpdate;
-
-        public delegate void OnTankHitDelegate(TankValues other, ATankBullet bullet);
-        public OnTankHitDelegate OnTankHit;
-        
-        protected bool OnBulletHit(GameObject other)
-        {
-            TankValues tankValues = other.GetComponent<TankValues>();
-            
-            // If it's a force field then get parent tank values
-            if (!tankValues)
-            {
-                ForceField forceField = other.GetComponent<ForceField>();
-                if (forceField)
-                {
-                    tankValues = forceField.ParentTank.GetComponent<TankValues>();
-                }
-            }
-
-            // Return true if collides with own object
-            if (tankValues && ParentTank && tankValues.gameObject == ParentTank.gameObject) return true;
-            
-            if (tankValues)
-            {
-                Debug.Log($"Hit {other.name}");
-                if (OnTankHit != null)
-                {
-                    OnTankHit?.Invoke(tankValues, TankBullet);    
-                }
-                else
-                {
-                    tankValues.WasHit(TankBullet);
-                }
-            }
-
-            return false;
-        }
-
-        protected PlayerInput _playerInput;
-        protected bool TriggerPressed;
-
-        /// <summary>
-        /// Associates this gun to input trigger
-        /// </summary>
-        /// <param name="input"></param>
-        public virtual void RegisterInput(PlayerInput input)
-        {
-            _playerInput = input;
-            _playerInput.Trigger1.OnTriggerPressed += () => TriggerPressed = true;
-            _playerInput.Trigger1.OnTriggerReleased += () => TriggerPressed = false;
-        }
-        
         
         /// <summary>
         /// Called when the weapon is instantiated through network
@@ -145,6 +73,108 @@ namespace TankBattle.Tanks.Guns
                 tankManager.SecondaryGun = this;
             }
         }
+        
+        #region Fire management
+        public virtual void Fire()
+        {
+            // Firing is authoritative
+            if (!_photonView.IsMine && PhotonNetwork.IsConnected) return;
+            
+            if (!CanFire) return;
+
+            if(PhotonNetwork.IsConnected)
+            {
+                _photonView.RPC("NetworkFire", RpcTarget.All);
+            }
+            else
+            {
+                NetworkFire();
+            }
+
+            LastFired = 0.0f;
+            CanFire = false;
+        }
+
+        
+        [PunRPC]
+        public abstract void NetworkFire();
+        #endregion
+        
+        #region Impact management
+        public delegate void OnTankHitDelegate(TankValues other, float damage);
+        public OnTankHitDelegate OnTankHit;
+        
+        protected bool OnBulletHit(GameObject other)
+        {
+            // Impact is authoritative
+            if (!_photonView.IsMine && PhotonNetwork.IsConnected) return false;
+            
+            TankValues tankValues = other.GetComponent<TankValues>();
+            
+            // If it's a force field then get parent tank values
+            if (!tankValues)
+            {
+                ForceField forceField = other.GetComponent<ForceField>();
+                if (forceField)
+                {
+                    tankValues = forceField.ParentTank.GetComponent<TankValues>();
+                }
+            }
+
+            // Return true if collides with own object
+            // if (tankValues && ParentTank && tankValues.gameObject == ParentTank.gameObject) return true;
+            
+            if (tankValues)
+            {
+                if (PhotonNetwork.IsConnected)
+                {
+                    _photonView.RPC("NetworkHit", RpcTarget.All, tankValues.GetComponent<PhotonView>().ViewID, TankBullet.Damage);
+                }
+                else
+                {
+                    DelegateHit(tankValues, TankBullet.Damage);
+                }
+            }
+
+            return false;
+        }
+
+        [PunRPC]
+        public void NetworkHit(int viewID, float damage)
+        {
+            PhotonView targetView = PhotonNetwork.GetPhotonView(viewID);
+            DelegateHit(targetView.GetComponent<TankValues>(), damage);
+        }
+
+        private void DelegateHit(TankValues tankValues, float damage)
+        {
+            Debug.Log($"Hit {tankValues.name}");
+            if (OnTankHit != null)
+            {
+                OnTankHit?.Invoke(tankValues, TankBullet.Damage);    
+            }
+            else
+            {
+                tankValues.WasHit(TankBullet.Damage);
+            }
+        }
+        #endregion
+
+        #region Input management
+        protected TankInput TankInput;
+        protected bool TriggerPressed;
+
+        /// <summary>
+        /// Associates this gun to input trigger
+        /// </summary>
+        /// <param name="input"></param>
+        public virtual void RegisterInput(TankInput input)
+        {
+            TankInput = input;
+            TankInput.Trigger1.OnTriggerPressed += () => TriggerPressed = true;
+            TankInput.Trigger1.OnTriggerReleased += () => TriggerPressed = false;
+        }
+        #endregion
     }
     
 #if UNITY_EDITOR

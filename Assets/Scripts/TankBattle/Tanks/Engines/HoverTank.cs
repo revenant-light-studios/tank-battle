@@ -1,3 +1,4 @@
+using System;
 using ExtensionMethods;
 using TankBattle.Tanks.Turrets;
 using UnityEngine;
@@ -11,11 +12,12 @@ namespace TankBattle.Tanks.Engines
         public float FlightDistance = 0.6f;
         public float HoverForce = 80000;
         private float _deadZone = 0.1f;
+        
         public float ForwardAccel = 10000.0f;
         public float BackwardAccel = 2500.0f;
+        public float TurnRate = 500f;
 
         private float _thrust = 0;
-        public float TurnRate = 500f;
         private float _turn;
 
         RaycastHit _raycastHit;
@@ -49,6 +51,11 @@ namespace TankBattle.Tanks.Engines
             Cursor.visible = false;
         }
 
+        private void FixedUpdate()
+        {
+            UpdateTank();
+        }
+
         private void UpdateAntiGravityEngines()
         {
             float tankWidth = _tankBase.GetComponent<MeshFilter>().mesh.bounds.size.x;
@@ -73,18 +80,22 @@ namespace TankBattle.Tanks.Engines
 
         public override void UpdateTank()
         {
+            // Forward movement
             if (Mathf.Abs(_thrust) > 0f)
             {
-                _rigidbody.AddForce(transform.forward * _thrust);
+                // Debug.Log($"Thrust {_thrust}");
+                float accel = _thrust > 0f ? ForwardAccel : BackwardAccel;
+                _rigidbody.AddForce(transform.forward * (_thrust * accel), ForceMode.Acceleration);
             }
+            // float accel = _thrust > 0f ? ForwardAccel : BackwardAccel;
+            // _rigidbody.velocity = transform.forward * (_thrust * accel);
 
-            if (Mathf.Abs(_turn) > 0f)
-            {
-                _rigidbody.AddTorque(Vector3.up * (_turn * TurnRate));
-            }
-
-            _thrust = 0f;
-            _turn = 0f;
+            // Rotation
+            // if (Mathf.Abs(_turn) > 0f)
+            // {
+            //     _rigidbody.AddTorque(Vector3.up * (_turn * TurnRate));
+            // }
+            _rigidbody.angularVelocity = Vector3.up * (_turn * TurnRate);
 
             // Hovering
             for(int i=0; i < _antyGravityEngines.Length; i++)
@@ -125,24 +136,15 @@ namespace TankBattle.Tanks.Engines
         public override float InputHorizontalAxis
         {
             set {
-                if (Mathf.Abs(value) > _deadZone)
-                {
-                    _turn = value;
-                }
+                _turn = value;
             }
         }
         
         public override float InputVerticalAxis
         {
-            set {
-                if (value > _deadZone)
-                {
-                    _thrust = value * ForwardAccel;
-                }
-                else if(value < -_deadZone)
-                {
-                    _thrust = value * BackwardAccel;
-                }
+            set
+            {
+                _thrust = value;
             }
         }
     }

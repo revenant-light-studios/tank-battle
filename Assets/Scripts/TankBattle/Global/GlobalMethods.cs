@@ -1,4 +1,3 @@
-using TankBattle.Navigation;
 using UnityEngine;
 
 namespace TankBattle.Global

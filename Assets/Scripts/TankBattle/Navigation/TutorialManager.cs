@@ -1,9 +1,7 @@
-﻿using ExtensionMethods;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using ExtensionMethods;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
 
 namespace TankBattle.Navigation
 {

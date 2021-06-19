@@ -1,5 +1,4 @@
 using TankBattle.InputManagers;
-using TankBattle.Tanks;
 using UnityEngine;
 using UnityEngine.Serialization;
 
