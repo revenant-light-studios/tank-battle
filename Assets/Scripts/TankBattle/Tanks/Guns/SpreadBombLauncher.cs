@@ -1,4 +1,3 @@
-using System;
 using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Tanks.Bullets;
@@ -24,14 +23,14 @@ namespace TankBattle.Tanks.Guns
             if(_aim) Destroy(_aim.gameObject);
         }
 
-        public override void RegisterInput(PlayerInput input)
+        public override void RegisterInput(TankInput input)
         {
             _aim = transform.FirstOrDefault(t => t.name == "Aim")?.gameObject;
             _aim.transform.SetParent(null, true);
 
-            _playerInput = input;
-            _playerInput.Trigger2.OnTriggerPressed += OnTrigger2Pressed;
-            _playerInput.Trigger2.OnTriggerReleased += OnTrigger2Released;
+            TankInput = input;
+            TankInput.Trigger2.OnTriggerPressed += OnTrigger2Pressed;
+            TankInput.Trigger2.OnTriggerReleased += OnTrigger2Released;
         }
 
         protected override void Update()

@@ -14,14 +14,14 @@ namespace TankBattle.Tanks
 {
     [RequireComponent(typeof(PhotonView)),
      RequireComponent(typeof(ATankCamera)), 
-     RequireComponent(typeof(PlayerInput)),
+     RequireComponent(typeof(TankInput)),
      RequireComponent(typeof(TankValues)),
      RequireComponent(typeof(DetectableObject))]
     public class TankManager : MonoBehaviour, IPunInstantiateMagicCallback
     {
         private PhotonView _photonView;
         private ATankCamera _cameraFollow;
-        private PlayerInput _playerInput;
+        private TankInput _tankInput;
         private ATankHud _tankHud;
         private ATankTurret _turret;
         private TankValues _tankValues;
@@ -46,7 +46,7 @@ namespace TankBattle.Tanks
             _tankValues = GetComponent<TankValues>();
             _photonView = GetComponent<PhotonView>();
             _cameraFollow = GetComponent<ATankCamera>();
-            _playerInput = GetComponent<PlayerInput>();
+            _tankInput = GetComponent<TankInput>();
             _detectableObject = GetComponent<DetectableObject>();
             _turret = GetComponentInChildren<ATankTurret>();
 
@@ -92,7 +92,7 @@ namespace TankBattle.Tanks
                 // All non local tanks
                 Radar.Instance.AddDetectableObject(_detectableObject);
 
-                _playerInput.enabled = false;
+                _tankInput.enabled = false;
                 _cameraFollow.enabled = false;
 
                 if (IsDummy)
@@ -107,19 +107,14 @@ namespace TankBattle.Tanks
             if ((_photonView.IsMine || !PhotonNetwork.IsConnected) && !IsDummy)
             {
                 UpdateEnemyTracker();
-            
-                // Testing
-                if (Input.GetKeyDown(KeyCode.Tab))
-                {
-                    // Debug.Log("Tracking key pressed");
-                    SelectNextEnemy();
-                }
             }
         }
 
         private void FixedUpdate()
         {
-            _forceField.transform.position = transform.position;
+            Vector3 position = transform.position;
+            position.y = 0f;
+            _forceField.transform.position = position;
         }
 
         public void OnPhotonInstantiate(PhotonMessageInfo info)
@@ -152,16 +147,16 @@ namespace TankBattle.Tanks
         private void InitInput()
         {
             // Init input
-            _playerInput.enabled = true;
+            _tankInput.enabled = true;
             
             if (GlobalMethods.IsDesktop())
             {
-                _playerInput.InitInput(null, null, null, null);
+                _tankInput.InitInput(null, null, null, null);
             }
             else
             {
                 TankHudMobile tankHudMobile = (TankHudMobile)_tankHud;
-                _playerInput.InitInput(tankHudMobile.MovementJoystick, tankHudMobile.AimJoystick, tankHudMobile.ShootBtn, tankHudMobile.SpecialShootBtn);
+                _tankInput.InitInput(tankHudMobile.MovementJoystick, tankHudMobile.AimJoystick, tankHudMobile.ShootBtn, tankHudMobile.SpecialShootBtn);
             }
         }
         #endregion
@@ -175,6 +170,8 @@ namespace TankBattle.Tanks
         
         private void InitEnemyTracker()
         {
+            _tankInput.Trigger3.OnTriggerPressed += () => SelectNextEnemy();
+            
             _cameraTransform = GameObject.Find("Camera Position")?.transform;
             _camera = _cameraTransform.FirstOrDefault(t => t.name == "Main Camera").GetComponent<UnityEngine.Camera>();
             _launchPointTransform = transform.FirstOrDefault(t => t.name == "FirePoint");
@@ -343,7 +340,7 @@ namespace TankBattle.Tanks
                 Debug.Log($"{name}: Set gun {value.name}");
                 Transform firePoint = transform.FirstOrDefault(t => t.name == "FirePoint");
                 _primaryGun.transform.SetParent(firePoint, false);
-                _primaryGun.RegisterInput(_playerInput);
+                _primaryGun.RegisterInput(_tankInput);
                 _primaryGun.ParentTank = this;
                 _onTankWeaponEnabled?.Invoke(_primaryGun, TankWeapon.Primary);
             }
@@ -367,7 +364,7 @@ namespace TankBattle.Tanks
                 
                 Transform missilePoint = transform.FirstOrDefault(t => t.name == "LaunchPoint");
                 _secondaryGun.transform.SetParent(missilePoint, false);
-                _secondaryGun.RegisterInput(_playerInput);
+                _secondaryGun.RegisterInput(_tankInput);
                 _secondaryGun.ParentTank = this;
                 _onTankWeaponEnabled?.Invoke(_secondaryGun, TankWeapon.Secondary);
                 if (_trackedTank) _trackedTank.Locked = false;

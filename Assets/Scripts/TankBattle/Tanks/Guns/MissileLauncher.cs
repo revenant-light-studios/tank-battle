@@ -41,11 +41,11 @@ namespace TankBattle.Tanks.Guns
             }
         }
 
-        public override void RegisterInput(PlayerInput input)
+        public override void RegisterInput(TankInput input)
         {
-            _playerInput = input;
-            _playerInput.Trigger2.OnTriggerPressed += () => TriggerPressed = true;
-            _playerInput.Trigger2.OnTriggerReleased += () => TriggerPressed = false;
+            TankInput = input;
+            TankInput.Trigger2.OnTriggerPressed += () => TriggerPressed = true;
+            TankInput.Trigger2.OnTriggerReleased += () => TriggerPressed = false;
         }
 
         [PunRPC]

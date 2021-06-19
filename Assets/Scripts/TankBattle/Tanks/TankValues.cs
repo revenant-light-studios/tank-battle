@@ -1,3 +1,4 @@
+using System;
 using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Tanks.Bullets;
@@ -49,6 +50,7 @@ namespace TankBattle.Tanks
             _shieldAmount = TotalShield;
             _armorAmount = TotalArmor;
         }
+        
         private void OnBulletHit(TankValues otherValues, ATankBullet bullet)
         {
                 // other is a tank

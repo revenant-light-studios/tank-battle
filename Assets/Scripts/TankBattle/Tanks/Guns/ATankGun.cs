@@ -106,18 +106,18 @@ namespace TankBattle.Tanks.Guns
             return false;
         }
 
-        protected PlayerInput _playerInput;
+        protected TankInput TankInput;
         protected bool TriggerPressed;
 
         /// <summary>
         /// Associates this gun to input trigger
         /// </summary>
         /// <param name="input"></param>
-        public virtual void RegisterInput(PlayerInput input)
+        public virtual void RegisterInput(TankInput input)
         {
-            _playerInput = input;
-            _playerInput.Trigger1.OnTriggerPressed += () => TriggerPressed = true;
-            _playerInput.Trigger1.OnTriggerReleased += () => TriggerPressed = false;
+            TankInput = input;
+            TankInput.Trigger1.OnTriggerPressed += () => TriggerPressed = true;
+            TankInput.Trigger1.OnTriggerReleased += () => TriggerPressed = false;
         }
         
         

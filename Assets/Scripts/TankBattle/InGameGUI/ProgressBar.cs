@@ -3,7 +3,6 @@ using ExtensionMethods;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif

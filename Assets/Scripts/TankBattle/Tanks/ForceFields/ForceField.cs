@@ -1,7 +1,4 @@
-using System;
 using System.Collections;
-using ExtensionMethods;
-using TankBattle.Tanks.Bullets;
 using UnityEngine;
 using UnityEngine.Serialization;
 

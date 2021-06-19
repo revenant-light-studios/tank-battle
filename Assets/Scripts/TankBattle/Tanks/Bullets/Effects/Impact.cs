@@ -1,5 +1,3 @@
-using System;
-using TankBattle.Audio;
 using UnityEngine;
 
 namespace TankBattle.Tanks.Bullets.Effects
