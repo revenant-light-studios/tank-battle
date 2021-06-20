@@ -3,6 +3,7 @@ using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Global;
 using TankBattle.InGameGUI;
+using TankBattle.InGameGUI.Hud;
 using TankBattle.Navigation;
 using TankBattle.Tanks.Camera;
 using TankBattle.Tanks.ForceFields;
@@ -81,10 +82,10 @@ namespace TankBattle.Tanks
             {
                 // Only local player tank
                 InitUI();
-                InitTankGunsFromPrefabs();
                 InitEnemyTracker();
                 InitInput();
                 InitCamera();
+                InitTankGunsFromPrefabs();
                 
                 // Put local tank in non collission layer
                 // gameObject.SetLayerRecursively(12);
