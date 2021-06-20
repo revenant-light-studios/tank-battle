@@ -6,6 +6,8 @@ using TankBattle.Tanks.Engines;
 using TankBattle.Tanks.Turrets;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.EnhancedTouch;
+using UnityEngine.InputSystem.Users;
 using UnityEngine.Serialization;
 
 namespace TankBattle.Tanks
@@ -25,25 +27,22 @@ namespace TankBattle.Tanks
         private AxisState _axisStateX;
         [SerializeField, FormerlySerializedAs("AxisStateY")]
         private AxisState _axisStateY;
-
-        // private VirtualJoystick _movementJoystick;
-        // private VirtualButton _shootButton;
-        // private VirtualButton _secondaryShootButton;
-        // private VirtualButton _secondaryTrackButton;
-        //
-        // public void InitInput(VirtualJoystick movement, VirtualJoystick aim, VirtualButton shoot, VirtualButton specialShoot)
-        // {
-        //     PlayerInputManager.instance.JoinPlayer();    
-        //     Cursor.lockState = CursorLockMode.Locked;
-        // }
-
+        
         public void InitInput()
         {
-            PlayerInputManager.instance.JoinPlayer();
             PlayerInput playerInput = GetComponent<PlayerInput>();
-            playerInput.user.ActivateControlScheme(GlobalMethods.IsDesktop() ? "Desktop" : "Mobile");
+            playerInput.enabled = true;
+            PlayerInputManager.instance.JoinPlayer();
+            Cursor.lockState = GlobalMethods.IsDesktop() ? CursorLockMode.Locked : CursorLockMode.None;
             
-            Cursor.lockState = CursorLockMode.Locked;
+            #if UNITY_EDITOR
+            if (!GlobalMethods.IsDesktop())
+            {
+                playerInput.user.UnpairDevices();
+                InputUser.PerformPairingWithDevice(Gamepad.current, playerInput.user);
+                TouchSimulation.Enable();
+            }
+            #endif
         }
         
         private void Start()
