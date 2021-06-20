@@ -83,6 +83,7 @@ namespace TankBattle.Navigation
             // Debug.Log("Start game");
             if (PhotonNetwork.IsMasterClient)
             {
+                PhotonNetwork.CurrentRoom.IsOpen = false;
                 PhotonNetwork.LoadLevel("GamePlay");
             }
         }

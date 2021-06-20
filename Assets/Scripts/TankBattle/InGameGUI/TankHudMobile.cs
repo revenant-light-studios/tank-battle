@@ -1,4 +1,7 @@
+using ExtensionMethods;
 using TankBattle.InputManagers;
+using TankBattle.Tanks;
+using TankBattle.Tanks.Guns;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -6,24 +9,43 @@ namespace TankBattle.InGameGUI
 {
     public class TankHudMobile : TankHud
     {
-        [SerializeField, FormerlySerializedAs("MovementJoystick")]
         private VirtualJoystick _movementJoystick;
-        
-        [SerializeField, FormerlySerializedAs("AimJoystick")]
         private VirtualJoystick _aimJoystick;
+        private VirtualButton _primaryShootButton;
+        private VirtualButton _secondaryShootButton;
+        private VirtualButton _lockButton;
 
-        [SerializeField, FormerlySerializedAs("Shoot")]
-        private VirtualButton _shootBtn;
+        protected override void Awake()
+        {
+            base.Awake();
 
-        [SerializeField, FormerlySerializedAs("SpecialShoot")]
-        private VirtualButton _specialShootBtn;
+            _movementJoystick = transform.FirstOrDefault(t => t.name == "MovementJoystick").GetComponent<VirtualJoystick>();
+            _aimJoystick = transform.FirstOrDefault(t => t.name == "AimJoystick").GetComponent<VirtualJoystick>();
+            _primaryShootButton = transform.FirstOrDefault(t => t.name == "PrimaryShootButton").GetComponent<VirtualButton>();
+            _secondaryShootButton = transform.FirstOrDefault(t => t.name == "SecondaryShootButton").GetComponent<VirtualButton>();
+            _secondaryShootButton.gameObject.SetActive(false);
+            _lockButton = transform.FirstOrDefault(t => t.name == "LockButton").GetComponent<VirtualButton>();
+            _lockButton.gameObject.SetActive(false);
+        }
 
-        public VirtualJoystick MovementJoystick { get => _movementJoystick; }
-        
-        public VirtualJoystick AimJoystick { get => _aimJoystick; }
-        
-        public VirtualButton ShootBtn { get => _shootBtn; }
+        protected override void OnTankWeaponEnabled(ATankGun gun, TankManager.TankWeapon weapon)
+        {
+            base.OnTankWeaponEnabled(gun, weapon);
 
-        public VirtualButton SpecialShootBtn { get => _specialShootBtn; }
+            if (weapon == TankManager.TankWeapon.Secondary)
+            {
+                if (gun != null)
+                {
+                    _secondaryShootButton.gameObject.SetActive(true);
+                    _lockButton.gameObject.SetActive(gun.CanTrack);
+                    gun.OnNumberOfBulletsChange += bullets => _secondaryShootButton.Text = $"{bullets}";
+                }
+                else
+                {
+                    _secondaryShootButton.gameObject.SetActive(false);
+                    _lockButton.gameObject.SetActive(false);
+                }
+            }
+        }
     }
 }

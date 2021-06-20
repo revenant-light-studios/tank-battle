@@ -45,13 +45,34 @@ namespace TankBattle.Items
 
                     if (PhotonNetwork.IsConnected)
                     {
-                        PhotonNetwork.Destroy(GetComponent<PhotonView>());
+                        PhotonView view = GetComponent<PhotonView>();
+                        view.RPC("NetworkDestroyObject", RpcTarget.All, view.ViewID);
                     }
                     else
                     {
-                        Destroy(gameObject);
+                        DestroyObject(gameObject);
                     }
                 }
+            }
+        }
+
+        [PunRPC]
+        public void NetworkDestroyObject(int viewId)
+        {
+            if (!PhotonNetwork.IsMasterClient) return;
+            PhotonView view = PhotonNetwork.GetPhotonView(viewId);
+            DestroyObject(view.gameObject);
+        }
+
+        private void DestroyObject(GameObject gameObject)
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                PhotonNetwork.Destroy(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);   
             }
         }
     }

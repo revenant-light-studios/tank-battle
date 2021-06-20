@@ -3,6 +3,7 @@ using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Global;
 using TankBattle.InGameGUI;
+using TankBattle.Navigation;
 using TankBattle.Tanks.Camera;
 using TankBattle.Tanks.ForceFields;
 using TankBattle.Tanks.Guns;
@@ -49,7 +50,8 @@ namespace TankBattle.Tanks
             _tankInput = GetComponent<TankInput>();
             _detectableObject = GetComponent<DetectableObject>();
             _turret = GetComponentInChildren<ATankTurret>();
-
+            _tankHud = PlayRoomManager.Instance.UserUI.GetComponentInChildren<ATankHud>();
+            
             if (!_forceFieldPrefab)
             {
                 _forceFieldPrefab = Resources.Load<ForceField>("Tanks/ForceFields/ForceField");
@@ -78,12 +80,12 @@ namespace TankBattle.Tanks
             if ((_photonView.IsMine || !PhotonNetwork.IsConnected) && !IsDummy)
             {
                 // Only local player tank
+                InitUI();
                 InitTankGunsFromPrefabs();
                 InitEnemyTracker();
                 InitInput();
                 InitCamera();
-                InitUI();
-
+                
                 // Put local tank in non collission layer
                 // gameObject.SetLayerRecursively(12);
             }
@@ -124,13 +126,7 @@ namespace TankBattle.Tanks
         #region UI Management
         private void InitUI()
         {
-            GameObject userUI = GameObject.FindGameObjectWithTag("UserGameUI");
-            if (userUI)
-            {
-                _tankHud = userUI.transform.GetComponentInChildren<ATankHud>();
-                _tankHud.RegisterTank(this);
-
-            }
+            _tankHud.RegisterTank(this);
         }
         #endregion
         
@@ -149,16 +145,6 @@ namespace TankBattle.Tanks
             // Init input
             _tankInput.enabled = true;
             _tankInput.InitInput();
-            
-            // if (GlobalMethods.IsDesktop())
-            // {
-            //     _tankInput.InitInput(null, null, null, null);
-            // }
-            // else
-            // {
-            //     TankHudMobile tankHudMobile = (TankHudMobile)_tankHud;
-            //     _tankInput.InitInput(tankHudMobile.MovementJoystick, tankHudMobile.AimJoystick, tankHudMobile.ShootBtn, tankHudMobile.SpecialShootBtn);
-            // }
         }
         #endregion
         
@@ -333,17 +319,32 @@ namespace TankBattle.Tanks
             {
                 if (_primaryGun != null)
                 {
-                    Destroy(_primaryGun.gameObject);    
+                    Destroy(_primaryGun.gameObject);
+                    _onTankWeaponEnabled?.Invoke(null, TankWeapon.Primary);   
                 }
                 
                 _primaryGun = value;
                 
-                Debug.Log($"{name}: Set gun {value.name}");
-                Transform firePoint = transform.FirstOrDefault(t => t.name == "FirePoint");
-                _primaryGun.transform.SetParent(firePoint, false);
-                _primaryGun.RegisterInput(_tankInput);
-                _primaryGun.ParentTank = this;
-                _onTankWeaponEnabled?.Invoke(_primaryGun, TankWeapon.Primary);
+                if(value != null)
+                {
+                    Debug.Log($"{name}: Set gun {value.name}");
+                    Transform firePoint = transform.FirstOrDefault(t => t.name == "FirePoint");
+                    _primaryGun.transform.SetParent(firePoint, false);
+                    _primaryGun.RegisterInput(_tankInput);
+                    _primaryGun.ParentTank = this;
+                    _primaryGun.OnNumberOfBulletsChange += bullets => WeaponNumberOfBulletsChange(bullets, TankWeapon.Primary);
+                    _onTankWeaponEnabled?.Invoke(_primaryGun, TankWeapon.Primary);
+                }
+            }
+        }
+
+        private void WeaponNumberOfBulletsChange(int numberOfBullets, TankWeapon weapon)
+        {
+            if (PhotonNetwork.IsConnected && !_photonView.IsMine) return;
+
+            if (numberOfBullets == 0)
+            {
+                DropWeapon(weapon);
             }
         }
         
@@ -359,15 +360,21 @@ namespace TankBattle.Tanks
                 if (_secondaryGun != null)
                 {
                     Destroy(_secondaryGun.gameObject);
+                    _onTankWeaponEnabled?.Invoke(null, TankWeapon.Secondary);
                 }
                 
                 _secondaryGun = value;
                 
-                Transform missilePoint = transform.FirstOrDefault(t => t.name == "LaunchPoint");
-                _secondaryGun.transform.SetParent(missilePoint, false);
-                _secondaryGun.RegisterInput(_tankInput);
-                _secondaryGun.ParentTank = this;
-                _onTankWeaponEnabled?.Invoke(_secondaryGun, TankWeapon.Secondary);
+                if(value != null)
+                {
+                    Transform missilePoint = transform.FirstOrDefault(t => t.name == "LaunchPoint");
+                    _secondaryGun.transform.SetParent(missilePoint, false);
+                    _secondaryGun.RegisterInput(_tankInput);
+                    _secondaryGun.ParentTank = this;
+                    _secondaryGun.OnNumberOfBulletsChange += bullets => WeaponNumberOfBulletsChange(bullets, TankWeapon.Secondary);
+                    _onTankWeaponEnabled?.Invoke(_secondaryGun, TankWeapon.Secondary);
+                }
+                
                 if (_trackedTank) _trackedTank.Locked = false;
             }
         }
@@ -396,7 +403,7 @@ namespace TankBattle.Tanks
                 _onTankWeaponEnabled -= value;
             }
         }
-
+        
         public void PickWeapon(string weaponName, TankWeapon weapon)
         {
             string resource = $"Guns/{weaponName}";
@@ -420,6 +427,25 @@ namespace TankBattle.Tanks
                     SecondaryGun = gun;
                 }
             }
+        }
+
+        public void DropWeapon(TankWeapon weapon)
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                _photonView.RPC("NetworkDropWeapon", RpcTarget.All, weapon);
+            }
+            else
+            {
+                NetworkDropWeapon(weapon);
+            }
+        }
+
+        [PunRPC]
+        public void NetworkDropWeapon(TankWeapon weapon)
+        {
+            if (weapon == TankWeapon.Primary) PrimaryGun = null;
+            else SecondaryGun = null;
         }
         #endregion
     }

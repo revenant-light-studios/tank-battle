@@ -39,7 +39,10 @@ namespace TankBattle.Tanks
             {
                 tankManager.OnTankWeaponEnabled += (gun, weapon) =>
                 {
-                    gun.OnTankHit = OnBulletHit;
+                    if (gun != null)
+                    {
+                        gun.OnTankHit = OnBulletHit;    
+                    }
                 };
             }
         }

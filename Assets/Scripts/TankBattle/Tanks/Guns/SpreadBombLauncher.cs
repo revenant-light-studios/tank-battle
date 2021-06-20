@@ -73,7 +73,8 @@ namespace TankBattle.Tanks.Guns
         {
             _bullet = Instantiate(TankBullet, _launchPoint ? _launchPoint : transform);
             _bullet.OnBulletHit = OnBulletHit;
-            _bullet.Fire(transform);    
+            _bullet.Fire(transform);
+            CurrentNumberOfBullets--;
         }
     }
 }

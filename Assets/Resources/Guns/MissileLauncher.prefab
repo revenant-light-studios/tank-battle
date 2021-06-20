@@ -76,6 +76,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bc25b3098ad4aef8a878a9b37c296b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _maxNumberOfBullets: 5
   _firingRate: 3
   TankBullet: {fileID: 2202746663091894072, guid: c07cd5a92ef6e4d5688dd010fc90b2b1,
     type: 3}
