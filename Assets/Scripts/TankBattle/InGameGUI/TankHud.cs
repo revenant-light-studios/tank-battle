@@ -1,6 +1,7 @@
 using ExtensionMethods;
 using TankBattle.Tanks;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace TankBattle.InGameGUI
 {
@@ -9,6 +10,7 @@ namespace TankBattle.InGameGUI
         private ValueBar _lifeBar;
         private ValueBar _shieldBar;
         private CrossHair _crossHair;
+        private Text _livingPlayersText;
         
         private TankValues _tankValues;
         private HitImage _hitImage;
@@ -19,6 +21,8 @@ namespace TankBattle.InGameGUI
             _hitImage = transform.FirstOrDefault(t => t.name == "HitImage")?.GetComponent<HitImage>();
             _lifeBar = transform.FirstOrDefault(t => t.name == "LifeBar")?.GetComponent<ValueBar>();
             _shieldBar = transform.FirstOrDefault(t => t.name == "ShieldBar")?.GetComponent<ValueBar>();
+            _livingPlayersText = transform.FirstOrDefault(t => t.name == "LivingPlayersText").GetComponent<Text>();
+
         }
         
         public override void RegisterTank(TankManager tankManager)
@@ -45,6 +49,19 @@ namespace TankBattle.InGameGUI
 
             // Debug.LogFormat("Tank {0} registered with hud", tankManager.name);
         }
+
+        public override void UpdateLivingPlayersText(int livingPlayers)
+        {
+            _livingPlayersText.text = $"{livingPlayers}";
+        }
+
+
+        public override void StartViewerMode()
+        {
+            Debug.Log("Viewer");
+            GetComponent<TankViewerManager>().enabled = true;
+        }
+
         private void OnTurretMove(Vector3 hitPoint)
         {
             Vector3 position = Camera.main.WorldToScreenPoint(hitPoint);

@@ -41,6 +41,7 @@ namespace TankBattle.Tanks
         {
             PlayerInputManager.instance.JoinPlayer();
             PlayerInput playerInput = GetComponent<PlayerInput>();
+            playerInput.enabled = true;
             playerInput.user.ActivateControlScheme(GlobalMethods.IsDesktop() ? "Desktop" : "Mobile");
             
             Cursor.lockState = CursorLockMode.Locked;

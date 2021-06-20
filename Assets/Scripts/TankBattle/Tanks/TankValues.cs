@@ -84,6 +84,8 @@ namespace TankBattle.Tanks
                 if (PhotonNetwork.IsConnected && _photonView.IsMine)
                 {
                     _photonView.RPC("DestroyTank", RpcTarget.All);
+                    int livingPlayers = PhotonNetwork.CurrentRoom.GetLivingPlayers();
+                    PhotonNetwork.CurrentRoom.UpdateLivingPlayers(livingPlayers - 1);
                 }
                 else
                 {
@@ -112,7 +114,8 @@ namespace TankBattle.Tanks
                 transform.FirstOrDefault(t => t.name == "ExtraFuelTank")?.gameObject.SetActive(false);
                 transform.FirstOrDefault(t => t.name == "MissileThrower")?.gameObject.SetActive(false);
                 explosion.Play();
-                Destroy(gameObject, explosion.main.duration);
+                gameObject.GetComponent<TankInput>().enabled = false;
+                gameObject.GetComponent<TankManager>().TankHud.StartViewerMode();
             }
         }
     }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ExitGames.Client.Photon;
 using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Global;
@@ -17,7 +18,7 @@ namespace TankBattle.Tanks
      RequireComponent(typeof(TankInput)),
      RequireComponent(typeof(TankValues)),
      RequireComponent(typeof(DetectableObject))]
-    public class TankManager : MonoBehaviour, IPunInstantiateMagicCallback
+    public class TankManager : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     {
         private PhotonView _photonView;
         private ATankCamera _cameraFollow;
@@ -35,10 +36,13 @@ namespace TankBattle.Tanks
         
         #region Public properties
 
+        public ATankCamera CameraFollow { get => _cameraFollow; }
         public ATankTurret Turret
         {
             get => _turret;
         }
+
+        public ATankHud TankHud { get => _tankHud; }
         #endregion
 
         private void Awake()
@@ -49,6 +53,14 @@ namespace TankBattle.Tanks
             _tankInput = GetComponent<TankInput>();
             _detectableObject = GetComponent<DetectableObject>();
             _turret = GetComponentInChildren<ATankTurret>();
+
+            GameObject userUI = GameObject.FindGameObjectWithTag("UserGameUI");
+            if (userUI)
+            {
+                _tankHud = userUI.transform.GetComponentInChildren<ATankHud>();
+                _tankHud.RegisterTank(this);
+
+            }
 
             if (!_forceFieldPrefab)
             {
@@ -100,6 +112,12 @@ namespace TankBattle.Tanks
                     GetComponent<AudioSource>().enabled = false;
                 }
             }
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                int livingPlayers = PhotonNetwork.CurrentRoom.PlayerCount;
+                PhotonNetwork.CurrentRoom.UpdateLivingPlayers(livingPlayers);
+            }
         }
 
         private void Update()
@@ -121,6 +139,18 @@ namespace TankBattle.Tanks
         {
         }
 
+        public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+        {
+            if (propertiesThatChanged.ContainsKey(RoomExtension.LivingPlayersPropertyName))
+            {
+                int livingPlayers = PhotonNetwork.CurrentRoom.GetLivingPlayers();
+                _tankHud.UpdateLivingPlayersText(livingPlayers);
+                if(PhotonNetwork.IsMasterClient && livingPlayers <= 1)
+                {
+                    Debug.Log("END10");
+                }
+            }
+        }
         #region UI Management
         private void InitUI()
         {
