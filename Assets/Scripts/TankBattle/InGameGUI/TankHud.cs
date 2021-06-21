@@ -11,6 +11,7 @@ namespace TankBattle.InGameGUI
         protected ValueBar _shieldBar;
         protected CrossHair _crossHair;
         protected HitImage _hitImage;
+        protected GameObject _tutorialPanel;
         
         protected virtual void Awake()
         {
@@ -18,6 +19,8 @@ namespace TankBattle.InGameGUI
             _hitImage = transform.FirstOrDefault(t => t.name == "HitImage")?.GetComponent<HitImage>();
             _lifeBar = transform.FirstOrDefault(t => t.name == "LifeBar")?.GetComponent<ValueBar>();
             _shieldBar = transform.FirstOrDefault(t => t.name == "ShieldBar")?.GetComponent<ValueBar>();
+            _tutorialPanel = transform.FirstOrDefault(t => t.name == "TutorialPanel")?.gameObject;
+            _tutorialPanel.SetActive(false);
         }
 
         protected override void OnTankWeaponEnabled(ATankGun gun, TankManager.TankWeapon weapon)
@@ -54,6 +57,11 @@ namespace TankBattle.InGameGUI
         {
             if(_lifeBar) _lifeBar.CurrentValue = values.ArmorAmount / values.TotalArmor;
             if(_shieldBar) _shieldBar.CurrentValue = values.ShieldAmount / values.TotalShield;
+        }
+
+        protected void ShowOrHideTutorial()
+        {
+            _tutorialPanel.SetActive(!_tutorialPanel.activeSelf);
         }
     }
 }
