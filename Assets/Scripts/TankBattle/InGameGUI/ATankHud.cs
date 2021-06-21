@@ -9,6 +9,8 @@ namespace TankBattle.InGameGUI
 
         public abstract void UpdateLivingPlayersText(int LivingPlayers);
 
+        public abstract void ShowEndPanel(TankManager tankManager);
+
         public abstract void StartViewerMode();
     }
 }

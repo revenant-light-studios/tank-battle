@@ -43,6 +43,8 @@ namespace TankBattle.Tanks
         }
 
         public ATankHud TankHud { get => _tankHud; }
+
+        public TankValues TankValues { get => _tankValues; }
         #endregion
 
         private void Awake()
@@ -147,7 +149,15 @@ namespace TankBattle.Tanks
                 _tankHud.UpdateLivingPlayersText(livingPlayers);
                 if(PhotonNetwork.IsMasterClient && livingPlayers <= 1)
                 {
-                    Debug.Log("END10");
+                    var allTankList = FindObjectsOfType<TankManager>();
+                    foreach (var tank in allTankList)
+                    {
+                        if (tank.Turret.gameObject.activeSelf)
+                        {
+                            _tankHud.ShowEndPanel(tank);
+                            break;
+                        }
+                    }
                 }
             }
         }

@@ -11,6 +11,7 @@ namespace TankBattle.InGameGUI
         private ValueBar _shieldBar;
         private CrossHair _crossHair;
         private Text _livingPlayersText;
+        private FinishGame _endPanel;
         
         private TankValues _tankValues;
         private HitImage _hitImage;
@@ -22,6 +23,8 @@ namespace TankBattle.InGameGUI
             _lifeBar = transform.FirstOrDefault(t => t.name == "LifeBar")?.GetComponent<ValueBar>();
             _shieldBar = transform.FirstOrDefault(t => t.name == "ShieldBar")?.GetComponent<ValueBar>();
             _livingPlayersText = transform.FirstOrDefault(t => t.name == "LivingPlayersText").GetComponent<Text>();
+            _endPanel = transform.FirstOrDefault(t => t.name == "EndGamePanel").GetComponent<FinishGame>();
+            _endPanel.gameObject.SetActive(false);
 
         }
         
@@ -77,6 +80,12 @@ namespace TankBattle.InGameGUI
         {
             if(_lifeBar) _lifeBar.CurrentValue = values.ArmorAmount / values.TotalArmor;
             if(_shieldBar) _shieldBar.CurrentValue = values.ShieldAmount / values.TotalShield;
+        }
+
+        public override void ShowEndPanel(TankManager tankManager)
+        {
+            _endPanel.gameObject.SetActive(true);
+            _endPanel.InitEndPanel(tankManager);
         }
     }
 }
