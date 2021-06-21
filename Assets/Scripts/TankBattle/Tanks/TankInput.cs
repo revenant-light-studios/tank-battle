@@ -27,7 +27,10 @@ namespace TankBattle.Tanks
         private AxisState _axisStateX;
         [SerializeField, FormerlySerializedAs("AxisStateY")]
         private AxisState _axisStateY;
-        
+
+        public delegate void OnShowOrHideHelpDelegate();
+        public OnShowOrHideHelpDelegate OnShowOrHideHelp;
+
         public void InitInput()
         {
             PlayerInput playerInput = GetComponent<PlayerInput>();
@@ -86,6 +89,11 @@ namespace TankBattle.Tanks
         public void OnLock(InputValue inputValue)
         {
             LockTrigger.IsPressed = inputValue.isPressed;
+        }
+
+        public void OnOpenHelp(InputValue inputValue)
+        {
+            OnShowOrHideHelp?.Invoke();
         }
         
         private void LateUpdate()

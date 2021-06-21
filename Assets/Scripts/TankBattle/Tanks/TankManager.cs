@@ -56,6 +56,13 @@ namespace TankBattle.Tanks
             {
                 _forceFieldPrefab = Resources.Load<ForceField>("Tanks/ForceFields/ForceField");
             }
+
+            _tankInput.OnShowOrHideHelp += ShowOrHideHelp;
+        }
+
+        private void ShowOrHideHelp()
+        {
+            _tankHud.ShowOrHideHelp();
         }
 
         private void Start()

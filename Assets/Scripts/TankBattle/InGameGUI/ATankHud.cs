@@ -31,5 +31,6 @@ namespace TankBattle.InGameGUI
         protected abstract void OnTankValuesChanged(TankValues values);
         protected abstract void OnTurretMove(Vector3 position);
         protected abstract void OnTankWeaponEnabled(ATankGun gun, TankManager.TankWeapon weapon);
+        public abstract void ShowOrHideHelp();
     }
 }
