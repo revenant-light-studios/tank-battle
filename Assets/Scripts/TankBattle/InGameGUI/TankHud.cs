@@ -62,7 +62,7 @@ namespace TankBattle.InGameGUI
         public override void StartViewerMode()
         {
             Debug.Log("Viewer");
-            GetComponent<TankViewerManager>().enabled = true;
+            GetComponentInChildren<TankViewerManager>().enabled = true;
         }
 
         private void OnTurretMove(Vector3 hitPoint)

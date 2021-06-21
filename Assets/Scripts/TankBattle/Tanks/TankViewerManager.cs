@@ -34,12 +34,6 @@ namespace TankBattle.Tanks
             SelectTankToFollow();
         }
 
-        private void OnDisable()
-        {
-           
-        }
-
-
         public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
         {
             if (propertiesThatChanged.ContainsKey(RoomExtension.LivingPlayersPropertyName))
@@ -106,7 +100,14 @@ namespace TankBattle.Tanks
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            Debug.Log("Click");
+            _currentPosCamera++;
+            if (_currentPosCamera >= _tankManagersList.Length)
+            {
+                _currentPosCamera = 0;
+            }
+
+            _currentTankFollow = _tankManagersList[_currentPosCamera];
+            _currentTankFollow.CameraFollow.StartFollowing();
         }
     }
 }
