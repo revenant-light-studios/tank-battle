@@ -154,7 +154,7 @@ namespace TankBattle.Tanks
                     {
                         if (tank.Turret.gameObject.activeSelf)
                         {
-                            _tankHud.ShowEndPanel(tank);
+                            //_tankHud.ShowEndPanel(tank);
                             break;
                         }
                     }

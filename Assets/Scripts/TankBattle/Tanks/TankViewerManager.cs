@@ -1,13 +1,11 @@
 using Photon.Pun;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 
 namespace TankBattle.Tanks
 {
-    public class TankViewerManager : MonoBehaviourPunCallbacks
+    public class TankViewerManager : MonoBehaviourPunCallbacks, IPointerDownHandler
     {
         private TankManager[] _tankManagersList;
         private int _currentPosCamera;
@@ -30,7 +28,8 @@ namespace TankBattle.Tanks
         }
 
         private void OnEnable()
-        {     
+        {
+            Cursor.lockState = CursorLockMode.None;
             UpdateFollowTankList();
             SelectTankToFollow();
         }
@@ -73,24 +72,6 @@ namespace TankBattle.Tanks
             _tankManagersList = newTankList.ToArray();
         }
 
-        public void OnTrigger1(InputValue inputValue)
-        {
-            Debug.Log($"Trigger1 pressed: {inputValue.isPressed}");
-            if (inputValue.isPressed)
-            {
-                Debug.Log("····");
-                _currentPosCamera++;
-                Debug.Log(_currentPosCamera);
-                if (_currentPosCamera >= _tankManagersList.Length)
-                {
-                    _currentPosCamera = 0;
-                }
-
-                _currentTankFollow = _tankManagersList[_currentPosCamera];
-                _currentTankFollow.CameraFollow.StartFollowing();
-            }
-        }
-
         private void SelectTankToFollow()
         {
             if (_currentTankFollow == null)
@@ -123,6 +104,10 @@ namespace TankBattle.Tanks
             }
         }
 
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            Debug.Log("Click");
+        }
     }
 }
 
