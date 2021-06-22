@@ -15,6 +15,8 @@ namespace TankBattle.Tanks.Guns
         [SerializeField, FormerlySerializedAs("FiringRate"), InspectorName("Fire rate"), Tooltip("Seconds between consecutive shots")] 
         protected float _firingRate = 2f;
 
+        public Sprite Icon;
+
         protected float LastFired;
         protected bool CanFire;
         protected bool _canTrack;
@@ -168,7 +170,7 @@ namespace TankBattle.Tanks.Guns
 
         private void DelegateHit(TankValues tankValues, float damage)
         {
-            Debug.Log($"Hit {tankValues.name}");
+            // Debug.Log($"Hit {tankValues.name}");
             if (OnTankHit != null)
             {
                 OnTankHit?.Invoke(tankValues, damage);    

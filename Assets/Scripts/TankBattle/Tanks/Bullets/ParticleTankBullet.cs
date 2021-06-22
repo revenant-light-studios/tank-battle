@@ -44,6 +44,7 @@ namespace TankBattle.Tanks.Bullets
 
             if (!hitSelf)
             {
+                // Debug.Log($"Bullet collided with {other.name}");
                 _particleSystem.GetParticles(particles);
                 particles[0].remainingLifetime = -1;
                 _particleSystem.SetParticles(particles);
@@ -60,7 +61,7 @@ namespace TankBattle.Tanks.Bullets
             }
             else
             {
-                Debug.Log($"{name} detected hit with self tank");
+                // Debug.Log($"{name} detected hit with self tank");
             }
         }
     }

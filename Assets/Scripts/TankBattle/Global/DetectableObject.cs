@@ -73,7 +73,7 @@ namespace TankBattle.Global
 
             set
             {
-                Debug.Log($"{name}: I was locked");
+                // Debug.Log($"{name}: I was locked");
                 _locked = value;
                 if(_radarTrack) _radarTrack.SetTrackingState(_locked ? RadarTrack.LockedState.Locked : RadarTrack.LockedState.None);
             }

@@ -103,6 +103,7 @@ MonoBehaviour:
   m_StopNaN: 0
   m_Dithering: 0
   m_ClearDepth: 1
+  m_AllowXRRendering: 1
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
@@ -225,6 +226,18 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6010867372467323004, guid: d59c41f87ca984bfc9aa348bfefa3ca4,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: -876546973899608171, guid: 1046c7f9858ea9e4595fa89596726120,
+        type: 3}
+    - target: {fileID: 7456033167985303224, guid: d59c41f87ca984bfc9aa348bfefa3ca4,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: -6629797300637803691, guid: 1046c7f9858ea9e4595fa89596726120,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d59c41f87ca984bfc9aa348bfefa3ca4, type: 3}
 --- !u!4 &3995113140927587600 stripped

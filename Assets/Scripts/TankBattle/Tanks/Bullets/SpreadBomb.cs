@@ -62,7 +62,7 @@ namespace TankBattle.Tanks.Bullets
 
         private void OnParticleCollision(GameObject other)
         {
-            Debug.Log($"{name}: Particle collided with {other.name}");
+            // Debug.Log($"{name}: Particle collided with {other.name}");
             OnBulletHit?.Invoke(other);
         }
     }

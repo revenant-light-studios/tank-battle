@@ -21,13 +21,13 @@ namespace TankBattle.InGameGUI
         #endif
         
         [SerializeField, FormerlySerializedAs("MinValue"), InspectorName("Minimum value")]
-        private int _minValue;
+        private float _minValue = 0;
         
         [SerializeField, FormerlySerializedAs("MaxValue"), InspectorName("Maximum value")]
-        private int _maxValue;
+        private float _maxValue = 1;
         
         [SerializeField, FormerlySerializedAs("Value"), InspectorName("Current value")]
-        private int _value;
+        private float _value = 0;
 
         [SerializeField, FormerlySerializedAs("ShowValue"), InspectorName("Show value")]
         private bool _showValue;
@@ -35,22 +35,28 @@ namespace TankBattle.InGameGUI
         private Text _valueText;
         private Image _mask;
         
-        public int MinValue
+        public float MinValue
         {
             get => _minValue;
             set => _minValue = value;
         }
 
-        public int MaxValue
+        public float MaxValue
         {
             get => _maxValue;
-            set => _minValue = value;
+            set => _maxValue = value;
         }
 
-        public int Value
+        public float Value
         {
             get => _value;
-            set => _value = Math.Min(Math.Max(value, _minValue), _maxValue);
+            set => _value = Mathf.Clamp(value, _minValue, _maxValue);
+        }
+
+        public bool ShowValue
+        {
+            get => _showValue;
+            set => _showValue = value;
         }
 
         private void Update()
@@ -66,16 +72,17 @@ namespace TankBattle.InGameGUI
 
         private void CalculateFill()
         {
-            _value = Math.Min(Math.Max(_value, _minValue), _maxValue);
+            _value = Mathf.Clamp(_value, _minValue, _maxValue);
             
             float current = _value - _minValue;
-            float range = _maxValue - _minValue;
+            float range = Mathf.Max(0.00001f ,_maxValue - _minValue);
             float fillAmount = current / range;
+            
             _mask.fillAmount = fillAmount;
 
             if (_valueText)
             {
-                _valueText.text = _showValue ? $"{fillAmount * 100:##0}%" : "";
+                _valueText.text = (_showValue ? $"{fillAmount * 100,3:##0}%" : "").Replace(' ', (char)160);
             }
         }
     }

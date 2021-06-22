@@ -3,6 +3,8 @@ using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Global;
 using TankBattle.InGameGUI;
+using TankBattle.InGameGUI.Hud;
+using TankBattle.InGameGUI.LockedTank;
 using TankBattle.Navigation;
 using TankBattle.Tanks.Camera;
 using TankBattle.Tanks.ForceFields;
@@ -51,6 +53,7 @@ namespace TankBattle.Tanks
             _detectableObject = GetComponent<DetectableObject>();
             _turret = GetComponentInChildren<ATankTurret>();
             _tankHud = PlayRoomManager.Instance.UserUI.GetComponentInChildren<ATankHud>();
+            _lockedTank = FindObjectOfType<LockedTank>();
             
             if (!_forceFieldPrefab)
             {
@@ -81,10 +84,10 @@ namespace TankBattle.Tanks
             {
                 // Only local player tank
                 InitUI();
-                InitTankGunsFromPrefabs();
                 InitEnemyTracker();
                 InitInput();
                 InitCamera();
+                InitTankGunsFromPrefabs();
                 
                 // Put local tank in non collission layer
                 // gameObject.SetLayerRecursively(12);
@@ -154,6 +157,27 @@ namespace TankBattle.Tanks
         private UnityEngine.Camera _camera;
         private Transform _launchPointTransform;
         private DetectableObject _trackedTank;
+        private LockedTank _lockedTank;
+
+        public DetectableObject LockedTank
+        {
+            get => _trackedTank;
+            private set
+            {
+                // Remove locked mark for previously tracked tank
+                if (_trackedTank != null && _trackedTank != value) _trackedTank.Locked = false;
+                
+                _trackedTank = value;
+                
+                // Add locked mark for current tracked tank if not null
+                if(_trackedTank != null) _trackedTank.Locked = true;
+                
+                OnLockedTankChange?.Invoke(_trackedTank);
+            }
+        }
+
+        public delegate void OnLockedTankChangeDelegate(DetectableObject trackedTank);
+        public event OnLockedTankChangeDelegate OnLockedTankChange;
         
         private void InitEnemyTracker()
         {
@@ -165,7 +189,7 @@ namespace TankBattle.Tanks
 
             _inScreenTanks = new List<DetectableObject>();
             
-            Debug.Log($"InitEnemyTracker, tanks: {Radar.Instance.DetectableObjects.Count}");
+            // Debug.Log($"InitEnemyTracker, tanks: {Radar.Instance.DetectableObjects.Count}");
             foreach (DetectableObject tank in Radar.Instance.DetectableObjects)
             {
                 tank.InitTrackerImage(_tankHud.transform, _camera);
@@ -191,7 +215,7 @@ namespace TankBattle.Tanks
 
                 if (!_camera)
                 {
-                    Debug.Log($"{name}: Camera is null");
+                    // Debug.Log($"{name}: Camera is null");
                     return;
                 }
                 
@@ -236,12 +260,14 @@ namespace TankBattle.Tanks
 
         private void SelectNextEnemy()
         {
+            if (!SecondaryGun || !SecondaryGun.CanTrack) return;
+
             int currentTankIndex = -1;
             DetectableObject tank;
             
-            if (_trackedTank != null)
+            if (LockedTank != null)
             {
-                currentTankIndex = _inScreenTanks.IndexOf(_trackedTank);
+                currentTankIndex = _inScreenTanks.IndexOf(LockedTank);
             }
             
             for (int i = 0; i < _inScreenTanks.Count; i++)
@@ -279,11 +305,16 @@ namespace TankBattle.Tanks
         
         public void TankLock(DetectableObject tank)
         {
-            if (_trackedTank) _trackedTank.Locked = false;
-            _trackedTank = tank;
-            _trackedTank.Locked = true;
+            LockedTank = tank;
+            // OnLockedTankChange?.Invoke(tank.gameObject);
+
+            if (_lockedTank)
+            {
+                _lockedTank.TrackerTank = gameObject;
+                _lockedTank.TrackedTank = tank.gameObject;
+            }
             
-            if (_secondaryGun is MissileLauncher) ((MissileLauncher)_secondaryGun).TrackedTank = _trackedTank.gameObject;
+            if (_secondaryGun is MissileLauncher) ((MissileLauncher)_secondaryGun).TrackedTank = LockedTank.gameObject;
         }
         #endregion
         
@@ -327,7 +358,7 @@ namespace TankBattle.Tanks
                 
                 if(value != null)
                 {
-                    Debug.Log($"{name}: Set gun {value.name}");
+                    // Debug.Log($"{name}: Set gun {value.name}");
                     Transform firePoint = transform.FirstOrDefault(t => t.name == "FirePoint");
                     _primaryGun.transform.SetParent(firePoint, false);
                     _primaryGun.RegisterInput(_tankInput);
@@ -374,8 +405,8 @@ namespace TankBattle.Tanks
                     _secondaryGun.OnNumberOfBulletsChange += bullets => WeaponNumberOfBulletsChange(bullets, TankWeapon.Secondary);
                     _onTankWeaponEnabled?.Invoke(_secondaryGun, TankWeapon.Secondary);
                 }
-                
-                if (_trackedTank) _trackedTank.Locked = false;
+
+                if (LockedTank) LockedTank = null;
             }
         }
         

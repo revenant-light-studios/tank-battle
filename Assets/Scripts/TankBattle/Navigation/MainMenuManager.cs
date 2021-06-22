@@ -52,7 +52,7 @@ namespace TankBattle.Navigation
             _closeJoinPanel = _joinPanel.FirstOrDefault(t => t.name == "ExitJoinPanel").GetComponent<Button>();
             _keyRoom = _joinPanel.FirstOrDefault(t => t.name == "InputKeyRoom").GetComponent<InputField>();
 
-            Debug.Log("Registering main menu listeners");
+            // Debug.Log("Registering main menu listeners");
             _nickname.onValueChanged.AddListener(delegate { UpdateNickname(); });
             _playBtn.onClick.AddListener(OnClickPlay);
             _openJoinBtn.onClick.AddListener(OnClickOpenJoin);
@@ -93,13 +93,13 @@ namespace TankBattle.Navigation
             if (_modes[_modeSelected] == "PUBLIC")
             {
                 OnPlayPublic?.Invoke();
-                Debug.Log("Public");
+                // Debug.Log("Public");
                 PhotonNetwork.JoinRandomRoom();
             }
             else
             {
                 OnPlayPrivate?.Invoke();
-                Debug.Log("Private");
+                // Debug.Log("Private");
                 CreateRoom(false);
             }
             
