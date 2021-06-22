@@ -1,3 +1,4 @@
+using TankBattle.Global;
 using TankBattle.Tanks;
 using TankBattle.Tanks.Guns;
 using UnityEngine;
@@ -23,8 +24,9 @@ namespace TankBattle.InGameGUI.Hud
             }
 
             tankManager.OnTankWeaponEnabled += OnTankWeaponEnabled;
+            tankManager.OnLockedTankChange += OnLockedTankChange;
         }
-
+        protected abstract void OnLockedTankChange(DetectableObject trackedtank);
         protected abstract void OnTankWasHit(TankValues values);
         protected abstract void OnTankValuesChanged(TankValues values);
         protected abstract void OnTurretMove(Vector3 position);

@@ -37,7 +37,7 @@ namespace TankBattle.InGameGUI.Hud
                     _secondaryShootButton.gameObject.SetActive(true);
                     _lockButton.gameObject.SetActive(gun.CanTrack);
                     _secondaryShootButton.Text = $"{gun.CurrentNumberOfBullets}";
-                    gun.OnNumberOfBulletsChange += bullets => _secondaryShootButton.Text = $"{bullets}";
+                    // gun.OnNumberOfBulletsChange += bullets => _secondaryShootButton.Text = $"{bullets}";
                 }
                 else
                 {
@@ -45,6 +45,11 @@ namespace TankBattle.InGameGUI.Hud
                     _lockButton.gameObject.SetActive(false);
                 }
             }
+        }
+
+        protected override void NumberOfBulletsChange(int numberOfBullets)
+        {
+            _secondaryShootButton.Text = $"{numberOfBullets}";
         }
     }
 }

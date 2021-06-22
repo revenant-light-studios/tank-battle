@@ -28,6 +28,9 @@ namespace TankBattle.Tanks
         public delegate void OnTankWasHitDelegate(TankValues values);
         public OnTankWasHitDelegate OnTankWasHit;
 
+        public delegate void OnTankWasDestroyedDelegate(TankValues values);
+        public event OnTankWasDestroyedDelegate OnTankWasDestroyed;
+
         private PhotonView _photonView;
 
         public ForceField ForceField;
@@ -115,6 +118,7 @@ namespace TankBattle.Tanks
                 transform.FirstOrDefault(t => t.name == "ExtraFuelTank")?.gameObject.SetActive(false);
                 transform.FirstOrDefault(t => t.name == "MissileThrower")?.gameObject.SetActive(false);
                 explosion.Play();
+                OnTankWasDestroyed?.Invoke(this);
                 Destroy(gameObject, explosion.main.duration);
             }
         }

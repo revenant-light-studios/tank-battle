@@ -170,7 +170,7 @@ namespace TankBattle.Tanks.Guns
 
         private void DelegateHit(TankValues tankValues, float damage)
         {
-            Debug.Log($"Hit {tankValues.name}");
+            // Debug.Log($"Hit {tankValues.name}");
             if (OnTankHit != null)
             {
                 OnTankHit?.Invoke(tankValues, damage);    

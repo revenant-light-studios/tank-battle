@@ -27,13 +27,23 @@ namespace TankBattle.InGameGUI.Hud
                     _secondaryWeaponIcon.gameObject.SetActive(true);
                     _secondaryWeaponIcon.Icon = gun.Icon;
                     _secondaryWeaponIcon.Text = $"{gun.CurrentNumberOfBullets}";
-                    gun.OnNumberOfBulletsChange += bullets => _secondaryWeaponIcon.Text = $"{bullets}";
+                    // gun.OnNumberOfBulletsChange += bullets => _secondaryWeaponIcon.Text = $"{bullets}";
                 }
                 else
                 {
                     _secondaryWeaponIcon.gameObject.SetActive(false);
                 }
             }
+        }
+
+        /// <summary>
+        /// For this method to be called base.OnTankWeaponEnabled must have been called,
+        /// or the event registered explicitly
+        /// </summary>
+        /// <param name="numberOfBullets"></param>
+        protected override void NumberOfBulletsChange(int numberOfBullets)
+        {
+            _secondaryWeaponIcon.Text = $"{numberOfBullets}";
         }
     }
 }

@@ -1,4 +1,6 @@
 using ExtensionMethods;
+using TankBattle.Global;
+using TankBattle.InGameGUI.LockedTank;
 using TankBattle.Tanks;
 using TankBattle.Tanks.Guns;
 using UnityEngine;
@@ -11,6 +13,7 @@ namespace TankBattle.InGameGUI.Hud
         protected ValueBar _shieldBar;
         protected CrossHair _crossHair;
         protected HitImage _hitImage;
+        protected LockedTankUI _lockedTankUI;
         
         protected virtual void Awake()
         {
@@ -18,6 +21,11 @@ namespace TankBattle.InGameGUI.Hud
             _hitImage = transform.FirstOrDefault(t => t.name == "HitImage")?.GetComponent<HitImage>();
             _lifeBar = transform.FirstOrDefault(t => t.name == "LifeBar")?.GetComponent<ValueBar>();
             _shieldBar = transform.FirstOrDefault(t => t.name == "ShieldBar")?.GetComponent<ValueBar>();
+            _lockedTankUI = transform.FirstOrDefault(t => t.name == "LockedTankUI")?.GetComponent<LockedTankUI>();
+            if (_lockedTankUI)
+            {
+                _lockedTankUI.SetActive(false);
+            }
         }
 
         protected override void OnTankWeaponEnabled(ATankGun gun, TankManager.TankWeapon weapon)
@@ -36,7 +44,7 @@ namespace TankBattle.InGameGUI.Hud
 
         protected virtual void NumberOfBulletsChange(int numberOfBullets)
         {
-            Debug.Log($"Secondary weapon current number of bullets {numberOfBullets}");    
+            // Debug.Log($"Secondary weapon current number of bullets {numberOfBullets}");    
         }
 
         protected override void OnTurretMove(Vector3 hitPoint)
@@ -45,6 +53,19 @@ namespace TankBattle.InGameGUI.Hud
             _crossHair.UpdatePosition(position);
         }
 
+        protected override void OnLockedTankChange(DetectableObject trackedtank)
+        {
+            if (!_lockedTankUI) return;
+
+            if (trackedtank != null)
+            {
+                _lockedTankUI.TankValues = trackedtank.GetComponent<TankValues>();
+            }
+            else
+            {
+                _lockedTankUI.TankValues = null;
+            }
+        }
         protected override void OnTankWasHit(TankValues values)
         { 
             _hitImage?.HitFlash();
