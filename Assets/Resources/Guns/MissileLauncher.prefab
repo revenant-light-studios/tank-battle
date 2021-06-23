@@ -78,7 +78,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxNumberOfBullets: 5
   _firingRate: 3
-  Icon: {fileID: 21300000, guid: e210fc7cebc40429e9cffe568d202fd3, type: 3}
+  Icon: {fileID: 21300000, guid: 3a12509224a1f451d9a3bd495a902657, type: 3}
   TankBullet: {fileID: 2202746663091894072, guid: c07cd5a92ef6e4d5688dd010fc90b2b1,
     type: 3}
   _trackedTank: {fileID: 0}

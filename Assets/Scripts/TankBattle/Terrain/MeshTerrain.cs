@@ -39,8 +39,8 @@ namespace TankBattle.Terrain
             _meshFilter.sharedMesh = _meshData.CreateMesh();
             _meshFilter.sharedMesh.RecalculateBounds();
             
-            _renderer = GetComponent<PerlinNoiseRenderer>();
-            _renderer.DrawNoiseMap(heights);
+            // _renderer = GetComponent<PerlinNoiseRenderer>();
+            // _renderer.DrawNoiseMap(heights);
             
             _meshCollider = GetComponent<MeshCollider>();
             _meshCollider.sharedMesh = _meshFilter.mesh;

@@ -27,7 +27,6 @@ namespace TankBattle.InGameGUI.Hud
                     _secondaryWeaponIcon.gameObject.SetActive(true);
                     _secondaryWeaponIcon.Icon = gun.Icon;
                     _secondaryWeaponIcon.Text = $"{gun.CurrentNumberOfBullets}";
-                    // gun.OnNumberOfBulletsChange += bullets => _secondaryWeaponIcon.Text = $"{bullets}";
                 }
                 else
                 {

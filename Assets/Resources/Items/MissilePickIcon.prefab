@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2562309205509549683}
   - component: {fileID: 6072984920442515187}
   m_Layer: 0
-  m_Name: Item
+  m_Name: MissilePickIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39,7 +39,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6596567605825149316}
-  m_Mesh: {fileID: -4436863061088633788, guid: b54abc106614341ddbb57fe2c744b425, type: 3}
+  m_Mesh: {fileID: -4436863061088633788, guid: 8317d701e72894d34af06a93638ff7d7, type: 3}
 --- !u!23 &6072984920442515187
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -51,14 +51,16 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 37acacd32b52243378feb581c42fadbf, type: 2}
+  - {fileID: 2100000, guid: 10b927d596c9a434ebadf97ed54f7fcb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -79,3 +81,4 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
