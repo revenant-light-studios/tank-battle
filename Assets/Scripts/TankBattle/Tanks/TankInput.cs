@@ -26,6 +26,9 @@ namespace TankBattle.Tanks
         [SerializeField, FormerlySerializedAs("AxisStateY")]
         private AxisState _axisStateY;
 
+        public delegate void OnOpenPauseMenuDelegate();
+        public OnOpenPauseMenuDelegate OnOpenPauseMenu;
+
         // private VirtualJoystick _movementJoystick;
         // private VirtualButton _shootButton;
         // private VirtualButton _secondaryShootButton;
@@ -88,6 +91,11 @@ namespace TankBattle.Tanks
         public void OnLock(InputValue inputValue)
         {
             LockTrigger.IsPressed = inputValue.isPressed;
+        }
+
+        public void OnOpenPause(InputValue inputValue)
+        {
+            OnOpenPauseMenu?.Invoke();
         }
         
         private void LateUpdate()

@@ -12,6 +12,7 @@ namespace TankBattle.InGameGUI
         private CrossHair _crossHair;
         private Text _livingPlayersText;
         private FinishGame _endPanel;
+        private GameObject _pauseMenu;
         
         private TankValues _tankValues;
         private HitImage _hitImage;
@@ -24,10 +25,26 @@ namespace TankBattle.InGameGUI
             _shieldBar = transform.FirstOrDefault(t => t.name == "ShieldBar")?.GetComponent<ValueBar>();
             _livingPlayersText = transform.FirstOrDefault(t => t.name == "LivingPlayersText").GetComponent<Text>();
             _endPanel = transform.FirstOrDefault(t => t.name == "EndGamePanel").GetComponent<FinishGame>();
+            _pauseMenu = transform.FirstOrDefault(t => t.name == "PauseMenu").gameObject;
+            
             _endPanel.gameObject.SetActive(false);
 
         }
-        
+
+        public override void OpenPauseMenu()
+        {
+            _pauseMenu.SetActive(!_pauseMenu.activeSelf);
+            if (_pauseMenu.activeSelf)
+            {
+                Cursor.lockState = CursorLockMode.None;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+
+        }
+
         public override void RegisterTank(TankManager tankManager)
         {
             _tankValues = tankManager.GetComponent<TankValues>();

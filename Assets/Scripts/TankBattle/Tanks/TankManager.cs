@@ -68,6 +68,13 @@ namespace TankBattle.Tanks
             {
                 _forceFieldPrefab = Resources.Load<ForceField>("Tanks/ForceFields/ForceField");
             }
+
+            _tankInput.OnOpenPauseMenu += OpenPauseMenu;
+        }
+
+        private void OpenPauseMenu()
+        {
+            _tankHud.OpenPauseMenu();
         }
 
         private void Start()
@@ -154,7 +161,7 @@ namespace TankBattle.Tanks
                     {
                         if (tank.Turret.gameObject.activeSelf)
                         {
-                            //_tankHud.ShowEndPanel(tank);
+                            _tankHud.ShowEndPanel(tank);
                             break;
                         }
                     }

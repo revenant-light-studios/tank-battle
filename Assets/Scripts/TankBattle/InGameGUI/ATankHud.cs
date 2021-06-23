@@ -12,5 +12,8 @@ namespace TankBattle.InGameGUI
         public abstract void ShowEndPanel(TankManager tankManager);
 
         public abstract void StartViewerMode();
+
+        public abstract void OpenPauseMenu();
+
     }
 }
