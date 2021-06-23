@@ -71,9 +71,12 @@ namespace TankBattle.Tanks.Guns
         [PunRPC]
         public override void NetworkFire()
         {
-            _bullet = Instantiate(TankBullet, _launchPoint ? _launchPoint : transform);
+            Transform launchTransform = _launchPoint ? _launchPoint : transform;
+            _bullet = Instantiate(TankBullet);
+            _bullet.transform.position = launchTransform.position;
             _bullet.OnBulletHit = OnBulletHit;
             _bullet.Fire(transform);
+            
             CurrentNumberOfBullets--;
         }
     }

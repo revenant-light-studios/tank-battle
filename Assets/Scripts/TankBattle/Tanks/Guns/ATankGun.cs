@@ -68,6 +68,7 @@ namespace TankBattle.Tanks.Guns
             if(!CanFire && LastFired >= _firingRate)
             {
                 CanFire = _maxNumberOfBullets==0 || _currentNumberOfBullets > 0;
+                Debug.Log($"Canfire: {CanFire} {_currentNumberOfBullets}");
             }
         }
         

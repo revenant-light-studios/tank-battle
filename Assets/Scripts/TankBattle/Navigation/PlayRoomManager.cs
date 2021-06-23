@@ -370,7 +370,7 @@ namespace TankBattle.Navigation
                 // s.name = $"SecondaryWeapon{i}";
                 // s.GetComponent<Renderer>().material.color = Color.red;
 
-                int weponType = generator.Next(0, _secondaryWeaponTypes.Length - 1);
+                int weponType = generator.Next(0, _secondaryWeaponTypes.Length);
                 SpawnSecondaryWeapon(_secondaryWeaponTypes[weponType], spawnPosition);
             }
         }
