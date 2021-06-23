@@ -28,7 +28,6 @@ namespace TankBattle.Tanks.Bullets
             _childParticleCollision = transform.FirstOrDefault(t => t.name == "Projectile")?.GetComponent<ParticleCollisionDelegate>();
             if (_childParticleCollision) _childParticleCollision.OnChildParticleCollision = OnParticleCollision;
             
-
             PlayRoomManager roomManager = FindObjectOfType<PlayRoomManager>();
             _spreadBombParticleSystem.randomSeed = (uint)roomManager.RandomSeed;
             
@@ -56,13 +55,23 @@ namespace TankBattle.Tanks.Bullets
                     _bombTransform.gameObject.SetActive(false);
                     _spreadBombParticleSystem.transform.position = _bombTransform.position;
                     _spreadBombParticleSystem.Play();
+                    return;
                 }
+            }
+
+            if (_detonated && 
+                _spreadBombParticleSystem != null &&
+                _spreadBombParticleSystem.IsAlive() &&
+                _spreadBombParticleSystem.particleCount == 0)
+            {
+                Debug.Log($"Destroying spreadbomb {name}");
+                Destroy(gameObject);
             }
         }
 
         private void OnParticleCollision(GameObject other)
         {
-            Debug.Log($"{name}: Particle collided with {other.name}");
+            // Debug.Log($"{name}: Particle collided with {other.name}");
             OnBulletHit?.Invoke(other);
         }
     }

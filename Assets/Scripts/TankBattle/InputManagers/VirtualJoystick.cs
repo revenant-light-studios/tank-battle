@@ -1,12 +1,15 @@
+using System;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.Layouts;
+using UnityEngine.InputSystem.OnScreen;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace TankBattle.InputManagers
 {
-    public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler, AxisState.IInputAxisProvider
+    public class VirtualJoystick : OnScreenControl, IDragHandler, IPointerUpHandler, IPointerDownHandler, AxisState.IInputAxisProvider
     {
 
         [SerializeField, FormerlySerializedAs("Container")]
@@ -40,6 +43,11 @@ namespace TankBattle.InputManagers
             _inputDirection = position/_radious;
         }
 
+        private void Update()
+        {
+            SendValueToControl(_inputDirection);
+        }
+
         public void OnPointerDown(PointerEventData ped)
         {
             _container.transform.position = ped.position;
@@ -69,5 +77,17 @@ namespace TankBattle.InputManagers
 
             return 0;
         }
+        
+        #region OnScreenControl
+        [InputControl(layout = "Vector2")]
+        [SerializeField]
+        private string m_ControlPath;
+        
+        protected override string controlPathInternal
+        {
+            get => m_ControlPath;
+            set => m_ControlPath = value;
+        }
+        #endregion
     }
 }

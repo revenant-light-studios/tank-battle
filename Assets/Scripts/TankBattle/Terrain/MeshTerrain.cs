@@ -39,11 +39,14 @@ namespace TankBattle.Terrain
             _meshFilter.sharedMesh = _meshData.CreateMesh();
             _meshFilter.sharedMesh.RecalculateBounds();
             
-            _renderer = GetComponent<PerlinNoiseRenderer>();
-            _renderer.DrawNoiseMap(heights);
+            // _renderer = GetComponent<PerlinNoiseRenderer>();
+            // _renderer.DrawNoiseMap(heights);
             
             _meshCollider = GetComponent<MeshCollider>();
             _meshCollider.sharedMesh = _meshFilter.mesh;
+
+            Bounds bounds = GetComponent<MeshRenderer>().bounds;
+            Debug.Log($"World size ({bounds.size})");
         }
         
         public float GetHeight(int x, int z)

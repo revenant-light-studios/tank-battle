@@ -9,9 +9,13 @@ namespace TankBattle.Tanks.Guns
 {
     public abstract class ATankGun : MonoBehaviour, IPunInstantiateMagicCallback
     {
+        [SerializeField, FormerlySerializedAs("NumberOfBullets"), InspectorName("Number of bullets"), Tooltip("Number of bullets, 0 for unlimited")]
+        protected int _maxNumberOfBullets = 0;
         
         [SerializeField, FormerlySerializedAs("FiringRate"), InspectorName("Fire rate"), Tooltip("Seconds between consecutive shots")] 
         protected float _firingRate = 2f;
+
+        public Sprite Icon;
 
         protected float LastFired;
         protected bool CanFire;
@@ -22,6 +26,22 @@ namespace TankBattle.Tanks.Guns
 
         [SerializeField] public ATankBullet TankBullet;
 
+        private int _currentNumberOfBullets;
+        public delegate void OnNumberOfBulletsChangeDelegate(int numberOfBullets);
+        public event OnNumberOfBulletsChangeDelegate OnNumberOfBulletsChange;
+
+        public int CurrentNumberOfBullets
+        {
+            get => _currentNumberOfBullets;
+            protected set
+            {
+                _currentNumberOfBullets = value;
+                OnNumberOfBulletsChange?.Invoke(_currentNumberOfBullets);
+            }
+        }
+        
+        
+        
         public delegate void OnEnergyUpdateDelegate(float currentEnergy, float minimumEnergy);
         public OnEnergyUpdateDelegate OnEnergyUpdate;
         
@@ -35,6 +55,8 @@ namespace TankBattle.Tanks.Guns
         protected virtual void Awake()
         {
             _photonView = GetComponent<PhotonView>();
+            _currentNumberOfBullets = _maxNumberOfBullets;
+            CanFire = true;
         }
 
         protected virtual void Update()
@@ -45,7 +67,8 @@ namespace TankBattle.Tanks.Guns
             
             if(!CanFire && LastFired >= _firingRate)
             {
-                CanFire = true;
+                CanFire = _maxNumberOfBullets==0 || _currentNumberOfBullets > 0;
+                Debug.Log($"Canfire: {CanFire} {_currentNumberOfBullets}");
             }
         }
         
@@ -148,14 +171,14 @@ namespace TankBattle.Tanks.Guns
 
         private void DelegateHit(TankValues tankValues, float damage)
         {
-            Debug.Log($"Hit {tankValues.name}");
+            // Debug.Log($"Hit {tankValues.name}");
             if (OnTankHit != null)
             {
-                OnTankHit?.Invoke(tankValues, TankBullet.Damage);    
+                OnTankHit?.Invoke(tankValues, damage);    
             }
             else
             {
-                tankValues.WasHit(TankBullet.Damage);
+                tankValues.WasHit(damage);
             }
         }
         #endregion

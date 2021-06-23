@@ -44,14 +44,6 @@
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
-                },
-                {
-                    "name": "OpenPause",
-                    "type": "Button",
-                    "id": "30d59e2e-b7ee-473d-b554-af58c94c6af8",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -61,18 +53,18 @@
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Desktop",
+                    "groups": "",
                     "action": "Trigger1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "1d963748-e78c-42af-9743-99fe064fc527",
-                    "path": "<Touchscreen>/touch0/press",
+                    "id": "3625cacb-68b3-4dd2-976c-1879ba8e1342",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Mobile",
+                    "groups": "",
                     "action": "Trigger1",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -83,18 +75,18 @@
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Desktop",
+                    "groups": "",
                     "action": "Trigger2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "0bd65943-1f0e-4274-9cac-cd72e2d91fa7",
-                    "path": "<Touchscreen>/touch2/press",
+                    "id": "8b0ff2e2-7616-4a65-a636-86c8bf26bd8a",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Mobile",
+                    "groups": "",
                     "action": "Trigger2",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -105,7 +97,7 @@
                     "path": "<Keyboard>/tab",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Desktop",
+                    "groups": "",
                     "action": "Lock",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -113,10 +105,10 @@
                 {
                     "name": "",
                     "id": "cb4ef484-d565-46d4-8305-7bbff8c2014f",
-                    "path": "<Touchscreen>/touch3/press",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Mobile",
+                    "groups": "",
                     "action": "Lock",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -138,7 +130,7 @@
                     "path": "<Keyboard>/#(w)",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Desktop",
+                    "groups": "",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -149,7 +141,7 @@
                     "path": "<Keyboard>/#(s)",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Desktop",
+                    "groups": "",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -160,7 +152,7 @@
                     "path": "<Keyboard>/#(a)",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Desktop",
+                    "groups": "",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -171,7 +163,7 @@
                     "path": "<Keyboard>/#(d)",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Desktop",
+                    "groups": "",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -182,7 +174,18 @@
                     "path": "<Joystick>/stick",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Mobile",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8149ace1-2237-4ff9-8288-ef4a23ca22d1",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -193,57 +196,24 @@
                     "path": "<Mouse>/delta",
                     "interactions": "",
                     "processors": "NormalizeVector2",
-                    "groups": "Desktop",
+                    "groups": "",
                     "action": "TurretMove",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "3bbf8bc1-3f39-4bb5-9d83-db0dc2ce8404",
-                    "path": "<Keyboard>/escape",
-                    "interactions": "Press",
+                    "id": "27fc940e-fb03-41fc-8f90-e36337af6c2b",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "OpenPause",
+                    "action": "TurretMove",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
             ]
         }
     ],
-    "controlSchemes": [
-        {
-            "name": "Desktop",
-            "bindingGroup": "Desktop",
-            "devices": [
-                {
-                    "devicePath": "<Keyboard>",
-                    "isOptional": false,
-                    "isOR": false
-                },
-                {
-                    "devicePath": "<Joystick>",
-                    "isOptional": true,
-                    "isOR": false
-                },
-                {
-                    "devicePath": "<Mouse>",
-                    "isOptional": false,
-                    "isOR": false
-                }
-            ]
-        },
-        {
-            "name": "Mobile",
-            "bindingGroup": "Mobile",
-            "devices": [
-                {
-                    "devicePath": "<Touchscreen>",
-                    "isOptional": false,
-                    "isOR": false
-                }
-            ]
-        }
-    ]
+    "controlSchemes": []
 }

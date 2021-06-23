@@ -65,8 +65,9 @@ namespace TankBattle.Tanks.Guns
             missileInstance.transform.position = _launcher.transform.position;
             missileInstance.transform.rotation = _launcher.transform.rotation;
             missileInstance.Fire(transform);
-            
             missileInstance.OnBulletHit = OnBulletHit;
+
+            CurrentNumberOfBullets--;
 
             if (_launchSound)
             {

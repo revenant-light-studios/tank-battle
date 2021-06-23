@@ -25,7 +25,7 @@ namespace TankBattle.InGameGUI
             set => _text.text = value;
         }
 
-        public int Progress
+        public float Progress
         {
             get => _progressBar.Value;
             set => _progressBar.Value = value;

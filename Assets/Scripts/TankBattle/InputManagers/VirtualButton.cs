@@ -1,4 +1,5 @@
 using System;
+using ExtensionMethods;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.Layouts;
@@ -22,6 +23,18 @@ namespace TankBattle.InputManagers
 
         [SerializeField, FormerlySerializedAs("FillImage")]
         private Image _fillImage;
+
+        private Text _text;
+        public string Text
+        {
+            get => _text.text;
+            set => _text.text = value;
+        }
+
+        private void Awake()
+        {
+            _text = transform.FirstOrDefault(t => t.name == "Text").GetComponent<Text>();
+        }
 
         public bool IsPressed()
         {

@@ -8,7 +8,8 @@ namespace TankBattle.Tanks.Bullets
     {
         [SerializeField] private float _force = 1f;
         private Rigidbody _rigidBody;
-        
+
+        private Collider _collider;
         private Impact _impactEffect;
         private GameObject _projectile;
         private bool _started;
@@ -17,7 +18,8 @@ namespace TankBattle.Tanks.Bullets
         {
             _rigidBody = GetComponent<Rigidbody>();
             _impactEffect = transform.FirstOrDefault(t => t.name == "Impact")?.GetComponent<Impact>();
-            _projectile = transform.FirstOrDefault(t => t.name == "Projectile")?.gameObject;        
+            _projectile = transform.FirstOrDefault(t => t.name == "Projectile")?.gameObject;
+            _collider = GetComponent<Collider>();
         }
 
         public override void Fire(Transform parent)
@@ -35,8 +37,9 @@ namespace TankBattle.Tanks.Bullets
 
         private void OnCollisionEnter(Collision other)
         {
-            Debug.Log($"{name}: collided with {other.gameObject.name}");
-            if(_projectile) _projectile.SetActive(false);
+            // Debug.Log($"{name}: collided with {other.gameObject.name}");
+            if(_projectile) {_projectile.SetActive(false);}
+            _collider.enabled = false;
             
             OnBulletHit?.Invoke(other.gameObject);
             

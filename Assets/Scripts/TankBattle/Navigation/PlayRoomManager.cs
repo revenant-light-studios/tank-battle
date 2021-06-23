@@ -12,6 +12,7 @@ using TankBattle.Items;
 using TankBattle.Tanks;
 using TankBattle.Terrain;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = System.Random;
@@ -20,7 +21,33 @@ namespace TankBattle.Navigation
 {
     public class PlayRoomManager : MonoBehaviourPunCallbacks
     {
+        #region public usefull stuff
         public static byte LoadingEvent = 100;
+
+        private static PlayRoomManager _playRoomManagerInstance;
+
+        public static PlayRoomManager Instance
+        {
+            get
+            {
+                if (_playRoomManagerInstance == null)
+                {
+                    throw new Exception("You cannot use the playroom manager without an instance in the scene");
+                }
+                
+                return _playRoomManagerInstance;
+            }
+        }
+
+        private GameObject _userUI;
+
+        public GameObject UserUI
+        {
+            get => _userUI;
+        }
+        #endregion
+        
+        
         private MeshTerrain _terrain;
         private int _randomSeed;
         private Random _randomGenerator;
@@ -30,7 +57,7 @@ namespace TankBattle.Navigation
         [SerializeField] private LoadingUI _LoadingUI;
         [SerializeField] private GameObject _tankPrefab;
         [SerializeField] private GameObject[] _tankAddOns;
-        
+
         private int _numberOfDummies = 10;
         private bool _spawnDummies = false;
         private int _numberOfSecondaryWeapons = 10;
@@ -64,7 +91,12 @@ namespace TankBattle.Navigation
         }
 
         private Text _debugSeedText;
-        
+
+        private void Awake()
+        {
+            _playRoomManagerInstance = this;
+        }
+
         public override void OnEnable()
         {
             base.OnEnable();
@@ -82,6 +114,127 @@ namespace TankBattle.Navigation
             LoadScene();
         }
 
+        #region Scene Loading
+
+        private IEnumerator _loadCoroutine;
+        private int _loadingProgess = 0;
+
+        private void LoadScene()
+        {
+            _loadCoroutine = LoadSceneCoroutine();
+            StartCoroutine(_loadCoroutine);
+        }
+        
+        private IEnumerator LoadSceneCoroutine()
+        {
+            ShowInGameUI();
+            
+            _LoadingUI?.Show();
+            
+            yield return SendLoadingMessage(_loadingProgess, "Generando arena");
+            
+            GameSettings settings = Resources.Load<GameSettings>("Settings/GameSettings");
+            if (settings)
+            {
+                _spawnDummies = settings.spawnDummyTanks;
+                _numberOfDummies = settings.numberOfDummies;
+                _spawnSecondaryWeapons = settings.spawnSecondaryWeapons;
+                _numberOfSecondaryWeapons = settings.numberOfSecondaryWeapons;
+                _secondaryWeaponTypes = settings.secondaryWeapons;
+
+                if (_secondaryWeaponTypes.Length == 0)
+                {
+                    _spawnSecondaryWeapons = false;
+                }
+            }
+            
+            _terrain = FindObjectOfType<MeshTerrain>();
+            _terrain.Generate(RandomSeed);
+            _debugSeedText.text = $"Terrain random seed: {_terrain.TerrainParameters.seed}";
+
+            _loadingProgess += 50;
+            yield return SendLoadingMessage(_loadingProgess, "Generando puntos de spawn");
+
+            int numberOfDummySpawnPoints = _spawnDummies ? _numberOfDummies : 0;
+            int numberOfSecondaryWeapons = _spawnSecondaryWeapons ? _numberOfSecondaryWeapons : 0;
+            int numberOfPlayers = PhotonNetwork.IsConnected ? PhotonNetwork.CurrentRoom.PlayerCount : 1;
+            int totalElementsToSpawn = numberOfPlayers + numberOfSecondaryWeapons + numberOfDummySpawnPoints;
+
+            GenerateSpawnPoints(numberOfPlayers + numberOfDummySpawnPoints);
+            _loadingProgess += (int)((numberOfPlayers + numberOfDummySpawnPoints) / totalElementsToSpawn * 0.5);
+            yield return SendLoadingMessage(_loadingProgess, "Instanciando tanques");
+                
+            if (PhotonNetwork.IsConnected)
+            {
+                InstantiatePlayers();
+            }
+            else
+            {
+                Vector3 position = _spawnPoints[0];
+                Instantiate(_tankPrefab, position, Quaternion.identity);
+            }
+
+            if (_spawnDummies)
+            {
+                SpawnDummyTanks(_numberOfDummies);
+            }
+            
+            
+            yield return SendLoadingMessage(_loadingProgess, "Generando armas secundarias");
+            
+            if (_spawnSecondaryWeapons)
+            {
+                SpawnSecondaryWeapons(numberOfSecondaryWeapons);
+            }
+            
+            yield return SendLoadingMessage(1, "Comenzando partida");
+            yield return new WaitForSeconds(1.0f);
+            
+            _LoadingUI.Hide();
+        }
+
+        private void ShowInGameUI()
+        {
+            Transform desktopUI = transform.FirstOrDefault(t => t.name == "UserUIDesktop");
+            Transform mobileUI = transform.FirstOrDefault(t => t.name == "UserUIMobile");
+            
+            if (GlobalMethods.IsDesktop())
+            {
+                desktopUI.gameObject.SetActive(true);
+                mobileUI.gameObject.SetActive(false);
+                _userUI = desktopUI.gameObject;
+            }
+            else
+            {
+                desktopUI.gameObject.SetActive(false);
+                mobileUI.gameObject.SetActive(true);
+                _userUI = mobileUI.gameObject;
+            }
+            
+            _debugSeedText = _userUI.transform.FirstOrDefault(t => t.name == "DebugSeed").GetComponent<Text>();
+        }
+
+        private YieldInstruction SendLoadingMessage(int progress, string message = "")
+        {
+            if (!PhotonNetwork.IsMasterClient && PhotonNetwork.IsConnected) return new WaitForEndOfFrame();
+
+            if (PhotonNetwork.IsConnected)
+            {
+                object[] content = new object[] { progress, message };
+                RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+                PhotonNetwork.RaiseEvent(LoadingEvent, content, options, SendOptions.SendReliable);
+            }
+            else
+            {
+                _LoadingUI.ShowProgress(progress, message);
+            }
+
+            return new WaitForEndOfFrame();
+        }
+
+        #endregion
+        
+        #region Players instantiation
         private void InstantiatePlayers()
         {
             Player player = PhotonNetwork.LocalPlayer;
@@ -173,8 +326,9 @@ namespace TankBattle.Navigation
                 dummyTank.GetComponent<TankManager>().IsDummy = true;
             }
         }
+        #endregion
 
-        #region Pickable items management
+        #region Pickable items instantiation
 
         private void SpawnSecondaryWeapons(int numberOfSecondaryWeapons = 0)
         {
@@ -216,7 +370,7 @@ namespace TankBattle.Navigation
                 // s.name = $"SecondaryWeapon{i}";
                 // s.GetComponent<Renderer>().material.color = Color.red;
 
-                int weponType = generator.Next(0, _secondaryWeaponTypes.Length - 1);
+                int weponType = generator.Next(0, _secondaryWeaponTypes.Length);
                 SpawnSecondaryWeapon(_secondaryWeaponTypes[weponType], spawnPosition);
             }
         }
@@ -232,129 +386,6 @@ namespace TankBattle.Navigation
                 Instantiate(item, position, Quaternion.identity);
             }
         }
-        #endregion
-
-        #region Scene Loading
-
-        private IEnumerator _loadCoroutine;
-        private int _loadingProgess = 0;
-
-        private void LoadScene()
-        {
-            _loadCoroutine = LoadSceneCoroutine();
-            StartCoroutine(_loadCoroutine);
-        }
-        
-        private IEnumerator LoadSceneCoroutine()
-        {
-            ShowInGameUI();
-            _LoadingUI?.Show();
-            
-            yield return SendLoadingMessage(_loadingProgess, "Generando arena");
-            
-            GameSettings settings = Resources.Load<GameSettings>("Settings/GameSettings");
-            if (settings)
-            {
-                _spawnDummies = settings.spawnDummyTanks;
-                _numberOfDummies = settings.numberOfDummies;
-                _spawnSecondaryWeapons = settings.spawnSecondaryWeapons;
-                _numberOfSecondaryWeapons = settings.numberOfSecondaryWeapons;
-                _secondaryWeaponTypes = settings.secondaryWeapons;
-
-                if (_secondaryWeaponTypes.Length == 0)
-                {
-                    _spawnSecondaryWeapons = false;
-                }
-            }
-            
-            _terrain = FindObjectOfType<MeshTerrain>();
-            _terrain.Generate(RandomSeed);
-            _debugSeedText.text = $"Terrain random seed: {_terrain.TerrainParameters.seed}";
-
-            _loadingProgess += 50;
-            yield return SendLoadingMessage(_loadingProgess, "Generando puntos de spawn");
-
-            int numberOfDummySpawnPoints = _spawnDummies ? _numberOfDummies : 0;
-            int numberOfSecondaryWeapons = _spawnSecondaryWeapons ? _numberOfSecondaryWeapons : 0;
-            int numberOfPlayers = PhotonNetwork.IsConnected ? PhotonNetwork.CurrentRoom.PlayerCount : 1;
-            int totalElementsToSpawn = numberOfPlayers + numberOfSecondaryWeapons + numberOfDummySpawnPoints;
-
-            GenerateSpawnPoints(numberOfPlayers + numberOfDummySpawnPoints);
-            _loadingProgess += (int)((numberOfPlayers + numberOfDummySpawnPoints) / totalElementsToSpawn * 0.5);
-            yield return SendLoadingMessage(_loadingProgess, "Instanciando tanques");
-                
-            if (PhotonNetwork.IsConnected)
-            {
-                InstantiatePlayers();
-            }
-            else
-            {
-                Vector3 position = _spawnPoints[0];
-                Instantiate(_tankPrefab, position, Quaternion.identity);
-            }
-
-            if (_spawnDummies)
-            {
-                SpawnDummyTanks(_numberOfDummies);
-            }
-            
-            
-            yield return SendLoadingMessage(_loadingProgess, "Generando armas secundarias");
-            
-            if (_spawnSecondaryWeapons)
-            {
-                SpawnSecondaryWeapons(numberOfSecondaryWeapons);
-            }
-            
-            yield return SendLoadingMessage(1, "Comenzando partida");
-            yield return new WaitForSeconds(1.0f);
-            
-            _LoadingUI.Hide();
-        }
-
-        private void ShowInGameUI()
-        {
-            Transform desktopUI = transform.FirstOrDefault(t => t.name == "UserUIDesktop");
-            Transform mobileUI = transform.FirstOrDefault(t => t.name == "UserUIMobile");
-            
-            Cursor.lockState = CursorLockMode.Confined;
-
-            GameObject canvas;
-            
-            if (GlobalMethods.IsDesktop())
-            {
-                desktopUI.gameObject.SetActive(true);
-                mobileUI.gameObject.SetActive(false);
-                canvas = desktopUI.gameObject;
-            }
-            else
-            {
-                desktopUI.gameObject.SetActive(false);
-                mobileUI.gameObject.SetActive(true);
-                canvas = mobileUI.gameObject;
-            }            
-            
-            _debugSeedText = canvas.transform.FirstOrDefault(t => t.name == "DebugSeed").GetComponent<Text>();
-        }
-
-        private YieldInstruction SendLoadingMessage(int progress, string message = "")
-        {
-            if (!PhotonNetwork.IsMasterClient && PhotonNetwork.IsConnected) return new WaitForEndOfFrame();
-
-            if (PhotonNetwork.IsConnected)
-            {
-                object[] content = new object[] { progress, message };
-                RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
-                PhotonNetwork.RaiseEvent(LoadingEvent, content, options, SendOptions.SendReliable);
-            }
-            else
-            {
-                _LoadingUI.ShowProgress(progress, message);
-            }
-
-            return new WaitForEndOfFrame();
-        }
-
         #endregion
     }
 }

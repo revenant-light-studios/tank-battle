@@ -32,6 +32,7 @@ namespace TankBattle.Tanks.Bullets
         public override void Fire(Transform parent)
         {
             _started = true;
+            Destroy(gameObject, 10f);
         }
 
         private void FixedUpdate()
