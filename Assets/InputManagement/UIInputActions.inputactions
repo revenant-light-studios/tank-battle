@@ -44,6 +44,22 @@
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "OpenHelp",
+                    "type": "Button",
+                    "id": "d673c5c0-4391-4c81-be5d-7bcfbeaf4284",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=2)"
+                },
+                {
+                    "name": "OpenPause",
+                    "type": "Button",
+                    "id": "c07b661b-3764-44d4-87ad-6c840cf0d157",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -209,6 +225,123 @@
                     "processors": "",
                     "groups": "",
                     "action": "TurretMove",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "654bc72c-0308-4ff8-86af-88092b3e5d12",
+                    "path": "<Keyboard>/leftCtrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenHelp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9622c440-dcf5-40b3-9484-b3512c393332",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenHelp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1f0c57f2-1c7b-4142-adbb-79cd823d6711",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenPause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3edbcfff-1725-4ab5-8016-0550a6d2012d",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenPause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "DeadPlayer",
+            "id": "102ed802-5a15-4a6e-9b0c-fddc99e9158b",
+            "actions": [
+                {
+                    "name": "SwitchTank",
+                    "type": "Button",
+                    "id": "8862c3a2-2f90-409a-9ad7-4a3c52605246",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "OpenPause",
+                    "type": "Button",
+                    "id": "d7511f4a-a6fd-4403-879e-d6c07363a688",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "8aea346b-9673-434b-83a9-673ddc4f9dd3",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SwitchTank",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8adc1fb2-dafe-4231-b236-93cd5e6f0e44",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenPause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "PauseSystem",
+            "id": "9db7411d-01b2-4065-b031-e5d6baab0e7b",
+            "actions": [
+                {
+                    "name": "OpenPause",
+                    "type": "Button",
+                    "id": "50992f33-9416-4a83-a53f-68a5d107ceba",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "4dacbfa8-f766-47b5-901e-caf0d6602a2f",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenPause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

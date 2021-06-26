@@ -46,9 +46,6 @@ namespace TankBattle.Tanks.Engines
             _rigidbody.centerOfMass = Vector3.down;
             
             UpdateAntiGravityEngines();
-            
-            // TODO: Move this out of here
-            Cursor.visible = false;
         }
 
         private void FixedUpdate()

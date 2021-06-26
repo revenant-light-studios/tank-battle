@@ -39,6 +39,7 @@ namespace Networking.Utilities
             // Debug.Log($"Random seed generated: {randomSeed}");
             
             RoomOptions roomOptions = new RoomOptions();
+            roomOptions.BroadcastPropsChangeToAll = true;
             roomOptions.MaxPlayers = _maxNumberOfPlayers;
             roomOptions.IsVisible = isVisible;
             roomOptions.PublishUserId = true;

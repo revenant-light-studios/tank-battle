@@ -15,11 +15,11 @@ namespace TankBattle.Navigation
         {
             _tutorialPanel = transform.FirstOrDefault(t => t.name == "TutorialPanel").gameObject;
 
-            _navButtons = _tutorialPanel.transform.FirstOrDefault(t => t.name == "NavigationBtnsTutorial").gameObject;
-            _nickname = _tutorialPanel.transform.FirstOrDefault(t => t.name == "NicknameInputTutorial").gameObject;
-            _playButton = _tutorialPanel.transform.FirstOrDefault(t => t.name == "PlayBtnTutorial").gameObject;
-            _modeButton = _tutorialPanel.transform.FirstOrDefault(t => t.name == "ModeBtnTutorial").gameObject;
-            _joinButton = _tutorialPanel.transform.FirstOrDefault(t => t.name == "OpenJoinBtnTutorial").gameObject;
+            _navButtons = _tutorialPanel.transform.FirstOrDefault(t => t.name == "NavigationBtns").gameObject;
+            _nickname = _tutorialPanel.transform.FirstOrDefault(t => t.name == "NicknameInput").gameObject;
+            _playButton = _tutorialPanel.transform.FirstOrDefault(t => t.name == "PlayBtn").gameObject;
+            _modeButton = _tutorialPanel.transform.FirstOrDefault(t => t.name == "ModeBtn").gameObject;
+            _joinButton = _tutorialPanel.transform.FirstOrDefault(t => t.name == "OpenJoinBtn").gameObject;
 
             _tutorialTexts.Add(_tutorialPanel.transform.FirstOrDefault(t => t.name == "WelcomeText").gameObject);
             _tutorialTexts.Add(_tutorialPanel.transform.FirstOrDefault(t => t.name == "NavButtonsText").gameObject);

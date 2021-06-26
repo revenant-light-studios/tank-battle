@@ -1350,8 +1350,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5692899117345103090, guid: 537ac8237e03543b792a06620ece2936, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 537ac8237e03543b792a06620ece2936, type: 3}
 --- !u!224 &590096835 stripped
 RectTransform:
@@ -4010,25 +4009,6 @@ MonoBehaviour:
   viewIdField: 4
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!1 &1651280650 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5692899117345103089, guid: 537ac8237e03543b792a06620ece2936,
-    type: 3}
-  m_PrefabInstance: {fileID: 587583517}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1651280651
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1651280650}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30509e286f85241fa8c30d387060dbd7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  soundPrefabArray: []
 --- !u!224 &1672710656 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4858686319416336374, guid: 2ddfc2b26ae094b88bdf904b88c60d55,

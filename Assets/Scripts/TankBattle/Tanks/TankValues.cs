@@ -1,5 +1,6 @@
 using System;
 using ExtensionMethods;
+using Networking.Utilities;
 using Photon.Pun;
 using TankBattle.Tanks.Bullets;
 using TankBattle.Tanks.ForceFields;
@@ -89,6 +90,7 @@ namespace TankBattle.Tanks
             {
                 if (PhotonNetwork.IsConnected && _photonView.IsMine)
                 {
+                    _photonView.Owner.SetAlive(false);
                     _photonView.RPC("DestroyTank", RpcTarget.All);
                 }
                 else
@@ -119,7 +121,7 @@ namespace TankBattle.Tanks
                 transform.FirstOrDefault(t => t.name == "MissileThrower")?.gameObject.SetActive(false);
                 explosion.Play();
                 OnTankWasDestroyed?.Invoke(this);
-                Destroy(gameObject, explosion.main.duration);
+                // Destroy(gameObject, explosion.main.duration);
             }
         }
     }
