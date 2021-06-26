@@ -1,3 +1,4 @@
+using System;
 using Cinemachine;
 using Photon.Pun;
 using TankBattle.Global;
@@ -14,6 +15,12 @@ namespace TankBattle.Tanks
 {
     public class TankInput : MonoBehaviour
     {
+        public enum TankInputMaps
+        {
+            Player,
+            PauseSystem
+        }
+        
         private PhotonView _photonView;
         private ATankEngine _engine;
         private ATankTurret _turret;
@@ -22,32 +29,51 @@ namespace TankBattle.Tanks
         public Trigger Trigger1 = new Trigger();
         public Trigger Trigger2 = new Trigger();
         public Trigger LockTrigger = new Trigger();
+        public Trigger PauseTrigger = new Trigger();
+        public Trigger HelpTrigger = new Trigger();
+        public Trigger SwitchTankTrigger = new Trigger();
 
         [SerializeField, FormerlySerializedAs("AxisStateX")]
         private AxisState _axisStateX;
         [SerializeField, FormerlySerializedAs("AxisStateY")]
         private AxisState _axisStateY;
         
-        public delegate void OnOpenPauseMenuDelegate();
-        public OnOpenPauseMenuDelegate OnOpenPauseMenu;
+        private PlayerInput _playerInput;
 
         public void InitInput()
         {
-            PlayerInput playerInput = GetComponent<PlayerInput>();
-            playerInput.enabled = true;
             PlayerInputManager.instance.JoinPlayer();
-            Cursor.lockState = GlobalMethods.IsDesktop() ? CursorLockMode.Locked : CursorLockMode.None;
+            
+            _playerInput = GetComponent<PlayerInput>();
+            _playerInput.enabled = true;
+            SwitchActionMap(TankInputMaps.Player);
             
             #if UNITY_EDITOR
             if (!GlobalMethods.IsDesktop())
             {
-                playerInput.user.UnpairDevices();
-                InputUser.PerformPairingWithDevice(Gamepad.current, playerInput.user);
+                _playerInput.user.UnpairDevices();
+                InputUser.PerformPairingWithDevice(Gamepad.current, _playerInput.user);
                 TouchSimulation.Enable();
             }
             #endif
         }
-        
+
+        public void SwitchActionMap(TankInputMaps map)
+        {
+            _playerInput.SwitchCurrentActionMap(map.ToString());
+            Debug.Log($"Action map switched to {map.ToString()}");
+            switch (map)
+            {
+                case TankInputMaps.Player:
+                    Cursor.lockState = GlobalMethods.IsDesktop() ? CursorLockMode.Locked : CursorLockMode.None;
+                    break;
+                case TankInputMaps.PauseSystem:
+                default:
+                    Cursor.lockState = CursorLockMode.None;
+                    break;
+            }
+        }
+
         private void Start()
         {
             _photonView = GetComponent<PhotonView>();
@@ -93,7 +119,21 @@ namespace TankBattle.Tanks
 
         public void OnOpenPause(InputValue inputValue)
         {
-            OnOpenPauseMenu?.Invoke();
+            // For single press capture
+            PauseTrigger.IsPressed = true;
+            PauseTrigger.IsPressed = false;
+        }
+
+        public void OnOpenHelp(InputValue inputValue)
+        {
+            HelpTrigger.IsPressed = inputValue.isPressed;
+        }
+
+        public void OnSwitchTank(InputValue inputValue)
+        {
+            // For single press capture
+            SwitchTankTrigger.IsPressed = true;
+            SwitchTankTrigger.IsPressed = false;
         }
         
         private void LateUpdate()

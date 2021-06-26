@@ -62,6 +62,12 @@ namespace TankBattle.Navigation
             _waiting.OnStartGame += () => StartGame();
         }
 
+        public override void OnEnable()
+        {
+            base.OnEnable();
+            Cursor.lockState = CursorLockMode.None;
+        }
+
         void Start()
         {
             _mainMenu.gameObject.SetActive(true);

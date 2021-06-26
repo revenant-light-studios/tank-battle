@@ -2,6 +2,8 @@ using ExtensionMethods;
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
+using TankBattle.InGameGUI.Hud;
+using TankBattle.Navigation;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,9 +20,7 @@ namespace TankBattle.InGameGUI
         {
             _winnerName = transform.FirstOrDefault(t => t.name == "WinnerNameText").GetComponent<Text>();
             _winnerStacks = transform.FirstOrDefault(t => t.name == "WinnerStacksText").GetComponent<Text>();
-
             _exitRoomBtn = transform.FirstOrDefault(t => t.name == "ExitBtn").GetComponent<Button>();
-
             _exitRoomBtn.onClick.AddListener(LeaveRoom);
         }
 
@@ -32,7 +32,7 @@ namespace TankBattle.InGameGUI
 
         private void LeaveRoom()
         {
-            PhotonNetwork.LeaveRoom();
+            PlayRoomManager.Instance.ExitPlay();
         }
     }
 }

@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using ExitGames.Client.Photon;
 using ExtensionMethods;
+using Networking.Utilities;
 using Photon.Pun;
-using Photon.Realtime;
 using TankBattle.Global;
-using TankBattle.InGameGUI;
 using TankBattle.InGameGUI.Hud;
 using TankBattle.InGameGUI.LockedTank;
 using TankBattle.Navigation;
@@ -21,6 +19,7 @@ namespace TankBattle.Tanks
      RequireComponent(typeof(ATankCamera)), 
      RequireComponent(typeof(TankInput)),
      RequireComponent(typeof(TankValues)),
+     RequireComponent(typeof(TankFollowerManager)),
      RequireComponent(typeof(DetectableObject))]
     public class TankManager : MonoBehaviourPunCallbacks, IPunInstantiateMagicCallback
     {
@@ -30,6 +29,7 @@ namespace TankBattle.Tanks
         private ATankHud _tankHud;
         private ATankTurret _turret;
         private TankValues _tankValues;
+        private TankFollowerManager _tankFollowerManager;
         private DetectableObject _detectableObject;
         
         [SerializeField, FormerlySerializedAs("ForceField")] private ForceField _forceFieldPrefab;
@@ -59,6 +59,7 @@ namespace TankBattle.Tanks
             _tankInput = GetComponent<TankInput>();
             _detectableObject = GetComponent<DetectableObject>();
             _turret = GetComponentInChildren<ATankTurret>();
+            _tankFollowerManager = GetComponent<TankFollowerManager>();
             _tankHud = PlayRoomManager.Instance.UserUI.GetComponentInChildren<ATankHud>();
             _lockedTank = FindObjectOfType<LockedTank>();
             
@@ -66,15 +67,8 @@ namespace TankBattle.Tanks
             {
                 _forceFieldPrefab = Resources.Load<ForceField>("Tanks/ForceFields/ForceField");
             }
-
-            _tankInput.OnOpenPauseMenu += OpenPauseMenu;
         }
-
-        private void OpenPauseMenu()
-        {
-            _tankHud.OpenPauseMenu();
-        }
-
+        
         private void Start()
         {
             // All tanks
@@ -97,12 +91,17 @@ namespace TankBattle.Tanks
             if ((_photonView.IsMine || !PhotonNetwork.IsConnected) && !IsDummy)
             {
                 // Only local player tank
+                PlayRoomManager.Instance.RegisterLocalTank(this);
+                _photonView.Owner.SetAlive(true);
+                _photonView.Owner.SetTank(this);
+
                 InitUI();
                 InitEnemyTracker();
                 InitInput();
                 InitCamera();
                 InitTankGunsFromPrefabs();
-                
+                InitTankFollower();
+
                 // Put local tank in non collission layer
                 // gameObject.SetLayerRecursively(12);
             }
@@ -118,12 +117,6 @@ namespace TankBattle.Tanks
                 {
                     GetComponent<AudioSource>().enabled = false;
                 }
-            }
-
-            if (PhotonNetwork.IsMasterClient)
-            {
-                int livingPlayers = PhotonNetwork.CurrentRoom.PlayerCount;
-                PhotonNetwork.CurrentRoom.UpdateLivingPlayers(livingPlayers);
             }
         }
 
@@ -145,27 +138,7 @@ namespace TankBattle.Tanks
         public void OnPhotonInstantiate(PhotonMessageInfo info)
         {
         }
-
-        public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
-        {
-            if (propertiesThatChanged.ContainsKey(RoomExtension.LivingPlayersPropertyName))
-            {
-                int livingPlayers = PhotonNetwork.CurrentRoom.GetLivingPlayers();
-                _tankHud.UpdateLivingPlayersText(livingPlayers);
-                if(PhotonNetwork.IsMasterClient && livingPlayers <= 1)
-                {
-                    var allTankList = FindObjectsOfType<TankManager>();
-                    foreach (var tank in allTankList)
-                    {
-                        if (tank.Turret.gameObject.activeSelf)
-                        {
-                            _tankHud.ShowEndPanel(tank);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+        
         #region UI Management
         private void InitUI()
         {
@@ -188,6 +161,20 @@ namespace TankBattle.Tanks
             // Init input
             _tankInput.enabled = true;
             _tankInput.InitInput();
+            
+            _tankInput.PauseTrigger.OnTriggerPressed += OpenPauseMenu;
+            _tankInput.HelpTrigger.OnTriggerPressed += OpenHelp;
+            _tankInput.HelpTrigger.OnTriggerReleased += OpenHelp;
+        }
+        private void OpenHelp()
+        {
+            _tankHud.ToggleHelpPanel();            
+        }
+
+        private void OpenPauseMenu()
+        {
+            _tankInput.SwitchActionMap(TankInput.TankInputMaps.PauseSystem);
+            _tankHud.TogglePauseMenu(() => _tankInput.SwitchActionMap(TankInput.TankInputMaps.Player));
         }
         #endregion
         
@@ -517,6 +504,16 @@ namespace TankBattle.Tanks
         {
             if (weapon == TankWeapon.Primary) PrimaryGun = null;
             else SecondaryGun = null;
+        }
+        #endregion
+
+        #region Tank follower management
+        private void InitTankFollower()
+        {
+            if (PhotonNetwork.IsConnected)
+            {
+                _tankFollowerManager.InitTankFollower(this);    
+            }
         }
         #endregion
     }

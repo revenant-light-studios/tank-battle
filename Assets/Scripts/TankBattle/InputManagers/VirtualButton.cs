@@ -33,7 +33,7 @@ namespace TankBattle.InputManagers
 
         private void Awake()
         {
-            _text = transform.FirstOrDefault(t => t.name == "Text").GetComponent<Text>();
+            _text = transform.FirstOrDefault(t => t.name == "Text")?.GetComponent<Text>();
         }
 
         public bool IsPressed()

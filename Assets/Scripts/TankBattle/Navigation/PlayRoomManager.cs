@@ -11,6 +11,7 @@ using TankBattle.InGameGUI;
 using TankBattle.Items;
 using TankBattle.Tanks;
 using TankBattle.Terrain;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
@@ -21,7 +22,7 @@ namespace TankBattle.Navigation
 {
     public class PlayRoomManager : MonoBehaviourPunCallbacks
     {
-        #region public usefull stuff
+        #region public usefull static stuff
         public static byte LoadingEvent = 100;
 
         private static PlayRoomManager _playRoomManagerInstance;
@@ -44,6 +45,17 @@ namespace TankBattle.Navigation
         public GameObject UserUI
         {
             get => _userUI;
+        }
+
+        private TankManager _userTank;
+        public TankManager UserTank
+        {
+            get => _userTank;
+        }
+
+        public void RegisterLocalTank(TankManager _tankManager)
+        {
+            _userTank = _tankManager;
         }
         #endregion
         
@@ -384,6 +396,39 @@ namespace TankBattle.Navigation
             else
             {
                 Instantiate(item, position, Quaternion.identity);
+            }
+        }
+        #endregion
+        
+        #region End scene management
+        public void ExitPlay()
+        {
+            if(PhotonNetwork.IsConnected)
+            {
+                PhotonNetwork.LeaveRoom();
+            }
+            else
+            {
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#else
+                Application.Quit();
+#endif
+            }
+        }
+
+        public override void OnLeftRoom()
+        {
+            base.OnLeftRoom();
+            SceneManager.LoadScene("Lobby");
+        }
+
+        public override void OnPlayerLeftRoom(Player otherPlayer)
+        {
+            base.OnPlayerLeftRoom(otherPlayer);
+            if (PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.DestroyPlayerObjects(otherPlayer);   
             }
         }
         #endregion
