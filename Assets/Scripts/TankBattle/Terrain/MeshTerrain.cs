@@ -46,7 +46,7 @@ namespace TankBattle.Terrain
             _meshCollider.sharedMesh = _meshFilter.mesh;
 
             Bounds bounds = GetComponent<MeshRenderer>().bounds;
-            Debug.Log($"World size ({bounds.size})");
+            // Debug.Log($"World size ({bounds.size})");
         }
         
         public float GetHeight(int x, int z)

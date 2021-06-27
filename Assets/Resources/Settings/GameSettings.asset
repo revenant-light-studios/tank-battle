@@ -15,7 +15,7 @@ MonoBehaviour:
   minimumNumberOfPlayers: 2
   maximumNumberOfPlayers: 20
   startWaitTime: 10
-  spawnDummyTanks: 0
+  spawnDummyTanks: 1
   numberOfDummies: 10
   spawnSecondaryWeapons: 1
   numberOfSecondaryWeapons: 10

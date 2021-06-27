@@ -73,7 +73,7 @@ namespace TankBattle.Tanks
         public void SwitchActionMap(TankInputMaps map)
         {
             _playerInput.SwitchCurrentActionMap(map.ToString());
-            Debug.Log($"Action map switched to {map.ToString()}");
+            // Debug.Log($"Action map switched to {map.ToString()}");
             switch (map)
             {
                 case TankInputMaps.Player:

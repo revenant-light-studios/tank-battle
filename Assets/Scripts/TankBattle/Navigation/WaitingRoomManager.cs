@@ -175,7 +175,7 @@ namespace TankBattle.Navigation
             // Check if countdown already started when I join
             if (!PhotonNetwork.IsMasterClient)
             {
-                Debug.Log($"Checking if room countdown already started");
+                // Debug.Log($"Checking if room countdown already started");
                 if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(RoomOptionsKeys.TimerStarted, out object timerStarted))
                 {
                     _timerStarted = (bool)timerStarted;
@@ -183,7 +183,7 @@ namespace TankBattle.Navigation
                     _timerStartTime = (double)PhotonNetwork.CurrentRoom.CustomProperties[RoomOptionsKeys.StartTime];
                     _timeToStartText.gameObject.SetActive(_timerStarted);
                     
-                    Debug.Log($"Yes! Already started {PhotonNetwork.Time - _timerStartTime:0} seconds ago");
+                    // Debug.Log($"Yes! Already started {PhotonNetwork.Time - _timerStartTime:0} seconds ago");
                 }
             }
 

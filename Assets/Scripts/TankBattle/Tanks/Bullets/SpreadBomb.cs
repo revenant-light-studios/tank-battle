@@ -64,7 +64,7 @@ namespace TankBattle.Tanks.Bullets
                 _spreadBombParticleSystem.IsAlive() &&
                 _spreadBombParticleSystem.particleCount == 0)
             {
-                Debug.Log($"Destroying spreadbomb {name}");
+                // Debug.Log($"Destroying spreadbomb {name}");
                 Destroy(gameObject);
             }
         }

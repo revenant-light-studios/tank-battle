@@ -57,7 +57,7 @@ namespace TankBattle.Tanks
 
         private void TankWasDestroyed(TankValues values)
         {
-            Debug.Log($"TankFollowerManager: {gameObject.name} TankWasDestroyed called");
+            // Debug.Log($"TankFollowerManager: {gameObject.name} TankWasDestroyed called");
             TankManager tankManager = GetComponent<TankManager>();
             
             _tankInput.SwitchActionMap(TankInput.TankInputMaps.DeadPlayer);
@@ -75,7 +75,7 @@ namespace TankBattle.Tanks
             {
                 int nextTank = (currentTank + i) % players.Count;
                 
-                Debug.Log($"nextTank={nextTank}");
+                // Debug.Log($"nextTank={nextTank}");
                 
                 if (players[nextTank].IsLocal) continue;
                 
@@ -87,13 +87,13 @@ namespace TankBattle.Tanks
 
             if (nextTankToFollow != null && nextTankToFollow != _currentTankFollow)
             {
-                Debug.Log($"Camera following {_currentTankFollow}");
+                // Debug.Log($"Camera following {_currentTankFollow}");
                 _currentTankFollow = nextTankToFollow;
                 _currentTankFollow.CameraFollow.StartFollowing();    
             }
             else
             {
-                Debug.LogWarning($"{gameObject.name} TankFollowManager: No more alive tanks to follow");
+                // Debug.LogWarning($"{gameObject.name} TankFollowManager: No more alive tanks to follow");
             }
         }
 
@@ -101,7 +101,7 @@ namespace TankBattle.Tanks
         {
             if (changedProps.ContainsKey(PlayerExtensions.PlayerAlive) && _isRunning)
             {
-                Debug.Log($"{targetPlayer.NickName} changed IsAlive {targetPlayer.IsAlive()}");
+                // Debug.Log($"{targetPlayer.NickName} changed IsAlive {targetPlayer.IsAlive()}");
                 FollowNextTank();
             }
         }
