@@ -124,6 +124,7 @@ namespace TankBattle.Global
             {
                 GameObject go = Instantiate(Resources.Load<GameObject>("Tanks/Hud/RadarTracker"), canvas);
                 go.name = $"RadarTrack-{playerName}";
+                go.SetActive(false);
                 _radarTrack = go.GetComponent<RadarTrack>();
                 _radarTrack.SetName(playerName);
             }

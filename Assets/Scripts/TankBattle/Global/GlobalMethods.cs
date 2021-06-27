@@ -19,5 +19,11 @@ namespace TankBattle.Global
             
             return settings ? !settings.forceMobile : true;
         }
+
+        public static bool IsForceMobile()
+        {
+            GameSettings settings = Resources.Load<GameSettings>("Settings/GameSettings");
+            return settings.forceMobile;
+        }
     }
 }

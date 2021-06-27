@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using ExitGames.Client.Photon;
 using ExtensionMethods;
 using Networking.Utilities;
 using Photon.Pun;
@@ -14,7 +16,6 @@ namespace TankBattle.Navigation
     public class WaitingRoomManager : MonoBehaviourPunCallbacks
     {
         [SerializeField] private GameObject _playerElemPrefab;
-        private PhotonView _pView;
 
         [SerializeField, FormerlySerializedAs("GameSettings")]
         private GameSettings _settings;
@@ -22,9 +23,10 @@ namespace TankBattle.Navigation
         private float _maxWaitTime = 15.0f;
         private int _minNumberOfPlayers = 2;
         private int _maxNumberOfPlayers = 20;
-        
-        private float _timeToStart;
-        private bool _startCountdown = false;
+
+        private double _timerTimeToStart;
+        private double _timerStartTime;
+        private bool _timerStarted;
 
         private Transform _playersList;
         private NavigationsButtons _navBtns;
@@ -50,8 +52,6 @@ namespace TankBattle.Navigation
 
         private void Awake()
         {
-            _pView = PhotonView.Get(this);
-
             if (_settings != null)
             {
                 _maxWaitTime = _settings.startWaitTime;
@@ -59,7 +59,9 @@ namespace TankBattle.Navigation
                 _maxNumberOfPlayers = _settings.maximumNumberOfPlayers;
             }
             
-            _timeToStart = _maxWaitTime;
+            _timerTimeToStart = 0d;
+            _timerStartTime = 0d;
+            _timerStarted = false;
             
             Transform playerList = transform.FirstOrDefault(t=>t.name== "PlayerList");
             _playersList = playerList.FirstOrDefault(t => t.name == "Content");
@@ -85,44 +87,74 @@ namespace TankBattle.Navigation
 
         private void Update()
         {
-            if (PhotonNetwork.LevelLoadingProgress > 0 && PhotonNetwork.LevelLoadingProgress < 1)
+            if (_timerStarted)
             {
-                // Debug.Log(PhotonNetwork.LevelLoadingProgress);
+                double delta = PhotonNetwork.Time - _timerStartTime;
+                double timeToStart = _maxWaitTime - delta;
+                _timeToStartText.text = $"{timeToStart:0} \n segundos...";
+                
+                if (timeToStart <= 0d)
+                {
+                    _timerStarted = false;
+                    StartGame();
+                }
             }
-            //StartContdown();
+        }
+        
+        private void StartTimer()
+        {
             if (PhotonNetwork.IsMasterClient)
             {
-                if (_startCountdown)
-                {
-                    _timeToStart -= Time.deltaTime;
-                   
-                    int sec = (int)_timeToStart;
-                    if (_timeToStart > 0)
-                    {
-                        _pView.RPC("UpdateCountDown", RpcTarget.All, sec);
-                    }
-                    else
-                    {
-                        _startCountdown = false;
-                        StartGame();
-                    }
-                }
-                
+                Hashtable hashtable = new Hashtable {
+                    { RoomOptionsKeys.TimeToStart, (double)_maxWaitTime },
+                    { RoomOptionsKeys.StartTime, PhotonNetwork.Time },
+                    { RoomOptionsKeys.TimerStarted, true }
+                };
+
+                PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
             }
-            
         }
 
-        [PunRPC]
-        private void UpdateCountDown(int time)
+        private void StopTimer()
         {
-            _timeToStartText.text = time + "\nsegundos...";
+            if (PhotonNetwork.IsMasterClient)
+            {
+                Hashtable hashtable = new Hashtable
+                {
+                    {
+                        RoomOptionsKeys.TimerStarted, false
+                    }
+                };
+
+                PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
+            }
+        }
+        
+        public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+        {
+            if (propertiesThatChanged.TryGetValue(RoomOptionsKeys.TimeToStart, out object timeToStart))
+            {
+                _timerTimeToStart = (double)timeToStart;
+                _timeToStartText.text = _timerTimeToStart + "\nsegundos...";
+            }
+            
+            if (propertiesThatChanged.TryGetValue(RoomOptionsKeys.StartTime, out object timerStart))
+            {
+                _timerStartTime = (double)timerStart;
+            }
+
+            if (propertiesThatChanged.TryGetValue(RoomOptionsKeys.TimerStarted, out object timerStarted))
+            {
+                _timerStarted = (bool)timerStarted;
+                _timeToStartText.gameObject.SetActive(_timerStarted);
+            }
         }
 
         public override void OnEnable()
         {
             base.OnEnable();
             _roomKey.text = "KEY: " + PhotonNetwork.CurrentRoom.Name;
-            _timeToStartText.text = _timeToStart + "\nsegundos...";
+            
             _timeToStartText.gameObject.SetActive(false);
 
             if (PhotonNetwork.CurrentRoom.IsVisible)
@@ -139,6 +171,22 @@ namespace TankBattle.Navigation
                     _startBtn.interactable = false;
                 }
             }
+            
+            // Check if countdown already started when I join
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                Debug.Log($"Checking if room countdown already started");
+                if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(RoomOptionsKeys.TimerStarted, out object timerStarted))
+                {
+                    _timerStarted = (bool)timerStarted;
+                    _timerTimeToStart = (double)PhotonNetwork.CurrentRoom.CustomProperties[RoomOptionsKeys.TimeToStart];
+                    _timerStartTime = (double)PhotonNetwork.CurrentRoom.CustomProperties[RoomOptionsKeys.StartTime];
+                    _timeToStartText.gameObject.SetActive(_timerStarted);
+                    
+                    Debug.Log($"Yes! Already started {PhotonNetwork.Time - _timerStartTime:0} seconds ago");
+                }
+            }
+
             InitPlayersList();
             CheckNumPlayers();
         }
@@ -171,7 +219,10 @@ namespace TankBattle.Navigation
 
         private void StartGame()
         {
-            OnStartGame?.Invoke();
+            if (PhotonNetwork.IsMasterClient)
+            {
+                OnStartGame?.Invoke();    
+            }
         }
 
         private void InitPlayersList()
@@ -186,25 +237,19 @@ namespace TankBattle.Navigation
         {
             int nPlayers = PhotonNetwork.CurrentRoom.Players.Count;
             
-            if (PhotonNetwork.CurrentRoom.IsVisible)
+            if (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.IsVisible)
             {
-                if (nPlayers < _minNumberOfPlayers)
-                {
-                    _timeToStartText.gameObject.SetActive(false);
-                    _startCountdown = false;
-                    _timeToStart = _maxWaitTime;
-                    _timeToStartText.text = _timeToStart + " segundos...";
-                }
-                else
-                {
-                    _timeToStartText.gameObject.SetActive(true);
-                    _startCountdown = true;
-                }
-
                 if (nPlayers == _maxNumberOfPlayers)
                 {
                     StartGame();
+                } else if (nPlayers < _minNumberOfPlayers && _timerStarted)
+                {
+                    StopTimer();
                 }
+                else if(nPlayers >= _minNumberOfPlayers && !_timerStarted)
+                {
+                    StartTimer();
+                } 
             }
             
             _numPlayersText.text = $"{nPlayers}/{_maxNumberOfPlayers} Jugadores en linea";

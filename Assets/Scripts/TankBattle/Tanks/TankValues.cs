@@ -4,6 +4,7 @@ using Networking.Utilities;
 using Photon.Pun;
 using TankBattle.Tanks.Bullets;
 using TankBattle.Tanks.ForceFields;
+using TankBattle.Tanks.Guns;
 using UnityEditor;
 using UnityEngine;
 
@@ -23,6 +24,9 @@ namespace TankBattle.Tanks
         private float _totalHits;
         public float TotalHits { get => _totalHits; }
 
+        private bool _isDead;
+        public bool IsDead { get => _isDead; }
+
         public delegate void OnValuesChangedDelegate(TankValues values);
         public OnValuesChangedDelegate OnValuesChanged;
 
@@ -32,20 +36,21 @@ namespace TankBattle.Tanks
         public delegate void OnTankWasDestroyedDelegate(TankValues values);
         public event OnTankWasDestroyedDelegate OnTankWasDestroyed;
 
+        private TankManager _tankManager;
         private PhotonView _photonView;
-
         public ForceField ForceField;
 
         private void Awake()
         {
-            TankManager tankManager = GetComponent<TankManager>();
-            if (tankManager)
+            _tankManager = GetComponent<TankManager>();
+            if (_tankManager)
             {
-                tankManager.OnTankWeaponEnabled += (gun, weapon) =>
+                _tankManager.OnTankWeaponEnabled += (gun, weapon) =>
                 {
                     if (gun != null)
                     {
-                        gun.OnTankHit = OnBulletHit;    
+                        gun.OnTankHit = OnBulletHit;
+                        gun.OnBulletFired += OnBulletFired;
                     }
                 };
             }
@@ -56,16 +61,38 @@ namespace TankBattle.Tanks
             _photonView = GetComponent<PhotonView>();
             _shieldAmount = TotalShield;
             _armorAmount = TotalArmor;
+            _isDead = false;
+        }
+
+        private float _totalBulletsFired = 0f;
+        
+        private void OnBulletFired()
+        {
+            if (_tankManager.IsMine)
+            {
+                _totalBulletsFired += 1;
+                _photonView.Owner.SetStat(PlayerExtensions.TotalBulletsFired, _totalBulletsFired);
+            }
         }
         
+        private float _enemiesKilled = 0f;
+
         private void OnBulletHit(TankValues otherValues, float damage)
         {
                 // other is a tank
                 otherValues.WasHit(damage);
-                HitOther();
-                
-                // Debug.LogFormat("{0} hit {4} tank. {0} hits: {1}, {4} shield: {2}, {4} armor: {3}", 
-                //     name, _totalHits, otherValues._shieldAmount, otherValues._armorAmount, otherValues.transform.name);
+
+                if(_tankManager.IsMine)
+                {
+                    _totalHits += 1;
+                    _photonView.Owner.SetStat(PlayerExtensions.TotalHits, _totalHits);
+                    
+                    if (otherValues.IsDead)
+                    {
+                        _enemiesKilled += 1;
+                        _photonView.Owner.SetStat(PlayerExtensions.EnemiesKilled, _enemiesKilled);    
+                    }
+                }
         }
 
         public void WasHit(float damage)
@@ -88,7 +115,8 @@ namespace TankBattle.Tanks
             }
             else
             {
-                if (PhotonNetwork.IsConnected && _photonView.IsMine)
+                _isDead = true;
+                if (_tankManager.IsMine)
                 {
                     _photonView.Owner.SetAlive(false);
                     _photonView.RPC("DestroyTank", RpcTarget.All);
@@ -102,13 +130,7 @@ namespace TankBattle.Tanks
             // Debug.LogFormat("Shield: {0}, Armor: {1}", _shieldAmount, _armorAmount);
             OnValuesChanged?.Invoke(this);
         }
-
-        private void HitOther()
-        {
-            if (!_photonView.IsMine && PhotonNetwork.IsConnected) return;
-            _totalHits += 1;
-        }
- 
+        
         [PunRPC]
         private void DestroyTank()
         {

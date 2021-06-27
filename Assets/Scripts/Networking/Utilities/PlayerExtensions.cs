@@ -3,6 +3,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using TankBattle.Navigation;
 using TankBattle.Tanks;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace Networking.Utilities
@@ -11,6 +12,12 @@ namespace Networking.Utilities
     {
         public static string PlayerAlive = "playerAlive";
         public static string PlayerTank = "playerTankViewId";
+        
+        // Stats
+        public static string TotalHits = "total-hits";
+        public static string TotalBulletsFired = "total-bullets-fired";
+        public static string TotalDamage = "total-damaget";
+        public static string EnemiesKilled = "enemies-killed";
 
         public static bool IsAlive(this Player player)
         {
@@ -50,6 +57,24 @@ namespace Networking.Utilities
                 }
             }
             return tank;
+        }
+
+        public static void SetStat(this Player player, string stat, float value)
+        {
+            Debug.Log($"{player.NickName}: stat change {stat}: {value}");   
+            Hashtable statHashtable = new Hashtable();
+            statHashtable[stat] = value;
+            player.SetCustomProperties(statHashtable);
+        }
+
+        public static float GetStat(this Player player, string stat)
+        {
+            if (player.CustomProperties.TryGetValue(stat, out object value))
+            {
+                return (float)value;
+            }
+
+            return 0f;
         }
     }
 }

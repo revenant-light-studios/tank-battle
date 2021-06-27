@@ -77,18 +77,6 @@ namespace TankBattle.InGameGUI.Hud
             {
                 int numberOfPlayersAlive = PhotonNetwork.CurrentRoom.GetAlivePlayersCount(); 
                 UpdateLivingPlayersText(numberOfPlayersAlive);
-                if (numberOfPlayersAlive <= 1)
-                {
-                    List<TankManager> aliveTanks = PhotonNetwork.CurrentRoom.GetAlivePlayersTanks();
-                    if (aliveTanks.Count > 0)
-                    {
-                        ShowEndPanel(aliveTanks[0]);    
-                    }
-                    else
-                    {
-                        // Get player with more hits    
-                    }
-                }
             }
         }
 

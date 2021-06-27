@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using ExtensionMethods;
 using Networking.Utilities;
 using Photon.Pun;
+using Photon.Realtime;
 using TankBattle.Global;
 using TankBattle.InGameGUI.Hud;
 using TankBattle.InGameGUI.LockedTank;
@@ -49,6 +50,21 @@ namespace TankBattle.Tanks
         public ATankHud TankHud { get => _tankHud; }
 
         public TankValues TankValues { get => _tankValues; }
+
+        public bool IsMine
+        {
+            get
+            {
+                if (PhotonNetwork.IsConnected)
+                {
+                    PhotonView photonView = GetComponent<PhotonView>();
+                    return photonView.Owner != null && _photonView.IsMine;
+                }
+
+                // Default for non-network testing
+                return !IsDummy;
+            }
+        }
         #endregion
 
         private void Awake()
@@ -88,7 +104,7 @@ namespace TankBattle.Tanks
                 }
             }
             
-            if ((_photonView.IsMine || !PhotonNetwork.IsConnected) && !IsDummy)
+            if (IsMine)
             {
                 // Only local player tank
                 PlayRoomManager.Instance.RegisterLocalTank(this);

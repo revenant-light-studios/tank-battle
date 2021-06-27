@@ -3,11 +3,13 @@ using Cinemachine;
 using Photon.Pun;
 using TankBattle.Global;
 using TankBattle.InputManagers;
+using TankBattle.Navigation;
 using TankBattle.Tanks.Engines;
 using TankBattle.Tanks.Turrets;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.InputSystem.Users;
 using UnityEngine.Serialization;
 
@@ -18,7 +20,8 @@ namespace TankBattle.Tanks
         public enum TankInputMaps
         {
             Player,
-            PauseSystem
+            PauseSystem,
+            DeadPlayer
         }
         
         private PhotonView _photonView;
@@ -54,6 +57,15 @@ namespace TankBattle.Tanks
                 _playerInput.user.UnpairDevices();
                 InputUser.PerformPairingWithDevice(Gamepad.current, _playerInput.user);
                 TouchSimulation.Enable();
+
+                if (GlobalMethods.IsForceMobile())
+                {
+                    InputSystemUIInputModule inputModule = FindObjectOfType<InputSystemUIInputModule>();
+                    if (inputModule)
+                    {
+                        inputModule.pointerBehavior = UIPointerBehavior.AllPointersAsIs;
+                    }
+                }
             }
             #endif
         }
