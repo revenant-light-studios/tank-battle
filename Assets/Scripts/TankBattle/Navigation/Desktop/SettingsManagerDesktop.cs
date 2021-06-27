@@ -8,7 +8,7 @@ namespace TankBattle.Navigation.Desktop
 {
     public class SettingsManagerDesktop : SettingsManager
     {
-        public Button _shootBtn { get; private set; }
+        /*public Button _shootBtn { get; private set; }
 
         private bool _waitingForKey = false;
         private string _pressedButton;
@@ -61,7 +61,7 @@ namespace TankBattle.Navigation.Desktop
                 _shootBtn.interactable = false;
             }
         }
-
+        */
     }
 }
 
