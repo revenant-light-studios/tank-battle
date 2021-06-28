@@ -14,6 +14,7 @@ namespace Networking.Utilities
         public static string PlayerTank = "playerTankViewId";
         
         // Stats
+        public static string DeadTimestamp = "dead-timestamp";
         public static string TotalHits = "total-hits";
         public static string TotalBulletsFired = "total-bullets-fired";
         public static string TotalDamage = "total-damaget";
@@ -33,6 +34,10 @@ namespace Networking.Utilities
         {
             Hashtable propertyHashTable = new Hashtable();
             propertyHashTable[PlayerAlive] = alive;
+            if (!alive)
+            {
+                propertyHashTable[DeadTimestamp] = PhotonNetwork.Time;
+            }
             player.SetCustomProperties(propertyHashTable);
         }
 

@@ -1,11 +1,12 @@
-using System.Collections;
 using Photon.Pun;
 using System.Collections.Generic;
 using System.Linq;
+using ExtensionMethods;
 using Networking.Utilities;
 using Photon.Realtime;
 using TankBattle.InGameGUI.Hud;
 using UnityEngine;
+using UnityEngine.UI;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace TankBattle.Tanks
@@ -23,6 +24,7 @@ namespace TankBattle.Tanks
 
         private TankInput _tankInput;
         private ATankHud _tankHud;
+        private Text _tankFollowedText;
         
         private void Awake()
         {
@@ -40,11 +42,7 @@ namespace TankBattle.Tanks
             _tankInput.SwitchTankTrigger.OnTriggerPressed += OnSwitchTriggerPressed;
 
             _tankHud = tankManager.TankHud;
-        }
-
-        private void SetHudFollowingMode()
-        {
-            
+            _tankFollowedText = _tankHud.transform.FirstOrDefault(t => t.name == "FollowedTankText")?.GetComponent<Text>();
         }
         
         private void OnSwitchTriggerPressed()
@@ -60,8 +58,10 @@ namespace TankBattle.Tanks
             // Debug.Log($"TankFollowerManager: {gameObject.name} TankWasDestroyed called");
             TankManager tankManager = GetComponent<TankManager>();
             
+            _tankHud.SetDeadHudState();
             _tankInput.SwitchActionMap(TankInput.TankInputMaps.DeadPlayer);
             _isRunning = true;
+            if(_tankFollowedText) _tankFollowedText.gameObject.SetActive(true);
             FollowNextTank();
         }
         
@@ -89,11 +89,12 @@ namespace TankBattle.Tanks
             {
                 // Debug.Log($"Camera following {_currentTankFollow}");
                 _currentTankFollow = nextTankToFollow;
-                _currentTankFollow.CameraFollow.StartFollowing();    
+                _currentTankFollow.CameraFollow.StartFollowing();
+                if (_tankFollowedText) _tankFollowedText.text = $"Siguiendo a {_currentTankFollow.name}";
             }
             else
             {
-                // Debug.LogWarning($"{gameObject.name} TankFollowManager: No more alive tanks to follow");
+                Debug.LogWarning($"{gameObject.name} TankFollowManager: No more alive tanks to follow");
             }
         }
 

@@ -23,9 +23,9 @@ namespace TankBattle.InGameGUI.Hud
         protected HitImage _hitImage;
         protected LockedTankUI _lockedTankUI;
         private Text _livingPlayersText;
-        private FinishGame _endPanel;
+        private FinishGamePanel _endPanel;
         private PauseMenu _pauseMenu;
-        
+        private TankInput _tankInput;        
 
         protected override void Awake()
         {
@@ -42,9 +42,25 @@ namespace TankBattle.InGameGUI.Hud
             }
             
             _livingPlayersText = transform.FirstOrDefault(t => t.name == "LivingPlayersText").GetComponent<Text>();
-            _endPanel = transform.FirstOrDefault(t => t.name == "EndGamePanel").GetComponent<FinishGame>();
+            _endPanel = transform.FirstOrDefault(t => t.name == "EndGamePanel").GetComponent<FinishGamePanel>();
             _pauseMenu = transform.FirstOrDefault(t => t.name == "PauseMenu").GetComponent<PauseMenu>();
             _endPanel.gameObject.SetActive(false);
+        }
+
+        public override void RegisterTank(TankManager tankManager)
+        {
+            base.RegisterTank(tankManager);
+            _tankInput = tankManager.GetComponent<TankInput>();
+        }
+
+        public override void SetDeadHudState()
+        {
+            base.SetDeadHudState();
+            _crossHair.gameObject.SetActive(false);
+            _hitImage.gameObject.SetActive(false);
+            _lockedTankUI?.SetActive(false);
+            transform.FirstOrDefault(t => t.name == "TankHud")?.gameObject.SetActive(false);
+            transform.FirstOrDefault(t => t.name == "RadarTracks")?.gameObject.SetActive(false);
         }
 
         protected override void OnTankWeaponEnabled(ATankGun gun, TankManager.TankWeapon weapon)
@@ -73,17 +89,27 @@ namespace TankBattle.InGameGUI.Hud
         
         public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
         {
-            if (changedProps.ContainsKey(PlayerExtensions.PlayerAlive))
+            if (changedProps.TryGetValue(PlayerExtensions.PlayerAlive, out object isAlive))
             {
                 int numberOfPlayersAlive = PhotonNetwork.CurrentRoom.GetAlivePlayersCount(); 
                 UpdateLivingPlayersText(numberOfPlayersAlive);
+
+                if (!(bool)isAlive)
+                {
+                    if (numberOfPlayersAlive <= 1)
+                    {
+                        ShowEndPanel();
+                    }
+                }
             }
         }
 
-        public override void ShowEndPanel(TankManager tankManager)
+        public override void ShowEndPanel()
         {
-            _endPanel.gameObject.SetActive(true);
-            _endPanel.InitEndPanel(tankManager);
+            SetDeadHudState();
+            _tankValues.GetComponent<PhotonView>().RPC("DeactivateTank", RpcTarget.All);
+            _tankInput.SwitchActionMap(TankInput.TankInputMaps.None);
+            _endPanel.Show();
         }
         public override void StartViewerMode()
         {

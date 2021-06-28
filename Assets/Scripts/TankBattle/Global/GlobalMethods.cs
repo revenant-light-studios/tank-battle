@@ -4,7 +4,16 @@ namespace TankBattle.Global
 {
     public static class GlobalMethods
     {
- #if !UNITY_EDITOR && UNITY_WEBGL
+        private const string _tutorialAlreadyPlayedKey = "tutorial-already-played";
+        public static int TutorialAlreadyPlayed
+        {
+            get => PlayerPrefs.GetInt(_tutorialAlreadyPlayedKey, 0);
+            set => PlayerPrefs.SetInt(_tutorialAlreadyPlayedKey, value);
+        }
+
+
+
+#if !UNITY_EDITOR && UNITY_WEBGL
         [System.Runtime.InteropServices.DllImport("__Internal")]
         private static extern bool IsMobile();
 #endif

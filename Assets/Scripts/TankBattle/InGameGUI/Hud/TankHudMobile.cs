@@ -26,6 +26,16 @@ namespace TankBattle.InGameGUI.Hud
             _lockButton.gameObject.SetActive(false);
         }
 
+        public override void SetDeadHudState()
+        {
+            base.SetDeadHudState();
+            _movementJoystick.gameObject.SetActive(false);
+            _aimJoystick.gameObject.SetActive(false);
+            _primaryShootButton.gameObject.SetActive(false);
+            _secondaryShootButton.gameObject.SetActive(false);
+            _lockButton.gameObject.SetActive(false);
+        }
+
         protected override void OnTankWeaponEnabled(ATankGun gun, TankManager.TankWeapon weapon)
         {
             base.OnTankWeaponEnabled(gun, weapon);

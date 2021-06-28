@@ -526,11 +526,25 @@ namespace TankBattle.Tanks
         #region Tank follower management
         private void InitTankFollower()
         {
-            if (PhotonNetwork.IsConnected)
+            if (IsMine)
             {
-                _tankFollowerManager.InitTankFollower(this);    
+                _tankFollowerManager.InitTankFollower(this);
             }
         }
         #endregion
+
+        [PunRPC]
+        public void DeactivateTank()
+        {
+            PrimaryGun = null;
+            SecondaryGun = null;
+            _forceField.gameObject.SetActive(false);
+            _detectableObject.enabled = false;
+            
+            transform.FirstOrDefault(t => t.name == "Turret")?.gameObject.SetActive(false);
+            transform.FirstOrDefault(t => t.name == "Body")?.gameObject.SetActive(false);
+            transform.FirstOrDefault(t => t.name == "ExtraFuelTank")?.gameObject.SetActive(false);
+            transform.FirstOrDefault(t => t.name == "MissileThrower")?.gameObject.SetActive(false);
+        }
     }
 }

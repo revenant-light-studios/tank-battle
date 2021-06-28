@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ExtensionMethods;
+using TankBattle.Global;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -31,7 +32,16 @@ namespace TankBattle.Navigation
         // Start is called before the first frame update
         void Start()
         {
-            changeTexts();
+            if (GlobalMethods.TutorialAlreadyPlayed == 1)
+            {
+                _tutorialPanel.SetActive(false);
+            }
+            else
+            {
+                _tutorialPanel.SetActive(true);
+                changeTexts();
+                GlobalMethods.TutorialAlreadyPlayed = 1;
+            }
         }
 
         public void OnPointerDown(PointerEventData eventData)

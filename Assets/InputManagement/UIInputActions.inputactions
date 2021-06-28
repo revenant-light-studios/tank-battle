@@ -287,6 +287,14 @@
                     "interactions": ""
                 },
                 {
+                    "name": "OpenHelp",
+                    "type": "Button",
+                    "id": "317a0352-764e-4818-95a2-10be8e3d5cbc",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=2)"
+                },
+                {
                     "name": "OpenPause",
                     "type": "Button",
                     "id": "d7511f4a-a6fd-4403-879e-d6c07363a688",
@@ -317,6 +325,39 @@
                     "action": "OpenPause",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f5b4a653-2ec4-458f-8c16-9e9b4e6db58d",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenPause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9a5f23d7-f7d8-45b9-a507-6e10b671356f",
+                    "path": "<Keyboard>/leftCtrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenHelp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "43f98fc0-471f-46a9-926c-6d7151705210",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenHelp",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -344,8 +385,25 @@
                     "action": "OpenPause",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "284baa56-e3c8-4adf-ace8-8acf51cf8916",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenPause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "None",
+            "id": "d178c169-db4c-43d9-b74b-93308bbffad1",
+            "actions": [],
+            "bindings": []
         }
     ],
     "controlSchemes": []

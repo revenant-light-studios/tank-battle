@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.InGameGUI;
 using TankBattle.Tanks;
@@ -122,7 +123,8 @@ namespace TankBattle.Global
             
             if (_radarTrack == null)
             {
-                GameObject go = Instantiate(Resources.Load<GameObject>("Tanks/Hud/RadarTracker"), canvas);
+                Transform parent = canvas.FirstOrDefault(t => t.name == "RadarTracks");   
+                GameObject go = Instantiate(Resources.Load<GameObject>("Tanks/Hud/RadarTracker"), parent != null ? parent : canvas);
                 go.name = $"RadarTrack-{playerName}";
                 go.SetActive(false);
                 _radarTrack = go.GetComponent<RadarTrack>();

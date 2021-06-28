@@ -22,8 +22,8 @@ namespace TankBattle.InGameGUI.Hud
             _tankValues = tankManager.GetComponent<TankValues>();
             if (_tankValues != null)
             {
-                _tankValues.OnValuesChanged = OnTankValuesChanged;
-                _tankValues.OnTankWasHit = OnTankWasHit;
+                _tankValues.OnValuesChanged += OnTankValuesChanged;
+                _tankValues.OnTankWasHit += OnTankWasHit;
             }
 
             if (tankManager.Turret)
@@ -56,10 +56,14 @@ namespace TankBattle.InGameGUI.Hud
         
         public abstract void UpdateLivingPlayersText(int LivingPlayers);
         
-        public abstract void ShowEndPanel(TankManager tankManager);
+        public abstract void ShowEndPanel();
         
         public abstract void StartViewerMode();
         
         public abstract void TogglePauseMenu(Action CloseAction);
+
+        public virtual void SetDeadHudState()
+        {
+        }
     }
 }

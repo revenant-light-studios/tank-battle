@@ -28,10 +28,10 @@ namespace TankBattle.Tanks
         public bool IsDead { get => _isDead; }
 
         public delegate void OnValuesChangedDelegate(TankValues values);
-        public OnValuesChangedDelegate OnValuesChanged;
+        public event OnValuesChangedDelegate OnValuesChanged;
 
         public delegate void OnTankWasHitDelegate(TankValues values);
-        public OnTankWasHitDelegate OnTankWasHit;
+        public event OnTankWasHitDelegate OnTankWasHit;
 
         public delegate void OnTankWasDestroyedDelegate(TankValues values);
         public event OnTankWasDestroyedDelegate OnTankWasDestroyed;
@@ -137,10 +137,7 @@ namespace TankBattle.Tanks
             ParticleSystem explosion = transform.FirstOrDefault(t => t.name == "Explosion")?.GetComponent<ParticleSystem>();
             if (explosion)
             {
-                transform.FirstOrDefault(t => t.name == "Turret")?.gameObject.SetActive(false);
-                transform.FirstOrDefault(t => t.name == "Body")?.gameObject.SetActive(false);
-                transform.FirstOrDefault(t => t.name == "ExtraFuelTank")?.gameObject.SetActive(false);
-                transform.FirstOrDefault(t => t.name == "MissileThrower")?.gameObject.SetActive(false);
+                _tankManager.DeactivateTank();
                 explosion.Play();
                 OnTankWasDestroyed?.Invoke(this);
                 // Destroy(gameObject, explosion.main.duration);

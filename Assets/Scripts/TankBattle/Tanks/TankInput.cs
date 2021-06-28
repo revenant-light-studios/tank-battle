@@ -21,7 +21,8 @@ namespace TankBattle.Tanks
         {
             Player,
             PauseSystem,
-            DeadPlayer
+            DeadPlayer,
+            None
         }
         
         private PhotonView _photonView;
@@ -74,12 +75,16 @@ namespace TankBattle.Tanks
         {
             _playerInput.SwitchCurrentActionMap(map.ToString());
             // Debug.Log($"Action map switched to {map.ToString()}");
+
+            // Set cursor
             switch (map)
             {
                 case TankInputMaps.Player:
                     Cursor.lockState = GlobalMethods.IsDesktop() ? CursorLockMode.Locked : CursorLockMode.None;
                     break;
+                case TankInputMaps.None:
                 case TankInputMaps.PauseSystem:
+                case TankInputMaps.DeadPlayer:
                 default:
                     Cursor.lockState = CursorLockMode.None;
                     break;

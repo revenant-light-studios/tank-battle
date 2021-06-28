@@ -24,8 +24,6 @@ namespace TankBattle.Navigation
     public class PlayRoomManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         #region public usefull static stuff
-        public static byte LoadingEvent = 100;
-
         private static PlayRoomManager _playRoomManagerInstance;
 
         public static PlayRoomManager Instance
@@ -128,9 +126,9 @@ namespace TankBattle.Navigation
         }
 
         #region Scene Loading
-
         private IEnumerator _loadCoroutine;
         private int _loadingProgess = 0;
+        private bool _loadingFinished = false;
 
         private void LoadScene()
         {
@@ -168,7 +166,7 @@ namespace TankBattle.Navigation
             yield return SendLoadingMessage(_loadingProgess, "Generando arena");
             _terrain = FindObjectOfType<MeshTerrain>();
             _terrain.Generate(RandomSeed);
-            _debugSeedText.text = $"Terrain random seed: {_terrain.TerrainParameters.seed}";
+            if(_debugSeedText != null) _debugSeedText.text = $"Terrain random seed: {_terrain.TerrainParameters.seed}";
             _loadingProgess++;
 
             if (PhotonNetwork.IsMasterClient)
@@ -177,10 +175,29 @@ namespace TankBattle.Navigation
                 yield return StartCoroutine(SpawnTanks());
                 yield return StartCoroutine(SpawnSecondaryWeapons(numberOfSecondaryWeapons));
                 yield return SendLoadingMessage(_loadingProgess, "Comenzando partida");
+
+                // Comunicate all clients that loading has finished
+                object[] content = new object[] {};
+                RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+                PhotonNetwork.RaiseEvent(LoadingFinished, content, options, SendOptions.SendReliable);
+            }
+            else
+            {
+                yield return WaitForEndOfLoad();
             }
             
             yield return new WaitForSeconds(1.0f);
             _LoadingUI.Hide();
+        }
+        
+        
+
+        private IEnumerator WaitForEndOfLoad()
+        {
+            while (!_loadingFinished)
+            {
+                yield return new WaitForEndOfFrame();
+            }
         }
 
         private void ShowInGameUI()
@@ -201,8 +218,11 @@ namespace TankBattle.Navigation
                 _userUI = mobileUI.gameObject;
             }
             
-            _debugSeedText = _userUI.transform.FirstOrDefault(t => t.name == "DebugSeed").GetComponent<Text>();
+            _debugSeedText = _userUI.transform.FirstOrDefault(t => t.name == "DebugSeed")?.GetComponent<Text>();
         }
+
+        public static byte LoadingEvent = 100;
+        public static byte LoadingFinished = 101;
 
         private YieldInstruction SendLoadingMessage(int progress, string message = "")
         {
@@ -223,9 +243,7 @@ namespace TankBattle.Navigation
         #endregion
         
         #region Players instantiation
-
         public const byte SpawnPlayer = 102;
-
 
         private IEnumerator SpawnTanks()
         {
@@ -306,6 +324,9 @@ namespace TankBattle.Navigation
 
                 Player player = PhotonNetwork.LocalPlayer;
                 PhotonNetwork.Instantiate(Path.Combine("Tanks", _tankPrefab.name), spawnPosition, Quaternion.identity);
+            } else if (eventCode == LoadingFinished)
+            {
+                _loadingFinished = true;
             }
         }
         

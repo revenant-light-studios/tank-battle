@@ -103,7 +103,7 @@ namespace TankBattle.Tanks.Guns
         public virtual void Fire()
         {
             // Firing is authoritative
-            if (!_photonView.IsMine && PhotonNetwork.IsConnected) return;
+            if (!_parentTank.IsMine) return;
             
             if (!CanFire) return;
 
