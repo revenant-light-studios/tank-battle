@@ -48,7 +48,7 @@ namespace TankBattle.Navigation
         public delegate void OnGoCreditsDelegate();
         public OnGoCreditsDelegate OnGoCredits;
 
-        private void Awake()
+        public virtual void Awake()
         {
             _pView = PhotonView.Get(this);
 
