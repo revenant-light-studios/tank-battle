@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using ExitGames.Client.Photon;
 using ExtensionMethods;
@@ -20,11 +21,9 @@ using Random = System.Random;
 
 namespace TankBattle.Navigation
 {
-    public class PlayRoomManager : MonoBehaviourPunCallbacks
+    public class PlayRoomManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         #region public usefull static stuff
-        public static byte LoadingEvent = 100;
-
         private static PlayRoomManager _playRoomManagerInstance;
 
         public static PlayRoomManager Instance
@@ -127,9 +126,9 @@ namespace TankBattle.Navigation
         }
 
         #region Scene Loading
-
         private IEnumerator _loadCoroutine;
         private int _loadingProgess = 0;
+        private bool _loadingFinished = false;
 
         private void LoadScene()
         {
@@ -140,10 +139,7 @@ namespace TankBattle.Navigation
         private IEnumerator LoadSceneCoroutine()
         {
             ShowInGameUI();
-            
-            _LoadingUI?.Show();
-            
-            yield return SendLoadingMessage(_loadingProgess, "Generando arena");
+            _LoadingUI.gameObject.SetActive(true);
             
             GameSettings settings = Resources.Load<GameSettings>("Settings/GameSettings");
             if (settings)
@@ -160,49 +156,48 @@ namespace TankBattle.Navigation
                 }
             }
             
+            int numberOfSecondaryWeapons = _spawnSecondaryWeapons ? _numberOfSecondaryWeapons : 0;
+            int numberOfDummies = _spawnDummies ? _numberOfDummies : 0;
+            int numberOfPlayers = PhotonNetwork.IsConnected ? PhotonNetwork.CurrentRoom.PlayerCount : 1;
+            int totalElementsToLoad = numberOfSecondaryWeapons + numberOfDummies + numberOfPlayers + 1;
+            
+            _LoadingUI?.Show(totalElementsToLoad);
+            
+            yield return SendLoadingMessage(_loadingProgess, "Generando arena");
             _terrain = FindObjectOfType<MeshTerrain>();
             _terrain.Generate(RandomSeed);
-            _debugSeedText.text = $"Terrain random seed: {_terrain.TerrainParameters.seed}";
+            if(_debugSeedText != null) _debugSeedText.text = $"Terrain random seed: {_terrain.TerrainParameters.seed}";
+            _loadingProgess++;
 
-            _loadingProgess += 50;
-            yield return SendLoadingMessage(_loadingProgess, "Generando puntos de spawn");
-
-            int numberOfDummySpawnPoints = _spawnDummies ? _numberOfDummies : 0;
-            int numberOfSecondaryWeapons = _spawnSecondaryWeapons ? _numberOfSecondaryWeapons : 0;
-            int numberOfPlayers = PhotonNetwork.IsConnected ? PhotonNetwork.CurrentRoom.PlayerCount : 1;
-            int totalElementsToSpawn = numberOfPlayers + numberOfSecondaryWeapons + numberOfDummySpawnPoints;
-
-            GenerateSpawnPoints(numberOfPlayers + numberOfDummySpawnPoints);
-            _loadingProgess += (int)((numberOfPlayers + numberOfDummySpawnPoints) / totalElementsToSpawn * 0.5);
-            yield return SendLoadingMessage(_loadingProgess, "Instanciando tanques");
-                
-            if (PhotonNetwork.IsConnected)
+            if (PhotonNetwork.IsMasterClient)
             {
-                InstantiatePlayers();
+                // Master client is responsible for all object spawning
+                yield return StartCoroutine(SpawnTanks());
+                yield return StartCoroutine(SpawnSecondaryWeapons(numberOfSecondaryWeapons));
+                yield return SendLoadingMessage(_loadingProgess, "Comenzando partida");
+
+                // Comunicate all clients that loading has finished
+                object[] content = new object[] {};
+                RaiseEventOptions options = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+                PhotonNetwork.RaiseEvent(LoadingFinished, content, options, SendOptions.SendReliable);
             }
             else
             {
-                Vector3 position = _spawnPoints[0];
-                Instantiate(_tankPrefab, position, Quaternion.identity);
-            }
-
-            if (_spawnDummies)
-            {
-                SpawnDummyTanks(_numberOfDummies);
+                yield return WaitForEndOfLoad();
             }
             
-            
-            yield return SendLoadingMessage(_loadingProgess, "Generando armas secundarias");
-            
-            if (_spawnSecondaryWeapons)
-            {
-                SpawnSecondaryWeapons(numberOfSecondaryWeapons);
-            }
-            
-            yield return SendLoadingMessage(1, "Comenzando partida");
             yield return new WaitForSeconds(1.0f);
-            
             _LoadingUI.Hide();
+        }
+        
+        
+
+        private IEnumerator WaitForEndOfLoad()
+        {
+            while (!_loadingFinished)
+            {
+                yield return new WaitForEndOfFrame();
+            }
         }
 
         private void ShowInGameUI()
@@ -223,13 +218,14 @@ namespace TankBattle.Navigation
                 _userUI = mobileUI.gameObject;
             }
             
-            _debugSeedText = _userUI.transform.FirstOrDefault(t => t.name == "DebugSeed").GetComponent<Text>();
+            _debugSeedText = _userUI.transform.FirstOrDefault(t => t.name == "DebugSeed")?.GetComponent<Text>();
         }
+
+        public static byte LoadingEvent = 100;
+        public static byte LoadingFinished = 101;
 
         private YieldInstruction SendLoadingMessage(int progress, string message = "")
         {
-            if (!PhotonNetwork.IsMasterClient && PhotonNetwork.IsConnected) return new WaitForEndOfFrame();
-
             if (PhotonNetwork.IsConnected)
             {
                 object[] content = new object[] { progress, message };
@@ -247,144 +243,165 @@ namespace TankBattle.Navigation
         #endregion
         
         #region Players instantiation
-        private void InstantiatePlayers()
+        public const byte SpawnPlayer = 102;
+
+        private IEnumerator SpawnTanks()
         {
-            Player player = PhotonNetwork.LocalPlayer;
-            Vector3 position = _spawnPoints[player.ActorNumber - 1];
-            PhotonNetwork.Instantiate(Path.Combine("Tanks", _tankPrefab.name), position, Quaternion.identity);
+            int numberOfDummySpawnPoints = _spawnDummies ? _numberOfDummies : 0;
+            int numberOfPlayers = PhotonNetwork.IsConnected ? PhotonNetwork.CurrentRoom.PlayerCount : 1;
+            int totalTanksToSpawn = numberOfPlayers + numberOfDummySpawnPoints;
+            int degrees = 360 / totalTanksToSpawn;
+            
+            yield return StartCoroutine(SpawnPlayerTanks(degrees));
+            yield return StartCoroutine(SpawnDummyTanks(numberOfDummySpawnPoints, degrees, numberOfPlayers));
+        }
+        
+        private IEnumerator SpawnDummyTanks(int numberOfDummys, int sectorDegrees, int startSector = 0)
+        {
+            if (numberOfDummys > 0)
+            {
+                yield return SendLoadingMessage(_loadingProgess, "Generando tanques dummy");
+            }
+            
+            Debug.Log($"Start spawning Dummy tanks");
+            for (int i = 0; i < numberOfDummys; i++)
+            {
+                int mySectorStart = sectorDegrees * (i + startSector);
+                int mySectorEnd = mySectorStart + sectorDegrees;
+                Vector3 spawnPosition = GenerateSpawnPoint(mySectorStart, mySectorEnd);
+                string name = $"Dummy{i}";
+                Debug.Log($"Spawning dummy[{i}] {name} in sector ({mySectorStart},{mySectorEnd}) position {spawnPosition}");
+                
+                GameObject dummyTank = PhotonNetwork.InstantiateRoomObject(Path.Combine("Tanks", _tankPrefab.name), spawnPosition, Quaternion.identity);
+                dummyTank.name = name;
+                dummyTank.GetComponent<TankManager>().IsDummy = true;
+                
+                _loadingProgess += 1;
+                yield return SendLoadingMessage(_loadingProgess, $"Generado dummy {name}");
+            }
+
+            yield return new WaitForSeconds(1);
         }
 
-        private void GenerateSpawnPoints(int playerCount)
+        private IEnumerator SpawnPlayerTanks(int sectorDegrees, int startSector = 0)
         {
-            Random generator = RandomGenerator;
-            _spawnPoints = new Vector3[playerCount];
-            int sectors = 360 / playerCount;
-            int xCenter = _terrain.TerrainParameters.xSize / 2;
-            int zCenter = _terrain.TerrainParameters.zSize / 2;
+            Debug.Log($"Start spawning Player tanks");
+            yield return SendLoadingMessage(_loadingProgess, "Generando tanques de los jugadores");
             
-            for (int i = 0; i < _spawnPoints.Length; i++)
-            {
-                int maxProbes = 2000;
-                float x;
-                float z;
-                float terrainHeight = 0f;
-                
-                do
-                {
-                    float randomAngle = generator.Next(i * sectors, i * sectors + sectors) * Mathf.Deg2Rad;
-                    float randomRadius = generator.Next((int)(xCenter * 0.5), (int)(xCenter * 0.9));
-                    x = Mathf.Cos(randomAngle) * randomRadius;
-                    z = Mathf.Sin(randomAngle) * randomRadius;
-                    
-                    // Debug.Log($"Trying spawnpoint {i} at angle: {randomAngle * Mathf.Rad2Deg}, radius: {randomRadius}");
-                } while (!IsFreeSpot(x, z, xCenter, zCenter, out terrainHeight) && --maxProbes > 0);
+            int i = startSector;
 
-                Vector3 spawnPosition = new Vector3(x * _terrain.transform.localScale.x, 1f, z * _terrain.transform.localScale.z); 
+            foreach (KeyValuePair<int,Player> valuePair in PhotonNetwork.CurrentRoom.Players)
+            {
+                Player player = valuePair.Value;
+                int mySectorStart = sectorDegrees * i;
+                int mySectorEnd = mySectorStart + sectorDegrees;
+                Vector3 spawnPosition = GenerateSpawnPoint(mySectorStart, mySectorEnd);
+                Debug.Log($"Spawning player {player.NickName} tank in sector ({mySectorStart},{mySectorEnd}) position {spawnPosition}");
                 
-                // DEBUG CODE
-                // Debug.Log($"Spawnpoint {i} [probes {maxProbes}, terrainHeigh {terrainHeight}] at ({x},1f,{z})");
-                // GameObject s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                // s.transform.position = spawnPosition; 
-                // s.transform.localScale = Vector3.one * 30;
-                // s.name = $"TankSpawn{i}";
-                // s.GetComponent<Renderer>().material.color = Color.green;
+                object[] content = new object[] { spawnPosition };
+                RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+                {
+                    TargetActors = new int[] { player.ActorNumber }
+                };
+                PhotonNetwork.RaiseEvent(SpawnPlayer, content, raiseEventOptions, SendOptions.SendReliable);
+                i++;
                 
-                _spawnPoints[i] = spawnPosition;
+                _loadingProgess++;
+                yield return SendLoadingMessage(_loadingProgess, $"Generado tanque del jugador {player.NickName}");
+            }
+            
+            yield return new WaitForSeconds(1);
+        }
+
+        public void OnEvent(EventData photonEvent)
+        {
+            byte eventCode = photonEvent.Code;
+
+            if (eventCode == SpawnPlayer)
+            {
+                object[] data = (object[])photonEvent.CustomData;
+                Vector3 spawnPosition = (Vector3)data[0];
+
+                Player player = PhotonNetwork.LocalPlayer;
+                PhotonNetwork.Instantiate(Path.Combine("Tanks", _tankPrefab.name), spawnPosition, Quaternion.identity);
+            } else if (eventCode == LoadingFinished)
+            {
+                _loadingFinished = true;
             }
         }
+        
+        private Vector3 GenerateSpawnPoint(int sectorStart, int sectorEnd, int maxProbes = 2000, float tolerance = 15f, float minDistance = 15f)
+        {
+            Random generator = RandomGenerator;
+            int xCenter = _terrain.TerrainParameters.xSize / 2;
+            int zCenter = _terrain.TerrainParameters.zSize / 2;
+            float x, z;
 
+            do
+            {
+                float randomAngle = generator.Next(sectorStart, sectorEnd) * Mathf.Deg2Rad;
+                float randomRadius = generator.Next((int)(xCenter * 0.5), (int)(xCenter * 0.9));
+                x = Mathf.Cos(randomAngle) * randomRadius;
+                z = Mathf.Sin(randomAngle) * randomRadius;
+                    
+                // Debug.Log($"Trying spawnpoint {i} at angle: {randomAngle * Mathf.Rad2Deg}, radius: {randomRadius}");
+            } while (!IsFreeSpot(x, z, xCenter, zCenter, out float terrainHeight, tolerance, minDistance) && --maxProbes > 0);
+            
+            Vector3 spawnPosition = new Vector3(x * _terrain.transform.localScale.x, 1f, z * _terrain.transform.localScale.z);
+            
+            // DEBUG CODE
+            // Debug.Log($"Weapon Spawnpoint {i} [probes {maxProbes}, terrainHeigh {terrainHeight}] at ({x},1f,{z})");
+            // GameObject s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            // s.transform.position = spawnPosition; 
+            // s.transform.localScale = Vector3.one * 5;
+            // s.name = $"SecondaryWeapon{i}";
+            // s.GetComponent<Renderer>().material.color = Color.red;
+            
+            return spawnPosition;
+        }
+        
         private bool IsFreeSpot(float x, float z, int xCenter, int zCenter, out float terrainHeight, float tolerance = 15f, float minDistance = 15f)
         {
             Vector3 center = new Vector3(x * _terrain.transform.localScale.x , 1f, z * _terrain.transform.localScale.z);
             Vector3 extents = new Vector3(tolerance, 0.2f, tolerance);
             Collider[] hits = Physics.OverlapBox(center, extents, Quaternion.identity);
-
-            bool nearSpawnPoint = false;
-             
-            for (int i = 0; i < _spawnPoints.Length; i++)
-            {
-                if (Vector3.Distance(_spawnPoints[i], center) < minDistance)
-                {
-                    nearSpawnPoint = true;
-                    break;
-                }
-            }
-
             terrainHeight = _terrain.GetHeight((int)x + xCenter, (int)z + zCenter);
-            
-            return !nearSpawnPoint && hits.Length == 0 && terrainHeight <= 0.01f;
-        }
-
-        private void SpawnDummyTanks(int numberOfTanks)
-        {
-            // Only the master client spawns dummies
-            if (PhotonNetwork.IsConnected && !PhotonNetwork.IsMasterClient) return;
-            
-            for (int i = 0; i < numberOfTanks; i++)
-            {
-                Vector3 position = _spawnPoints[_spawnPoints.Length - 1 - i];
-
-                GameObject dummyTank;
-                if (PhotonNetwork.IsConnected)
-                {
-                    dummyTank = PhotonNetwork.InstantiateRoomObject(Path.Combine("Tanks", _tankPrefab.name), position, Quaternion.identity);
-                }
-                else
-                {
-                    dummyTank = Instantiate(_tankPrefab, position, Quaternion.identity);    
-                }
-                
-                dummyTank.name = $"Dummy{i}";
-                dummyTank.GetComponent<TankManager>().IsDummy = true;
-            }
+            return hits.Length == 0 && terrainHeight <= 0.01f;
         }
         #endregion
 
         #region Pickable items instantiation
 
-        private void SpawnSecondaryWeapons(int numberOfSecondaryWeapons = 0)
+        private IEnumerator SpawnSecondaryWeapons(int numberOfSecondaryWeapons = 0)
         {
-            if (PhotonNetwork.IsConnected && !PhotonNetwork.IsMasterClient) return;
+            if (numberOfSecondaryWeapons > 0)
+            {
+                yield return SendLoadingMessage(_loadingProgess, "Generando armas secundarias");
+            }
             
+            Random generator = RandomGenerator;
             GameSettings settings = Resources.Load<GameSettings>("Settings/GameSettings");
-
-            if (!settings.spawnSecondaryWeapons) return;
-            
             PickableItem[] items = settings.secondaryWeapons;
 
-            Random generator = RandomGenerator;
-            int sectors = 360 / numberOfSecondaryWeapons;
-            int xCenter = _terrain.TerrainParameters.xSize / 2;
-            int zCenter = _terrain.TerrainParameters.zSize / 2;
+            int sectorDegrees = 360 / numberOfSecondaryWeapons;
             
             for (int i = 0; i < numberOfSecondaryWeapons; i++)
             {
-                int maxProbes = 1000;
-                float x;
-                float z;
-                float terrainHeight = 0f;
+                int mySectorStart = sectorDegrees * i;
+                int mySectorEnd = mySectorStart + sectorDegrees;
+                Vector3 spawnPosition = GenerateSpawnPoint(mySectorStart, mySectorEnd, 1000, 25f, 25f);
+                spawnPosition.y = 0.1f;
                 
-                do
-                {
-                    float randomAngle = generator.Next(i * sectors, i * sectors + sectors) * Mathf.Deg2Rad;
-                    float randomRadius = generator.Next((int)(xCenter * 0.3), (int)(xCenter * 0.9));
-                    x = Mathf.Cos(randomAngle) * randomRadius;
-                    z = Mathf.Sin(randomAngle) * randomRadius;
-                } while (!IsFreeSpot(x, z, xCenter, zCenter, out terrainHeight, 25f, 25f) && --maxProbes > 0);
-
-                Vector3 spawnPosition = new Vector3(x * _terrain.transform.localScale.x, 1f, z * _terrain.transform.localScale.z);
+                int weaponType = generator.Next(0, _secondaryWeaponTypes.Length);
+                SpawnSecondaryWeapon(_secondaryWeaponTypes[weaponType], spawnPosition);
                 
-                // DEBUG CODE
-                // Debug.Log($"Weapon Spawnpoint {i} [probes {maxProbes}, terrainHeigh {terrainHeight}] at ({x},1f,{z})");
-                // GameObject s = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                // s.transform.position = spawnPosition; 
-                // s.transform.localScale = Vector3.one * 5;
-                // s.name = $"SecondaryWeapon{i}";
-                // s.GetComponent<Renderer>().material.color = Color.red;
-
-                int weponType = generator.Next(0, _secondaryWeaponTypes.Length);
-                SpawnSecondaryWeapon(_secondaryWeaponTypes[weponType], spawnPosition);
+                Debug.Log($"Spawning weapon {_secondaryWeaponTypes[weaponType].ToString()} tank in sector ({mySectorStart},{mySectorEnd}) position {spawnPosition}");
+                
+                _loadingProgess++;
+                yield return SendLoadingMessage(_loadingProgess, $"Generando {_secondaryWeaponTypes[weaponType].name}");
             }
+            
+            yield return new WaitForSeconds(1);
         }
 
         private void SpawnSecondaryWeapon(PickableItem item, Vector3 position)

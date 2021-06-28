@@ -1,10 +1,12 @@
-using System.Collections;
 using Photon.Pun;
 using System.Collections.Generic;
 using System.Linq;
+using ExtensionMethods;
 using Networking.Utilities;
 using Photon.Realtime;
+using TankBattle.InGameGUI.Hud;
 using UnityEngine;
+using UnityEngine.UI;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace TankBattle.Tanks
@@ -13,17 +15,22 @@ namespace TankBattle.Tanks
     {
         private int _currentPosCamera;
         private TankManager _currentTankFollow;
-        private bool _canChangeCamera;
+        private bool _isRunning;
 
         public TankManager CurrentTankFollow { get => _currentTankFollow; }
 
         public delegate void OnChangeTankFollowDelegate();
         public OnChangeTankFollowDelegate OnChangeTankFollow;
+
+        private TankInput _tankInput;
+        private ATankHud _tankHud;
+        private Text _tankFollowedText;
         
         private void Awake()
         {
             _currentPosCamera = 0;
             _currentTankFollow = null;
+            _isRunning = false;
         }
 
         public void InitTankFollower(TankManager tankManager)
@@ -31,12 +38,16 @@ namespace TankBattle.Tanks
             TankValues tankValues = tankManager.GetComponent<TankValues>();
             tankValues.OnTankWasDestroyed += TankWasDestroyed;
 
-            TankInput inputManager = tankManager.GetComponent<TankInput>();
-            inputManager.SwitchTankTrigger.OnTriggerPressed += OnSwitchTriggerPressed;
+            _tankInput = tankManager.GetComponent<TankInput>();
+            _tankInput.SwitchTankTrigger.OnTriggerPressed += OnSwitchTriggerPressed;
+
+            _tankHud = tankManager.TankHud;
+            _tankFollowedText = _tankHud.transform.FirstOrDefault(t => t.name == "FollowedTankText")?.GetComponent<Text>();
         }
+        
         private void OnSwitchTriggerPressed()
         {
-            if (gameObject.activeSelf)
+            if (_isRunning)
             {
                 FollowNextTank();
             }
@@ -44,23 +55,27 @@ namespace TankBattle.Tanks
 
         private void TankWasDestroyed(TankValues values)
         {
-            Debug.Log($"TankFollowerManager: {gameObject.name} TankWasDestroyed called");
+            // Debug.Log($"TankFollowerManager: {gameObject.name} TankWasDestroyed called");
             TankManager tankManager = GetComponent<TankManager>();
-            gameObject.SetActive(true);
+            
+            _tankHud.SetDeadHudState();
+            _tankInput.SwitchActionMap(TankInput.TankInputMaps.DeadPlayer);
+            _isRunning = true;
+            if(_tankFollowedText) _tankFollowedText.gameObject.SetActive(true);
             FollowNextTank();
         }
         
         private void FollowNextTank()
         {
             List<Player> players = new List<Player>(PhotonNetwork.CurrentRoom.Players.Values.ToArray());
-            int currentTank = _currentTankFollow != null ? players.IndexOf(_currentTankFollow.photonView.Owner) : -1;
+            int currentTank = _currentTankFollow != null ? players.IndexOf(_currentTankFollow.photonView.Owner) : 0;
             TankManager nextTankToFollow = null;
             
             for (int i = 0; i < players.Count; i++)
             {
                 int nextTank = (currentTank + i) % players.Count;
                 
-                Debug.Log($"{players[nextTank].NickName} IsAlive: {players[nextTank].IsAlive()}");
+                // Debug.Log($"nextTank={nextTank}");
                 
                 if (players[nextTank].IsLocal) continue;
                 
@@ -72,8 +87,10 @@ namespace TankBattle.Tanks
 
             if (nextTankToFollow != null && nextTankToFollow != _currentTankFollow)
             {
+                // Debug.Log($"Camera following {_currentTankFollow}");
                 _currentTankFollow = nextTankToFollow;
-                _currentTankFollow.CameraFollow.StartFollowing();    
+                _currentTankFollow.CameraFollow.StartFollowing();
+                if (_tankFollowedText) _tankFollowedText.text = $"Siguiendo a {_currentTankFollow.name}";
             }
             else
             {
@@ -83,14 +100,10 @@ namespace TankBattle.Tanks
 
         public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
         {
-            foreach (DictionaryEntry changedProp in changedProps)
+            if (changedProps.ContainsKey(PlayerExtensions.PlayerAlive) && _isRunning)
             {
-                Debug.Log($"{targetPlayer.NickName} changed IsAlive {targetPlayer.IsAlive()}");   
-            }
-            
-            if (changedProps.ContainsKey(PlayerExtensions.PlayerAlive))
-            {
-                // FollowNextTank();
+                // Debug.Log($"{targetPlayer.NickName} changed IsAlive {targetPlayer.IsAlive()}");
+                FollowNextTank();
             }
         }
     }

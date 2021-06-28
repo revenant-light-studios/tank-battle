@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace TankBattle.InGameGUI
 {
@@ -7,6 +8,7 @@ namespace TankBattle.InGameGUI
     {
         private Vector2 _startSize;
         private RectTransform _rectTransform;
+        private Image _image;
     
         [SerializeField,
          FormerlySerializedAs("CurrentValue"),
@@ -15,6 +17,7 @@ namespace TankBattle.InGameGUI
 
         private void Awake()
         {
+            _image = GetComponent<Image>();
             _rectTransform = GetComponent<RectTransform>();
             _startSize = _rectTransform.sizeDelta;
         }
@@ -52,10 +55,9 @@ namespace TankBattle.InGameGUI
 
         private void UpdateBar()
         {
-            if (_rectTransform != null)
+            if (_image != null)
             {
-                // Debug.LogFormat("Value bar {0} value set to {1}", name, _currentValue);
-                _rectTransform.sizeDelta = _startSize * new Vector2(1f, _currentValue);    
+                _image.fillAmount = _currentValue;
             }
         }
     }

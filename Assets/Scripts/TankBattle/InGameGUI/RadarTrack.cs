@@ -24,9 +24,10 @@ namespace TankBattle.InGameGUI
         private Vector2 _maxLife;
         private Vector2 _maxShield;
 
+
         private void Awake()
         {
-            _parentCanvas = transform.parent.GetComponent<Canvas>();
+            _parentCanvas = GetComponentInParent<Canvas>();
             _rectTransform = GetComponent<RectTransform>();
             _trackingImage = transform.FirstOrDefault(t => t.name == "TrackerImage")?.GetComponent<Image>();
             if (_trackingImage) _trackingImage.color = TrackerColor;

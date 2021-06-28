@@ -16,6 +16,12 @@ namespace TankBattle.InGameGUI.Hud
             _secondaryWeaponIcon.gameObject.SetActive(false);            
         }
 
+        public override void SetDeadHudState()
+        {
+            base.SetDeadHudState();
+            _secondaryWeaponIcon.gameObject.SetActive(false);
+        }
+
         protected override void OnTankWeaponEnabled(ATankGun gun, TankManager.TankWeapon weapon)
         {
             base.OnTankWeaponEnabled(gun, weapon);
