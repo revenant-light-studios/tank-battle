@@ -22,4 +22,4 @@ MonoBehaviour:
   secondaryWeapons:
   - {fileID: 1162825868874876437, guid: 67303218b007d4c998255c5124cd829e, type: 3}
   - {fileID: 1162825868874876437, guid: ac0a9ed5c328845cbb56c9cb5d4f8267, type: 3}
-  forceMobile: 0
+  forceMobile: 1

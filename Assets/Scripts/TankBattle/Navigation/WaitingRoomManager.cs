@@ -50,7 +50,7 @@ namespace TankBattle.Navigation
         public delegate void OnGoCreditsDelegate();
         public OnGoCreditsDelegate OnGoCredits;
 
-        private void Awake()
+        public virtual void Awake()
         {
             if (_settings != null)
             {

@@ -243,7 +243,7 @@ GameObject:
   - component: {fileID: 8262307408639995165}
   - component: {fileID: 1166895081326587905}
   m_Layer: 0
-  m_Name: PayerElement
+  m_Name: PlayerElement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

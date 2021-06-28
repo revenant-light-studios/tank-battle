@@ -11,7 +11,20 @@ namespace TankBattle.Global
             set => PlayerPrefs.SetInt(_tutorialAlreadyPlayedKey, value);
         }
 
+        private const string _numberOfSecondaryGuns = "number-of-secondary-guns";
+        public static int NumberOfSecondaryGuns
+        {
+            get => PlayerPrefs.GetInt(_numberOfSecondaryGuns, 0);
+            set => PlayerPrefs.SetInt(_numberOfSecondaryGuns, value);
+        }
 
+        private const string _numberOfDummies = "number-of-dummies";
+        public static int NumberOfDummies
+        {
+            get => PlayerPrefs.GetInt(_numberOfDummies, 0);
+            set => PlayerPrefs.SetInt(_numberOfDummies, value);
+        }
+        
 
 #if !UNITY_EDITOR && UNITY_WEBGL
         [System.Runtime.InteropServices.DllImport("__Internal")]

@@ -142,20 +142,30 @@ namespace TankBattle.Navigation
             _LoadingUI.gameObject.SetActive(true);
             
             GameSettings settings = Resources.Load<GameSettings>("Settings/GameSettings");
-            if (settings)
+
+            if (PhotonNetwork.CurrentRoom.IsVisible)
             {
+                
                 _spawnDummies = settings.spawnDummyTanks;
                 _numberOfDummies = settings.numberOfDummies;
                 _spawnSecondaryWeapons = settings.spawnSecondaryWeapons;
                 _numberOfSecondaryWeapons = settings.numberOfSecondaryWeapons;
-                _secondaryWeaponTypes = settings.secondaryWeapons;
-
-                if (_secondaryWeaponTypes.Length == 0)
-                {
-                    _spawnSecondaryWeapons = false;
-                }
+            }
+            else
+            {
+                _numberOfDummies = GlobalMethods.NumberOfDummies;
+                _spawnDummies = _numberOfDummies > 0;
+                _numberOfSecondaryWeapons = GlobalMethods.NumberOfSecondaryGuns;
+                _spawnSecondaryWeapons = _numberOfSecondaryWeapons > 0;
             }
             
+            _secondaryWeaponTypes = settings.secondaryWeapons;
+
+            if (_secondaryWeaponTypes.Length == 0)
+            {
+                _spawnSecondaryWeapons = false;
+            }
+
             int numberOfSecondaryWeapons = _spawnSecondaryWeapons ? _numberOfSecondaryWeapons : 0;
             int numberOfDummies = _spawnDummies ? _numberOfDummies : 0;
             int numberOfPlayers = PhotonNetwork.IsConnected ? PhotonNetwork.CurrentRoom.PlayerCount : 1;
