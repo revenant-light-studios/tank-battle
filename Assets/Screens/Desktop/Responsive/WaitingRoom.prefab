@@ -1535,8 +1535,7 @@ GameObject:
   - component: {fileID: 340028481053809631}
   - component: {fileID: 4338241935763931125}
   - component: {fileID: 9089713636918292188}
-  - component: {fileID: 3343206921372086293}
-  - component: {fileID: 5409932924249541247}
+  - component: {fileID: 7969755694940953587}
   m_Layer: 0
   m_Name: WaitingRoom
   m_TagString: Untagged
@@ -1650,7 +1649,7 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &3343206921372086293
+--- !u!114 &7969755694940953587
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1664,21 +1663,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerElemPrefab: {fileID: 8329438251547603585, guid: 8b3135636b35c034892c003887e35673,
     type: 3}
-  _settings: {fileID: 0}
---- !u!114 &5409932924249541247
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9045479130846215763}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 037850c0094002d4da553cb5c3cdfaba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _playerElemPrefab: {fileID: 0}
-  _settings: {fileID: 0}
+  _settings: {fileID: 11400000, guid: 4ab308bc1dd0d491b87aa3e2bb32d7fd, type: 2}
 --- !u!1 &9199967519265913948
 GameObject:
   m_ObjectHideFlags: 0

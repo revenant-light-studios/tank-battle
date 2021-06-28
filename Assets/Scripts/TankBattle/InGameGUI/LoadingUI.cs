@@ -59,8 +59,9 @@ namespace TankBattle.InGameGUI
             Progress = progress;
             Text = message;
         }
-        public void Show()
+        public void Show(int maxValue)
         {
+            _progressBar.MaxValue = maxValue;
             gameObject.SetActive(true);
         }
 

@@ -40,8 +40,6 @@ namespace TankBattle.Tanks.Guns
             }
         }
         
-        
-        
         public delegate void OnEnergyUpdateDelegate(float currentEnergy, float minimumEnergy);
         public OnEnergyUpdateDelegate OnEnergyUpdate;
         
@@ -98,10 +96,14 @@ namespace TankBattle.Tanks.Guns
         }
         
         #region Fire management
+
+        public delegate void OnBulletFiredDelegate();
+        public event OnBulletFiredDelegate OnBulletFired;
+        
         public virtual void Fire()
         {
             // Firing is authoritative
-            if (!_photonView.IsMine && PhotonNetwork.IsConnected) return;
+            if (!_parentTank.IsMine) return;
             
             if (!CanFire) return;
 
@@ -113,7 +115,8 @@ namespace TankBattle.Tanks.Guns
             {
                 NetworkFire();
             }
-
+            
+            OnBulletFired?.Invoke();
             LastFired = 0.0f;
             CanFire = false;
         }

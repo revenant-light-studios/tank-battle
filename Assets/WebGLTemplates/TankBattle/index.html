@@ -10,10 +10,16 @@
         <link rel="stylesheet" href="css/tank-battle.css" />
     </head>
     <body>
-      <div id="unityContainer">
-        <canvas id="unity-canvas" />
-      </div>
-
+        <div id="unityContainer">
+            <div id="loading">
+                <div class="title">TANK BATTLE</div>
+                <div class="progress-wrapper">
+                    <span class="loading-text">Descargando datos del juego</span>
+                </div>
+            </div>
+            <canvas id="unity-canvas" />
+        </div>
+    
         <!-- check for F key press to toggle full screen -->
         <script>
             var isFullscreen = false;
@@ -22,14 +28,14 @@
             var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
 
             var config = {
-              dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
-              frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
-              codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+              dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}?r{{{ PRODUCT_VERSION }}}",
+              frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}?r{{{ PRODUCT_VERSION }}}",
+              codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}?r{{{ PRODUCT_VERSION }}}",
 #if MEMORY_FILENAME
-              memoryUrl: buildUrl + "/{{{ MEMORY_FILENAME }}}",
+              memoryUrl: buildUrl + "/{{{ MEMORY_FILENAME }}}?r{{{ PRODUCT_VERSION }}}",
 #endif
 #if SYMBOLS_FILENAME
-              symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
+              symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}?r{{{ PRODUCT_VERSION }}}",
 #endif
               streamingAssetsUrl: "StreamingAssets",
               companyName: "{{{ COMPANY_NAME }}}",
@@ -37,13 +43,19 @@
               productVersion: "{{{ PRODUCT_VERSION }}}",
             };
 
+            var loadingPanel = document.querySelector('div#loading');
+            var progressIndicator = document.querySelector('div#loading .loading-text');
             var script = document.createElement("script");
             script.src = loaderUrl;
             script.onload = () => {
-              var unityInstance = createUnityInstance(document.querySelector("#unity-canvas"), config)
-                .then(function(unityInstance) {
-                  unityInstance.SetFullscreen(1);
+                var unityInstance = createUnityInstance(document.querySelector("#unity-canvas"), config, (progress) => {
+                    var pct = parseInt(100 * progress);
+                    progressIndicator.style.backgroundImage = "-webkit-linear-gradient(left, #999 " + pct + "%, #4e4e4e " + pct + "%)";
                 })
+                    .then(function(unityInstance) {
+                        loadingPanel.classList.add('fade');
+                        // unityInstance.SetFullscreen(1);
+                    })
             };
             document.body.appendChild(script);
 

@@ -33,14 +33,27 @@ namespace TankBattle.Navigation
         private void InitCredits()
         {
             _transform = _creditsContainer.GetComponent<RectTransform>();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(_transform);
+            RectTransform _creditsTransform = GetComponent<RectTransform>();
+            
+            Vector2 canvasSize = _creditsTransform.rect.size;
+            _logo.sizeDelta = canvasSize * transform.localScale;
 
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_transform);
+            
             VerticalLayoutGroup layout = _transform.GetComponent<VerticalLayoutGroup>();
-            _startPos = _transform.anchoredPosition;
             float height = layout.preferredHeight * _transform.localScale.y;
-            float windowHeight = GetComponentInParent<Canvas>().GetComponent<RectTransform>().rect.height;
-            _endPos = new Vector2(_startPos.x, _startPos.y + height + (windowHeight * 0.5f - _logo.rect.height * 0.5f * transform.localScale.y));
+            _endPos = new Vector2(_startPos.x, height);
+            
+            
+
+            // VerticalLayoutGroup layout = _transform.GetComponent<VerticalLayoutGroup>();
+            // _startPos = _transform.anchoredPosition;
+            // float height = layout.preferredHeight * _transform.localScale.y;
+            // float windowHeight = GetComponentInParent<Canvas>().GetComponent<RectTransform>().rect.height;
+            // _endPos = new Vector2(_startPos.x, _startPos.y + height + (windowHeight * 0.5f - _logo.rect.height * 0.5f * transform.localScale.y));
+            
             load = true;
+            
             StartCredits();
         }
 

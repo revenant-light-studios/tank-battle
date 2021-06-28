@@ -1,57 +1,66 @@
 using ExtensionMethods;
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
+using Photon.Realtime;
+using TankBattle.Global;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace TankBattle.Navigation
 {
-    public class GameSettingsRoom : MonoBehaviour
+    public class GameSettingsRoom : MonoBehaviourPunCallbacks
     {
         private int MAX_NUM_PLAYERS = 20;
-        private int MIN_NUM_PLAYERS = 2;
         private int MAX_NUM_DUMMIES = 10;
 
         private int _numDummies = 0;
-        private int _numPlayers = 2;
+        private int _numSecondaryGuns = 0;
 
-        private Text _numPlayersText;
+        private Text _numSecondaryGunsText;
         private Text _numDummiesText;
-        private Button _sumPlayers;
-        private Button _subtractPlayers;
+        private Button _sumSecondaryGuns;
+        private Button _subtractSecondaryGuns;
         private Button _sumDummies;
         private Button _subtractDummies;
-        private Toggle _secundaryGunsToggle;
 
         private void Awake()
         {
-            _numPlayersText = transform.FirstOrDefault(t => t.name == "PlayersNumPanel").GetComponentInChildren<Text>();
-            _numPlayersText.text = $"{_numPlayers}";
-            _sumPlayers = transform.FirstOrDefault(t => t.name == "PlusPlayersNumButton").GetComponent<Button>();
-            _subtractPlayers = transform.FirstOrDefault(t => t.name == "SubtractPlayersNumButton").GetComponent<Button>();
+            _numSecondaryGunsText = transform.FirstOrDefault(t => t.name == "SGNumPanel").GetComponentInChildren<Text>();
+            _sumSecondaryGuns = transform.FirstOrDefault(t => t.name == "PlusSGNumButton").GetComponent<Button>();
+            _subtractSecondaryGuns = transform.FirstOrDefault(t => t.name == "SubtractSGNumButton").GetComponent<Button>();
 
             _numDummiesText = transform.FirstOrDefault(t => t.name == "DummiesNumPanel").GetComponentInChildren<Text>();
-            _numDummiesText.text = $"{_numDummies}";
             _sumDummies = transform.FirstOrDefault(t => t.name == "PlusDummiesButton").GetComponent<Button>();
             _subtractDummies = transform.FirstOrDefault(t => t.name == "SubtractDummiesButton").GetComponent<Button>();
-
-            _secundaryGunsToggle = transform.FirstOrDefault(t => t.name == "SecundaryGuns").GetComponentInChildren<Toggle>();
-
-            _sumPlayers.onClick.AddListener(() => UpdateNumPlayers(_numPlayers + 1));
-            _subtractPlayers.onClick.AddListener(() => UpdateNumPlayers(_numPlayers - 1));
+            
+            _sumSecondaryGuns.onClick.AddListener(() => UpdateNumSecondaryGuns(_numSecondaryGuns + 1));
+            _subtractSecondaryGuns.onClick.AddListener(() => UpdateNumSecondaryGuns(_numSecondaryGuns - 1));
             _sumDummies.onClick.AddListener(() => UpdateNumDummies(_numDummies + 1));
             _subtractDummies.onClick.AddListener(() => UpdateNumDummies(_numDummies - 1));
-            _secundaryGunsToggle.onValueChanged.AddListener(UpdateSecundaryGuns);
 
-            SetSettingsVisible(false);
+            _numDummies = GlobalMethods.NumberOfDummies;
+            _numSecondaryGuns = GlobalMethods.NumberOfSecondaryGuns;
 
+            _numDummiesText.text = $"{_numDummies}";
+            _numSecondaryGunsText.text = $"{_numSecondaryGuns}";
+
+
+            if (GlobalMethods.IsDesktop())
+            {
+                if (!PhotonNetwork.IsConnected || !PhotonNetwork.IsMasterClient)
+                {
+                    SetSettingsVisible(false);
+                }
+            }
         }
 
-        private void UpdateNumPlayers(int numPlayers)
+        private void UpdateNumSecondaryGuns(int numSecondaryGuns)
         {
-            var num = Mathf.Clamp(numPlayers, MIN_NUM_PLAYERS,MAX_NUM_PLAYERS);
-            _numPlayers = num;
-            _numPlayersText.text = $"{num}";
+            var num = Mathf.Clamp(numSecondaryGuns, 0, MAX_NUM_PLAYERS);
+            _numSecondaryGuns = num;
+            _numSecondaryGunsText.text = $"{num}";
+            GlobalMethods.NumberOfSecondaryGuns = num;
         }
 
         private void UpdateNumDummies(int numDummies)
@@ -59,23 +68,27 @@ namespace TankBattle.Navigation
             var num = Mathf.Clamp(numDummies, 0, MAX_NUM_DUMMIES);
             _numDummies = num;
             _numDummiesText.text = $"{num}";
+            GlobalMethods.NumberOfDummies = num;
         }
-
-        private void UpdateSecundaryGuns(bool withSecundaryGuns)
-        {
-            Debug.Log(withSecundaryGuns);
-            //Cambiar la opción del servidor con el valor del toggle
-        }
-
+        
         public void SetSettingsVisible(bool active)
         {
             _sumDummies.gameObject.SetActive(active);
-            _sumPlayers.gameObject.SetActive(active);
+            _sumSecondaryGuns.gameObject.SetActive(active);
             _subtractDummies.gameObject.SetActive(active);
-            _subtractPlayers.gameObject.SetActive(active);
-
-            _secundaryGunsToggle.interactable = active;
+            _subtractSecondaryGuns.gameObject.SetActive(active);
         }
 
+        public override void OnMasterClientSwitched(Player newMasterClient)
+        {
+            base.OnMasterClientSwitched(newMasterClient);
+
+            if (!GlobalMethods.IsDesktop()) return;
+            
+            if (!PhotonNetwork.CurrentRoom.IsVisible && PhotonNetwork.LocalPlayer == newMasterClient)
+            {
+                SetSettingsVisible(true);
+            }
+        }
     }
 }
