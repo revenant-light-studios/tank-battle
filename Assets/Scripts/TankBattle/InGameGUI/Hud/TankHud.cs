@@ -86,7 +86,20 @@ namespace TankBattle.InGameGUI.Hud
             base.OnEnable();
             UpdateLivingPlayersText(PhotonNetwork.CurrentRoom.GetAlivePlayersCount());
         }
-        
+
+        public override void OnPlayerLeftRoom(Player otherPlayer)
+        {
+            base.OnPlayerLeftRoom(otherPlayer);
+            
+            int numberOfPlayersAlive = PhotonNetwork.CurrentRoom.GetAlivePlayersCount();
+            UpdateLivingPlayersText(PhotonNetwork.CurrentRoom.GetAlivePlayersCount());
+
+            if (numberOfPlayersAlive <= 1)
+            {
+                ShowEndPanel();
+            }
+        }
+
         public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
         {
             if (changedProps.TryGetValue(PlayerExtensions.PlayerAlive, out object isAlive))
@@ -126,7 +139,7 @@ namespace TankBattle.InGameGUI.Hud
         
         protected virtual void NumberOfBulletsChange(int numberOfBullets)
         {
-            // Debug.Log($"Secondary weapon current number of bullets {numberOfBullets}");    
+            //Debug.Log($"Secondary weapon current number of bullets {numberOfBullets}");    
         }
 
         protected override void OnTurretMove(Vector3 hitPoint)

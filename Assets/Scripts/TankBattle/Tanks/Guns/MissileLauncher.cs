@@ -2,6 +2,7 @@ using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Tanks.Bullets;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.Serialization;
 
 namespace TankBattle.Tanks.Guns
@@ -47,6 +48,25 @@ namespace TankBattle.Tanks.Guns
             TankInput.Trigger2.OnTriggerPressed += () => TriggerPressed = true;
             TankInput.Trigger2.OnTriggerReleased += () => TriggerPressed = false;
         }
+        
+        protected virtual void Update()
+        {
+            LastFired += Time.deltaTime;
+            
+            if(!CanFire && LastFired >= _firingRate)
+            {
+                CanFire = _currentNumberOfBullets > 0;
+                // Debug.Log($"Canfire: {CanFire} {_currentNumberOfBullets}");
+            }
+         
+            if (TriggerPressed && CanFire)
+            {
+                Fire();
+                CanFire = false;
+                LastFired = 0.0f;
+                CurrentNumberOfBullets--;
+            }
+        }
 
         [PunRPC]
         public override void NetworkFire()
@@ -66,8 +86,6 @@ namespace TankBattle.Tanks.Guns
             missileInstance.transform.rotation = _launcher.transform.rotation;
             missileInstance.Fire(transform);
             missileInstance.OnBulletHit = OnBulletHit;
-
-            CurrentNumberOfBullets--;
 
             if (_launchSound)
             {

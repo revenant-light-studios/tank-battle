@@ -40,9 +40,23 @@ namespace TankBattle.Tanks.Guns
         
         protected override void Update()
         {
-            base.Update();
-
-            if (LastFired > 2 * _firingRate)
+            LastFired += Time.deltaTime;
+            
+            if(!CanFire && LastFired >= _firingRate)
+            {
+                CanFire = _energy >= _unloadRate;
+                // Debug.Log($"LastFired: {LastFired} -> CanFire: {_energy >= _unloadRate}");
+            }
+            
+            if (TriggerPressed && CanFire)
+            {
+                Fire();
+                CanFire = false;
+                LastFired = 0.0f;
+                UpdateEnergy(_energy - _unloadRate);
+            }        
+            
+            if (!TriggerPressed && LastFired > 2 * _firingRate)
             {
                 if (_energy < _maxEnergy)
                 {
@@ -52,11 +66,15 @@ namespace TankBattle.Tanks.Guns
             }
         }
         
+        private void UpdateEnergy(float value)
+        {
+            _energy = Mathf.Clamp(value, 0.0f, 1.0f);
+            OnEnergyUpdate?.Invoke(_energy / _maxEnergy, _unloadRate);
+        }
+
         [PunRPC]
         public override void NetworkFire()
         {
-            if (_energy >= _unloadRate)
-            {
                 if (!TankBullet) return;
 
                 ATankBullet bulletInstance = Instantiate(TankBullet, transform.position, transform.rotation);
@@ -80,14 +98,6 @@ namespace TankBattle.Tanks.Guns
 
                 _muzzleParticleSystem.Play();
                 _gunAudio?.PlayOneShot(_gunAudio.clip);
-                UpdateEnergy(_energy - _unloadRate);
-            }
-        }
-
-        private void UpdateEnergy(float value)
-        {
-            _energy = Mathf.Clamp(value, 0.0f, 1.0f);
-            OnEnergyUpdate?.Invoke(_energy / _maxEnergy, _unloadRate);
         }
     }
 }

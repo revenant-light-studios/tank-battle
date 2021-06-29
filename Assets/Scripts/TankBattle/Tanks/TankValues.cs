@@ -2,6 +2,7 @@ using System;
 using ExtensionMethods;
 using Networking.Utilities;
 using Photon.Pun;
+using Photon.Realtime;
 using TankBattle.Tanks.Bullets;
 using TankBattle.Tanks.ForceFields;
 using TankBattle.Tanks.Guns;
@@ -10,7 +11,7 @@ using UnityEngine;
 
 namespace TankBattle.Tanks
 {
-    public class TankValues : MonoBehaviour
+    public class TankValues : MonoBehaviourPunCallbacks
     {
         public float TotalShield;
         public float TotalArmor;
@@ -130,7 +131,17 @@ namespace TankBattle.Tanks
             // Debug.LogFormat("Shield: {0}, Armor: {1}", _shieldAmount, _armorAmount);
             OnValuesChanged?.Invoke(this);
         }
-        
+
+        public override void OnPlayerLeftRoom(Player otherPlayer)
+        {
+            base.OnPlayerLeftRoom(otherPlayer);
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                OnTankWasDestroyed?.Invoke(null);
+            }
+        }
+
         [PunRPC]
         private void DestroyTank()
         {

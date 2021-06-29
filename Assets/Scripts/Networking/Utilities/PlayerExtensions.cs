@@ -66,7 +66,7 @@ namespace Networking.Utilities
 
         public static void SetStat(this Player player, string stat, float value)
         {
-            Debug.Log($"{player.NickName}: stat change {stat}: {value}");   
+            // Debug.Log($"{player.NickName}: stat change {stat}: {value}");   
             Hashtable statHashtable = new Hashtable();
             statHashtable[stat] = value;
             player.SetCustomProperties(statHashtable);

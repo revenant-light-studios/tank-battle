@@ -26,7 +26,7 @@ namespace TankBattle.Tanks.Guns
 
         [SerializeField] public ATankBullet TankBullet;
 
-        private int _currentNumberOfBullets;
+        protected int _currentNumberOfBullets;
         public delegate void OnNumberOfBulletsChangeDelegate(int numberOfBullets);
         public event OnNumberOfBulletsChangeDelegate OnNumberOfBulletsChange;
 
@@ -56,19 +56,6 @@ namespace TankBattle.Tanks.Guns
             _currentNumberOfBullets = _maxNumberOfBullets;
             CanFire = true;
         }
-
-        protected virtual void Update()
-        {
-            if(TriggerPressed) Fire();
-            
-            LastFired += Time.deltaTime;
-            
-            if(!CanFire && LastFired >= _firingRate)
-            {
-                CanFire = _maxNumberOfBullets==0 || _currentNumberOfBullets > 0;
-                // Debug.Log($"Canfire: {CanFire} {_currentNumberOfBullets}");
-            }
-        }
         
         /// <summary>
         /// Called when the weapon is instantiated through network
@@ -96,16 +83,31 @@ namespace TankBattle.Tanks.Guns
         }
         
         #region Fire management
-
         public delegate void OnBulletFiredDelegate();
         public event OnBulletFiredDelegate OnBulletFired;
+
+        protected virtual void Update()
+        {
+            LastFired += Time.deltaTime;
+            
+            if(!CanFire && LastFired >= _firingRate)
+            {
+                CanFire = _maxNumberOfBullets==0 || _currentNumberOfBullets > 0;
+                // Debug.Log($"Canfire: {CanFire} {_currentNumberOfBullets}");
+            }
+         
+            if (TriggerPressed && CanFire)
+            {
+                Fire();
+                CanFire = false;
+                _currentNumberOfBullets--;
+            }
+        }
         
         public virtual void Fire()
         {
             // Firing is authoritative
             if (!_parentTank.IsMine) return;
-            
-            if (!CanFire) return;
 
             if(PhotonNetwork.IsConnected)
             {
@@ -115,10 +117,8 @@ namespace TankBattle.Tanks.Guns
             {
                 NetworkFire();
             }
-            
+
             OnBulletFired?.Invoke();
-            LastFired = 0.0f;
-            CanFire = false;
         }
 
         
@@ -133,7 +133,7 @@ namespace TankBattle.Tanks.Guns
         protected bool OnBulletHit(GameObject other)
         {
             // Impact is authoritative
-            if (!_photonView.IsMine && PhotonNetwork.IsConnected) return false;
+            if (!_parentTank.IsMine) return false;
             
             TankValues tankValues = other.GetComponent<TankValues>();
             
