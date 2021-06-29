@@ -1,79 +1,35 @@
 ﻿using System;
 using TankBattle.Navigation;
 using UnityEngine;
+using TankBattle.Global;
 
 namespace TankBattle.Audio
 {
     public class SoundManager : MonoBehaviour
     {
-        private CustomSettings _customSettings;
-        [SerializeField] private SoundPrefab[] soundPrefabArray;
-        private GameObject _currentTheme;
-
-        public enum Sound
+        public enum SoundTypes
         {
-            Enter,
-            NewGame,
-            Click,
-            Back,
-            BackgroundMenu,
-            BackgroundGame
+            effect,
+            music
         }
 
-        private void Start()
-        {
-            _customSettings = FindObjectOfType<CustomSettings>();
-            DontDestroyOnLoad(gameObject);
+        public SoundTypes SoundType = SoundTypes.effect;
 
-            _customSettings.OnChangeVolume += () => VolumeChange();
-        }
+        private float _volume;
 
-        private void VolumeChange()
+        private void Awake()
         {
-            // Debug.Log("New Volume");
-            if(_currentTheme != null)
+            if (SoundType == SoundTypes.effect)
             {
-                _currentTheme.GetComponent<AudioSource>().volume = _customSettings.musicVolume * _customSettings.globalVolume;
+                _volume = GlobalMethods.EffectsVolume;
             }
-        }
-
-        public void PlayBackground(Sound sound)
-        {
-            if(_currentTheme != null)
+            else
             {
-                Destroy(_currentTheme);
+                _volume = GlobalMethods.MusicVolume;
             }
-            _currentTheme = Instantiate(GetSounPrefab(sound));
-            _currentTheme.GetComponent<AudioSource>().volume = _customSettings.musicVolume * _customSettings.globalVolume;
-        }
-
-        public void PlaySoundEffect(Sound sound)
-        {
-            GameObject _sound = Instantiate(GetSounPrefab(sound));
-            DontDestroyOnLoad(_sound);
-            Destroy(_sound, 2.0f) ;
-            _sound.GetComponent<AudioSource>().volume = _customSettings.effectsVolume * _customSettings.globalVolume;
-        }
-
-        private GameObject GetSounPrefab(Sound sound)
-        {
-            foreach(SoundPrefab soundPrefab in soundPrefabArray)
-            {
-                if(soundPrefab.sound == sound)
-                {
-                    return soundPrefab.soundGameObject;
-                }
-            }
-            // Debug.LogError("Sound " + sound + " is not found!");
-            return null;
-        }
-
-
-        [Serializable]
-        public class SoundPrefab
-        {
-            public Sound sound;
-            public GameObject soundGameObject;
+            Debug.Log($"V: {_volume} G: {GlobalMethods.GeneralVolume}");
+            var audioSource = transform.GetComponent<AudioSource>();
+            audioSource.volume = _volume * GlobalMethods.GeneralVolume;
         }
     }   
 }
