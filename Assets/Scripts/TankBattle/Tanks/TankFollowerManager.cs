@@ -55,6 +55,8 @@ namespace TankBattle.Tanks
 
         private void TankWasDestroyed(TankValues values)
         {
+            if (values == null) return;
+            
             // Debug.Log($"TankFollowerManager: {gameObject.name} TankWasDestroyed called");
             TankManager tankManager = GetComponent<TankManager>();
             
