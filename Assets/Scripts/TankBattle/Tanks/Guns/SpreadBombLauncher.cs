@@ -10,7 +10,7 @@ namespace TankBattle.Tanks.Guns
         private ATankBullet _bullet;
         private Transform _launchPoint;
         private GameObject _aim;
-        
+
         protected override void Awake()
         {
             base.Awake();
@@ -35,32 +35,46 @@ namespace TankBattle.Tanks.Guns
 
         protected override void Update()
         {
-            if(_aim)
+            LastFired += Time.deltaTime;
+            
+            if(!CanFire && LastFired >= _firingRate)
             {
-                if (_aim.activeSelf)
+                CanFire = _currentNumberOfBullets > 0;
+                // Debug.Log($"Canfire: {CanFire} {_currentNumberOfBullets}");
+            }
+
+            if (CanFire)
+            {
+                if (!_aim) return;  // Safety check
+                
+                if (TriggerPressed)
                 {
+                    ShowAim(true);
                     Vector3 aimPosition = transform.position;
                     aimPosition.y = 0;
                     _aim.transform.position = aimPosition;
                 }
-            }
-            
-            if (TriggerPressed)
-            {
-                CanFire = true;
-                TriggerPressed = false;
-                Fire();
+                else
+                {
+                    if (_aim.activeSelf)
+                    {
+                        Fire();
+                        CanFire = false;
+                        LastFired = 0.0f;
+                        CurrentNumberOfBullets--;
+                        ShowAim(false);                        
+                    }
+                }
             }
         }
 
         private void OnTrigger2Released()
         {
-            TriggerPressed = true;
-            ShowAim(false);
+            TriggerPressed = false;
         }
         private void OnTrigger2Pressed()
         {
-            ShowAim(true);
+            TriggerPressed = true;
         }
 
         private void ShowAim(bool show)
@@ -76,8 +90,6 @@ namespace TankBattle.Tanks.Guns
             _bullet.transform.position = launchTransform.position;
             _bullet.OnBulletHit = OnBulletHit;
             _bullet.Fire(transform);
-            
-            CurrentNumberOfBullets--;
         }
     }
 }

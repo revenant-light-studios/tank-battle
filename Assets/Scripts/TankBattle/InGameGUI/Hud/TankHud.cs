@@ -126,7 +126,7 @@ namespace TankBattle.InGameGUI.Hud
         
         protected virtual void NumberOfBulletsChange(int numberOfBullets)
         {
-            // Debug.Log($"Secondary weapon current number of bullets {numberOfBullets}");    
+            //Debug.Log($"Secondary weapon current number of bullets {numberOfBullets}");    
         }
 
         protected override void OnTurretMove(Vector3 hitPoint)
