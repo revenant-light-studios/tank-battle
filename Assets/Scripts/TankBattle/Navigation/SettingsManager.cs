@@ -1,6 +1,7 @@
 ﻿using ExtensionMethods;
 using UnityEngine;
 using UnityEngine.UI;
+using TankBattle.Global;
 
 namespace TankBattle.Navigation
 {
@@ -30,38 +31,36 @@ namespace TankBattle.Navigation
             _musicSound = soundTransform.FirstOrDefault(t => t.name == "MusicVolume").GetComponentInChildren<Slider>();
             _effectsSound = soundTransform.FirstOrDefault(t => t.name == "EffectsVolume").GetComponentInChildren<Slider>();
 
+            _globalSound.value = GlobalMethods.GeneralVolume;
+            _musicSound.value = GlobalMethods.MusicVolume;
+            _effectsSound.value = GlobalMethods.EffectsVolume;
+
             _navBtns.OnMenu += () => OnGoMenu?.Invoke();
             _navBtns.OnCredits += () => OnGoCredits?.Invoke();
-        }
-        // Start is called before the first frame update
-        public virtual void Start()
-        {
-            _navBtns.SelectNavButton(NavigationsButtons.navWindows.Settings);
-
-           
-            _globalSound.value = _customSettings.globalVolume;
-            _musicSound.value = _customSettings.musicVolume;
-            _effectsSound.value = _customSettings.effectsVolume;
-
-            //callbacks
             _globalSound.onValueChanged.AddListener(GlobalVolumeChange);
             _musicSound.onValueChanged.AddListener(MusicVolumeChange);
             _effectsSound.onValueChanged.AddListener(EffectsVolumeChange);
-        }       
+
+            _navBtns.SelectNavButton(NavigationsButtons.navWindows.Settings);
+        }     
 
         private void GlobalVolumeChange(float volume)
         {
-            _customSettings.globalVolume = volume;
+            Debug.Log($"G: {volume}");
+            GlobalMethods.GeneralVolume = volume;
         }
 
         private void MusicVolumeChange(float volume)
         {
-            _customSettings.musicVolume = volume;
+            GlobalMethods.MusicVolume = volume;
+            Debug.Log($"M: {GlobalMethods.MusicVolume}");
+            
         }
 
         private void EffectsVolumeChange(float volume)
         {
-            _customSettings.effectsVolume = volume;
+            GlobalMethods.EffectsVolume = volume;
+            Debug.Log($"E: {volume}");
         }
         
     }
