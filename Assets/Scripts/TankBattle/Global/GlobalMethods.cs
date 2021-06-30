@@ -24,7 +24,13 @@ namespace TankBattle.Global
             get => PlayerPrefs.GetInt(_numberOfDummies, 0);
             set => PlayerPrefs.SetInt(_numberOfDummies, value);
         }
-        
+
+        private const string _keyboardBindings = "keyboard-bindings";
+        public static string KeyboardBindings
+        {
+            get => PlayerPrefs.GetString(_keyboardBindings, string.Empty);
+            set => PlayerPrefs.SetString(_keyboardBindings, value);
+        }
 
 #if !UNITY_EDITOR && UNITY_WEBGL
         [System.Runtime.InteropServices.DllImport("__Internal")]
