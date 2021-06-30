@@ -54,6 +54,13 @@ namespace TankBattle.Global
             set => PlayerPrefs.SetFloat(_effectsVolume, value);
         }
 
+        private const string _nickName = "nick-name";
+        public static string NickName
+        {
+            get => PlayerPrefs.GetString(_nickName, string.Empty);
+            set => PlayerPrefs.SetString(_nickName, value);
+        }
+
 #if !UNITY_EDITOR && UNITY_WEBGL
         [System.Runtime.InteropServices.DllImport("__Internal")]
         private static extern bool IsMobile();

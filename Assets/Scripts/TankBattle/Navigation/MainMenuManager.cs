@@ -2,6 +2,7 @@
 using Networking.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
+using TankBattle.Global;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -64,6 +65,7 @@ namespace TankBattle.Navigation
             _navBtns.OnCredits += () => OnGoCredits?.Invoke();
 
             _playBtn.interactable = false;
+            _nickname.text = GlobalMethods.NickName;
         }
 
         void Start()
@@ -76,6 +78,7 @@ namespace TankBattle.Navigation
         void UpdateNickname()
         {
             PhotonNetwork.NickName = _nickname.text;
+            GlobalMethods.NickName = _nickname.text;
         }
 
         void OnClickMode()
@@ -146,12 +149,7 @@ namespace TankBattle.Navigation
             key = key.ToUpper();
             PhotonNetwork.JoinRoom(key);
         }
-
-        // public override void OnJoinedLobby()
-        // {
-        //     _playBtn.interactable = true;
-        // }
-
+        
         public void SetPlayButtonInteractable(bool mode)
         {
             _playBtn.interactable = mode;
