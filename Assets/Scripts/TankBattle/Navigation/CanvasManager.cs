@@ -15,8 +15,7 @@ namespace TankBattle.Navigation
             Settings,
             WaitingRoom
         }
-
-
+        
         private CreditsManager _credits;
         private MainMenuManager _mainMenu;
         private SettingsManager _settings;
@@ -25,8 +24,6 @@ namespace TankBattle.Navigation
         private GameObject _desktop;
         private GameObject _mobile;
 
-        private CustomSettings _globalSettings;
-        
         private void Awake()
         {
             _desktop = transform.FirstOrDefault(t => t.name == "Desktop").gameObject;
@@ -76,6 +73,18 @@ namespace TankBattle.Navigation
         public override void OnJoinedRoom()
         {
             Navigate(navScreen.WaitingRoom);
+        }
+
+        public override void OnJoinedLobby()
+        {
+            base.OnJoinedLobby();
+            _mainMenu.SetPlayButtonInteractable(true);
+        }
+
+        public override void OnLeftLobby()
+        {
+            base.OnLeftLobby();
+            _mainMenu.SetPlayButtonInteractable(false);
         }
 
         public override void OnLeftRoom()

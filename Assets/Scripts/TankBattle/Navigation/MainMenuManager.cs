@@ -147,9 +147,14 @@ namespace TankBattle.Navigation
             PhotonNetwork.JoinRoom(key);
         }
 
-        public override void OnJoinedLobby()
+        // public override void OnJoinedLobby()
+        // {
+        //     _playBtn.interactable = true;
+        // }
+
+        public void SetPlayButtonInteractable(bool mode)
         {
-            _playBtn.interactable = true;
+            _playBtn.interactable = mode;
         }
     }
 }

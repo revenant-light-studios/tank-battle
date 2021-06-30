@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 1820445929}
   - component: {fileID: 7772637765216013499}
   - component: {fileID: 274185964802647832}
+  - component: {fileID: 7911518320623620988}
   m_Layer: 0
   m_Name: MissileLauncher
   m_TagString: Untagged
@@ -200,3 +201,16 @@ MonoBehaviour:
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &7911518320623620988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8491172486309891733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30509e286f85241fa8c30d387060dbd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SoundType: 0

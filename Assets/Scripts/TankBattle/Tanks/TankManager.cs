@@ -125,14 +125,8 @@ namespace TankBattle.Tanks
             {
                 // All non local tanks
                 Radar.Instance.AddDetectableObject(_detectableObject);
-
                 _tankInput.enabled = false;
                 _cameraFollow.enabled = false;
-
-                if (IsDummy)
-                {
-                    GetComponent<AudioSource>().enabled = false;
-                }
             }
         }
 

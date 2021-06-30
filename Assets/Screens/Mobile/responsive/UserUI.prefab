@@ -481,7 +481,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 778538906f93a4870970bc2fda62b43a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8d4b5f8fdb4564b34bd8d285455afb5a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2646,6 +2646,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: LockedTankUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 5696625131122214967, guid: 2479af98f50f14df2b3f5d39f811b30a,
+        type: 3}
+      propertyPath: m_Text
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2479af98f50f14df2b3f5d39f811b30a, type: 3}

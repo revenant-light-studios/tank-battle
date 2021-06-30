@@ -4008,7 +4008,7 @@ PrefabInstance:
     - target: {fileID: 5126060911004471252, guid: 7878dd8dbfb542d4e9aeba398b841022,
         type: 3}
       propertyPath: bindIndex
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5126060911004471254, guid: 7878dd8dbfb542d4e9aeba398b841022,
         type: 3}
@@ -4194,7 +4194,7 @@ PrefabInstance:
     - target: {fileID: 5126060911004471252, guid: 7878dd8dbfb542d4e9aeba398b841022,
         type: 3}
       propertyPath: bindIndex
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5126060911004471254, guid: 7878dd8dbfb542d4e9aeba398b841022,
         type: 3}

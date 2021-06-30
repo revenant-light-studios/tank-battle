@@ -28,7 +28,6 @@ namespace TankBattle.Navigation
             _startRebindingButton.GetComponentInChildren<Text>().text = InputControlPath.ToHumanReadableString(
             _action.action.bindings[bindIndex].effectivePath,
             InputControlPath.HumanReadableStringOptions.OmitDevice);
-            
             _startRebindingButton.onClick.AddListener(StartRebinding);
         }
 

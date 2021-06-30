@@ -28,11 +28,27 @@ namespace TankBattle.InputManagers
         public static void LoadOverridesFromJSON(this InputActionAsset inputActionAsset, string json)
         {
             BindingOverrideListJson list = JsonUtility.FromJson<BindingOverrideListJson>(json);
+            
             Dictionary<Guid, BindingOverrideJson> overrides = new Dictionary<Guid, BindingOverrideJson>();
-
             foreach (BindingOverrideJson bindingOverrideJson in list.bindings)
             {
                 overrides.Add(new Guid(bindingOverrideJson.id), bindingOverrideJson);
+            }
+
+            foreach (InputActionMap inputActionMap in inputActionAsset.actionMaps)
+            {
+                var bindings = inputActionMap.bindings;
+                for(int i=0; i < bindings.Count; i++)
+                {
+                    if (overrides.TryGetValue(bindings[i].id, out BindingOverrideJson bindingOverrideJson))
+                    {
+                        inputActionMap.ApplyBindingOverride(i,
+                            new InputBinding
+                            {
+                                overridePath = bindingOverrideJson.path
+                            });
+                    }
+                }
             }
         }
         
