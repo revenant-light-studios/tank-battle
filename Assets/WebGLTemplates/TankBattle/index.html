@@ -19,10 +19,26 @@
             </div>
             <canvas id="unity-canvas" />
         </div>
-    
+
+        <!-- FIX FOR INPUT MANAGEMENT IN MOBILE
+             All credit to Ulisses Dantas [https://github.com/dantasulisses/WebMobileInputFix]
+        <div>
+		        <form onsubmit="FixInputOnSubmit()" autocomplete="off" style="width: 0px; height: 0px; position: absolute; top: -9999px;">
+			           <input type="text" id="fixInput" oninput="unityInstance.Module.ccall('FixInputUpdate', null)" onblur="unityInstance.Module.ccall('FixInputOnBlur', null)" style="font-size: 42px;">
+		        </form>
+	      </div>
+        <!-- END FIX ->
+
         <!-- check for F key press to toggle full screen -->
         <script>
+            // function FixInputOnSubmit() {
+            //   document.getElementById("fixInput").blur();
+			      //  event.preventDefault();
+		        // }
+
+
             var isFullscreen = false;
+            var unityInstance;
 
             var buildUrl = "Build";
             var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
@@ -48,7 +64,7 @@
             var script = document.createElement("script");
             script.src = loaderUrl;
             script.onload = () => {
-                var unityInstance = createUnityInstance(document.querySelector("#unity-canvas"), config, (progress) => {
+                unityInstance = createUnityInstance(document.querySelector("#unity-canvas"), config, (progress) => {
                     var pct = parseInt(100 * progress);
                     progressIndicator.style.backgroundImage = "-webkit-linear-gradient(left, #999 " + pct + "%, #4e4e4e " + pct + "%)";
                 })
