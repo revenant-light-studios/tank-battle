@@ -3,10 +3,8 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>{{{ PRODUCT_NAME }}}</title>
-
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-
         <link rel="stylesheet" href="css/tank-battle.css" />
     </head>
     <body>
@@ -20,23 +18,8 @@
             <canvas id="unity-canvas" />
         </div>
 
-        <!-- FIX FOR INPUT MANAGEMENT IN MOBILE
-             All credit to Ulisses Dantas [https://github.com/dantasulisses/WebMobileInputFix]
-        <div>
-		        <form onsubmit="FixInputOnSubmit()" autocomplete="off" style="width: 0px; height: 0px; position: absolute; top: -9999px;">
-			           <input type="text" id="fixInput" oninput="unityInstance.Module.ccall('FixInputUpdate', null)" onblur="unityInstance.Module.ccall('FixInputOnBlur', null)" style="font-size: 42px;">
-		        </form>
-	      </div>
-        <!-- END FIX ->
-
         <!-- check for F key press to toggle full screen -->
         <script>
-            // function FixInputOnSubmit() {
-            //   document.getElementById("fixInput").blur();
-			      //  event.preventDefault();
-		        // }
-
-
             var isFullscreen = false;
             var unityInstance;
 

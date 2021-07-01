@@ -58,6 +58,8 @@ namespace TankBattle.InGameGUI.Hud
             base.SetDeadHudState();
             _crossHair.gameObject.SetActive(false);
             _hitImage.gameObject.SetActive(false);
+            _pauseMenu.gameObject.SetActive(false);
+            _helpPanel.gameObject.SetActive(false);
             _lockedTankUI?.SetActive(false);
             transform.FirstOrDefault(t => t.name == "TankHud")?.gameObject.SetActive(false);
             transform.FirstOrDefault(t => t.name == "RadarTracks")?.gameObject.SetActive(false);
