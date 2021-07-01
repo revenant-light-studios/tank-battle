@@ -5,6 +5,8 @@ namespace TankBattle.Global
 {
     public static class GlobalMethods
     {
+        private const string _settingsPath = "Settings/GameSettings";
+        
         private const string _tutorialAlreadyPlayedKey = "tutorial-already-played";
         public static int TutorialAlreadyPlayed
         {
@@ -68,7 +70,7 @@ namespace TankBattle.Global
 
         public static bool IsDesktop()
         {
-            GameSettings settings = Resources.Load<GameSettings>("Settings/GameSettings");
+            GameSettings settings = GameSettings;
             
 #if !UNITY_EDITOR && UNITY_WEBGL
             return !IsMobile();
@@ -79,8 +81,23 @@ namespace TankBattle.Global
 
         public static bool IsForceMobile()
         {
-            GameSettings settings = Resources.Load<GameSettings>("Settings/GameSettings");
+            GameSettings settings = GameSettings;
             return settings.forceMobile;
+        }
+
+        private static GameSettings _gameSettings;
+
+        public static GameSettings GameSettings
+        {
+            get
+            {
+                if (_gameSettings == null)
+                {
+                    _gameSettings = Resources.Load<GameSettings>(_settingsPath);
+                }
+
+                return _gameSettings;
+            }
         }
     }
 }

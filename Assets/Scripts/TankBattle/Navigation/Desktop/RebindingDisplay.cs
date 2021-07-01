@@ -34,7 +34,7 @@ namespace TankBattle.Navigation
 
         public void StartRebinding()
         {
-            Debug.Log("Rebind");
+            // Debug.Log("Rebind");
             _startRebindingButton.interactable = false;
 
             _rebindingOperation = _action.action.PerformInteractiveRebinding(bindIndex)
@@ -53,7 +53,7 @@ namespace TankBattle.Navigation
             _rebindingOperation.Dispose();
 
             string bindingsJSON = _action.asset.SaveOverridesToJSON(); 
-            Debug.Log(bindingsJSON);
+            // Debug.Log(bindingsJSON);
             GlobalMethods.KeyboardBindings = bindingsJSON;
         }
     }

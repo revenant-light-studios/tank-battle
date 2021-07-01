@@ -47,21 +47,21 @@ namespace TankBattle.Navigation
 
         private void GlobalVolumeChange(float volume)
         {
-            Debug.Log($"G: {volume}");
+            // Debug.Log($"G: {volume}");
             GlobalMethods.GeneralVolume = volume;
         }
 
         private void MusicVolumeChange(float volume)
         {
             GlobalMethods.MusicVolume = volume;
-            Debug.Log($"M: {GlobalMethods.MusicVolume}");
+            // Debug.Log($"M: {GlobalMethods.MusicVolume}");
             
         }
 
         private void EffectsVolumeChange(float volume)
         {
             GlobalMethods.EffectsVolume = volume;
-            Debug.Log($"E: {volume}");
+            // Debug.Log($"E: {volume}");
         }
         
     }

@@ -1,7 +1,10 @@
-﻿using ExtensionMethods;
+﻿using System;
+using System.Collections.Generic;
+using ExtensionMethods;
 using Photon.Pun;
 using TankBattle.Tanks;
 using TankBattle.Tanks.Guns;
+using TankBattle.Tanks.Powerups;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -9,12 +12,20 @@ namespace TankBattle.Items
 {
     public class PickableItem : MonoBehaviour
     {
+        public enum ItemType
+        {
+            SecondaryWeapon,
+            TankPowerup
+        }
+        
         [SerializeField, FormerlySerializedAs("RotationSpeed")] 
         private float _rotationSpeed;
         [SerializeField, FormerlySerializedAs("ItemIcon")]
         private Transform _itemIcon;
         [SerializeField, FormerlySerializedAs("ItemPrefab")]
         private GameObject _itemPrefab;
+        [SerializeField, FormerlySerializedAs("ItemType")]
+        private ItemType _itemType;
 
         private void Start()
         {
@@ -32,26 +43,56 @@ namespace TankBattle.Items
         private void OnTriggerEnter(Collider other)
         {
             GameObject root = other.transform.root.gameObject;
-            // Debug.Log($"{name}: {other.name} Jumped over me");
+            TankManager tankManager = root.GetComponent<TankManager>();
             
-            TankManager manager = root.GetComponent<TankManager>();
-            if (manager)
+            if (tankManager)
             {
-                ATankGun gun = _itemPrefab.GetComponent<ATankGun>();
-                if (gun)
+                if (_itemType == ItemType.SecondaryWeapon)
                 {
-                    manager.PickWeapon(gun.name, TankManager.TankWeapon.Secondary);
-                    // Debug.Log($"{other.name} picked up a {_itemPrefab.name}");
+                    ApplySecondaryWeapon(tankManager);
+                } else if (_itemType == ItemType.TankPowerup)
+                {
+                    ApplyPowerUp(tankManager);
+                }
+            }
+        }
+        private void ApplyPowerUp(TankManager tankManager)
+        {
+            // powerups are only applied to MY tank
+            if (!tankManager.IsMine) return;
 
-                    if (PhotonNetwork.IsConnected)
-                    {
-                        PhotonView view = GetComponent<PhotonView>();
-                        view.RPC("NetworkDestroyObject", RpcTarget.All, view.ViewID);
-                    }
-                    else
-                    {
-                        DestroyObject(gameObject);
-                    }
+            APowerUp[] currentPowerUps = tankManager.GetComponentsInChildren<APowerUp>();
+            for (int i = 0; i < currentPowerUps.Length; i++)
+            {
+                Debug.Log($"Checking if {currentPowerUps[i].GetType().ToString()} is a {_itemPrefab.GetComponent<APowerUp>().GetType()}");
+                if (currentPowerUps[i].GetType() == _itemPrefab.GetComponent<APowerUp>().GetType()) return;
+            }
+
+            GameObject powerUpGO = Instantiate(_itemPrefab);
+            APowerUp powerUp = powerUpGO.GetComponent<APowerUp>();
+
+            if (powerUp)
+            {
+                powerUp.ApplyPowerup(tankManager);
+                Destroy(gameObject);
+            }
+        }
+        private void ApplySecondaryWeapon(TankManager tankManager)
+        {
+            ATankGun gun = _itemPrefab.GetComponent<ATankGun>();
+            if (gun)
+            {
+                tankManager.PickWeapon(gun.name, TankManager.TankWeapon.Secondary);
+                // Debug.Log($"{other.name} picked up a {_itemPrefab.name}");
+
+                if (PhotonNetwork.IsConnected)
+                {
+                    PhotonView view = GetComponent<PhotonView>();
+                    view.RPC("NetworkDestroyObject", RpcTarget.All, view.ViewID);
+                }
+                else
+                {
+                    DestroyObject(gameObject);
                 }
             }
         }

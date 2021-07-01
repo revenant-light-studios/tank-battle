@@ -34,6 +34,10 @@ namespace TankBattle.Global
 
         [FormerlySerializedAs("SecondaryWeapons"), InspectorName("Secondary weapons"), Tooltip("Allowed secondary weapons")]
         public PickableItem[] secondaryWeapons;
+
+        [Header("Tank settings")]
+        [FormerlySerializedAs("TankSpeedMultiplier"), InspectorName("Tank speed multiplier"), Tooltip("Tank speed multiplier"), Range(1.0f, 2.0f)]
+        public float TankSpeedMultiplier;
         
         [Header("Other settings")]
         [FormerlySerializedAs("ForceMobileLayout"), InspectorName("Force mobile"), Tooltip("Force mobile layout")]

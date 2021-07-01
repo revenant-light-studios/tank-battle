@@ -273,14 +273,14 @@ namespace TankBattle.Navigation
                 yield return SendLoadingMessage(_loadingProgess, "Generando tanques dummy");
             }
             
-            Debug.Log($"Start spawning Dummy tanks");
+            // Debug.Log($"Start spawning Dummy tanks");
             for (int i = 0; i < numberOfDummys; i++)
             {
                 int mySectorStart = sectorDegrees * (i + startSector);
                 int mySectorEnd = mySectorStart + sectorDegrees;
                 Vector3 spawnPosition = GenerateSpawnPoint(mySectorStart, mySectorEnd);
                 string name = $"Dummy{i}";
-                Debug.Log($"Spawning dummy[{i}] {name} in sector ({mySectorStart},{mySectorEnd}) position {spawnPosition}");
+                // Debug.Log($"Spawning dummy[{i}] {name} in sector ({mySectorStart},{mySectorEnd}) position {spawnPosition}");
                 
                 GameObject dummyTank = PhotonNetwork.InstantiateRoomObject(Path.Combine("Tanks", _tankPrefab.name), spawnPosition, Quaternion.identity);
                 dummyTank.name = name;
@@ -295,7 +295,7 @@ namespace TankBattle.Navigation
 
         private IEnumerator SpawnPlayerTanks(int sectorDegrees, int startSector = 0)
         {
-            Debug.Log($"Start spawning Player tanks");
+            // Debug.Log($"Start spawning Player tanks");
             yield return SendLoadingMessage(_loadingProgess, "Generando tanques de los jugadores");
             
             int i = startSector;
@@ -306,7 +306,7 @@ namespace TankBattle.Navigation
                 int mySectorStart = sectorDegrees * i;
                 int mySectorEnd = mySectorStart + sectorDegrees;
                 Vector3 spawnPosition = GenerateSpawnPoint(mySectorStart, mySectorEnd);
-                Debug.Log($"Spawning player {player.NickName} tank in sector ({mySectorStart},{mySectorEnd}) position {spawnPosition}");
+                // Debug.Log($"Spawning player {player.NickName} tank in sector ({mySectorStart},{mySectorEnd}) position {spawnPosition}");
                 
                 object[] content = new object[] { spawnPosition };
                 RaiseEventOptions raiseEventOptions = new RaiseEventOptions
@@ -405,7 +405,7 @@ namespace TankBattle.Navigation
                 int weaponType = generator.Next(0, _secondaryWeaponTypes.Length);
                 SpawnSecondaryWeapon(_secondaryWeaponTypes[weaponType], spawnPosition);
                 
-                Debug.Log($"Spawning weapon {_secondaryWeaponTypes[weaponType].ToString()} tank in sector ({mySectorStart},{mySectorEnd}) position {spawnPosition}");
+                // Debug.Log($"Spawning weapon {_secondaryWeaponTypes[weaponType].ToString()} tank in sector ({mySectorStart},{mySectorEnd}) position {spawnPosition}");
                 
                 _loadingProgess++;
                 yield return SendLoadingMessage(_loadingProgess, $"Generando {_secondaryWeaponTypes[weaponType].name}");
