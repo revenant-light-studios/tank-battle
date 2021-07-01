@@ -56,7 +56,7 @@ namespace TankBattle.Tanks
             #if UNITY_EDITOR
             if (!GlobalMethods.IsDesktop())
             {
-                _playerInput.user.UnpairDevices();
+                _playerInput.user.UnpairDevice(Mouse.current);
                 InputUser.PerformPairingWithDevice(Gamepad.current, _playerInput.user);
                 TouchSimulation.Enable();
 
@@ -65,7 +65,7 @@ namespace TankBattle.Tanks
                     InputSystemUIInputModule inputModule = FindObjectOfType<InputSystemUIInputModule>();
                     if (inputModule)
                     {
-                        inputModule.pointerBehavior = UIPointerBehavior.AllPointersAsIs;
+                        inputModule.pointerBehavior = UIPointerBehavior.SingleUnifiedPointer;
                     }
                 }
             }

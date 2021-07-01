@@ -77,7 +77,7 @@
                 {
                     "name": "",
                     "id": "3625cacb-68b3-4dd2-976c-1879ba8e1342",
-                    "path": "<Gamepad>/buttonEast",
+                    "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -99,7 +99,7 @@
                 {
                     "name": "",
                     "id": "8b0ff2e2-7616-4a65-a636-86c8bf26bd8a",
-                    "path": "<Gamepad>/buttonSouth",
+                    "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -121,7 +121,7 @@
                 {
                     "name": "",
                     "id": "cb4ef484-d565-46d4-8305-7bbff8c2014f",
-                    "path": "<Gamepad>/buttonWest",
+                    "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -242,7 +242,7 @@
                 {
                     "name": "",
                     "id": "9622c440-dcf5-40b3-9484-b3512c393332",
-                    "path": "<Gamepad>/leftTrigger",
+                    "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -328,6 +328,17 @@
                 },
                 {
                     "name": "",
+                    "id": "11813ad5-7941-4e42-a8d7-dc3c97c409bf",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SwitchTank",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "8adc1fb2-dafe-4231-b236-93cd5e6f0e44",
                     "path": "<Keyboard>/escape",
                     "interactions": "Press",
@@ -362,7 +373,7 @@
                 {
                     "name": "",
                     "id": "43f98fc0-471f-46a9-926c-6d7151705210",
-                    "path": "<Gamepad>/leftTrigger",
+                    "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

@@ -27,6 +27,11 @@ namespace TankBattle.InputManagers
 
         public static void LoadOverridesFromJSON(this InputActionAsset inputActionAsset, string json)
         {
+            if (String.IsNullOrEmpty(json))
+            {
+                return;
+            }
+            
             BindingOverrideListJson list = JsonUtility.FromJson<BindingOverrideListJson>(json);
             
             Dictionary<Guid, BindingOverrideJson> overrides = new Dictionary<Guid, BindingOverrideJson>();

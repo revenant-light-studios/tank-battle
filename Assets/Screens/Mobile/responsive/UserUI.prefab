@@ -168,7 +168,7 @@ MonoBehaviour:
   _canHold: 0
   _requiredHoldTime: 0
   _fillImage: {fileID: 4352125828313599827}
-  m_ControlPath: <Gamepad>/buttonSouth
+  m_ControlPath: <Gamepad>/leftTrigger
 --- !u!1 &2144231175
 GameObject:
   m_ObjectHideFlags: 0
@@ -1163,7 +1163,7 @@ MonoBehaviour:
   _canHold: 1
   _requiredHoldTime: 2
   _fillImage: {fileID: 198767351}
-  m_ControlPath: <Gamepad>/buttonEast
+  m_ControlPath: <Gamepad>/rightTrigger
 --- !u!1 &5781217373296821983
 GameObject:
   m_ObjectHideFlags: 0
@@ -1716,7 +1716,7 @@ MonoBehaviour:
   _canHold: 0
   _requiredHoldTime: 0
   _fillImage: {fileID: 8803020855144387551}
-  m_ControlPath: <Gamepad>/buttonWest
+  m_ControlPath: <Gamepad>/leftShoulder
 --- !u!1 &6920764339829400537
 GameObject:
   m_ObjectHideFlags: 0
@@ -1734,7 +1734,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &815402515145818272
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2104,7 +2104,7 @@ MonoBehaviour:
   _canHold: 0
   _requiredHoldTime: 0
   _fillImage: {fileID: 7565516420046366310}
-  m_ControlPath: <Gamepad>/leftTrigger
+  m_ControlPath: <Gamepad>/buttonNorth
 --- !u!1001 &2047758570812756144
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2115,42 +2115,42 @@ PrefabInstance:
     - target: {fileID: 2719881198215466770, guid: f98a1d914749b49cf96a944715185356,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2719881198215466770, guid: f98a1d914749b49cf96a944715185356,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2719881198215466770, guid: f98a1d914749b49cf96a944715185356,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 24
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2719881198215466770, guid: f98a1d914749b49cf96a944715185356,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3263242157262751824, guid: f98a1d914749b49cf96a944715185356,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3263242157262751824, guid: f98a1d914749b49cf96a944715185356,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3263242157262751824, guid: f98a1d914749b49cf96a944715185356,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 80
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3263242157262751824, guid: f98a1d914749b49cf96a944715185356,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3414378775627332917, guid: f98a1d914749b49cf96a944715185356,
         type: 3}
@@ -2160,7 +2160,7 @@ PrefabInstance:
     - target: {fileID: 3414378775627332917, guid: f98a1d914749b49cf96a944715185356,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6948885604910766896, guid: f98a1d914749b49cf96a944715185356,
         type: 3}
