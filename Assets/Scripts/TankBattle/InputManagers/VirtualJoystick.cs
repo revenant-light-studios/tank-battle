@@ -22,7 +22,12 @@ namespace TankBattle.InputManagers
 
         private void Start()
         {
-            _radious = _container.rectTransform.rect.width * 0.5f;
+            Canvas canvas = GetComponentInParent<Canvas>();
+            float width = _container.rectTransform.rect.width;
+            float scale = canvas.scaleFactor;
+            
+            _radious = width * scale * 0.5f;
+            // Debug.Log($"Joystick {name} -> Width: {width}, Scale: {scale}, Radius: {_radious}");
             _container.gameObject.SetActive(false);
             _joystick.gameObject.SetActive(false);
         }
