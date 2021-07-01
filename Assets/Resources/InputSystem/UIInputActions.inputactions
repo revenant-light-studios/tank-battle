@@ -317,6 +317,17 @@
                 },
                 {
                     "name": "",
+                    "id": "88031cb9-82e3-4205-9699-a628cf0a6095",
+                    "path": "<Touchscreen>/primaryTouch/tap",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SwitchTank",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "8adc1fb2-dafe-4231-b236-93cd5e6f0e44",
                     "path": "<Keyboard>/escape",
                     "interactions": "Press",

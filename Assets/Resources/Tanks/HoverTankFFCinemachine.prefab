@@ -168,7 +168,6 @@ MonoBehaviour:
   ForwardAccel: 100
   BackwardAccel: 80
   TurnRate: 0.8
-  SpeedMultiplier: 1
 --- !u!114 &8380127123188987194
 MonoBehaviour:
   m_ObjectHideFlags: 0

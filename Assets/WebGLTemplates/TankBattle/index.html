@@ -21,7 +21,7 @@
         <!-- check for F key press to toggle full screen -->
         <script>
             var isFullscreen = false;
-            var unityInstance;
+            var unityInstance = null;
 
             var buildUrl = "Build";
             var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
@@ -47,13 +47,13 @@
             var script = document.createElement("script");
             script.src = loaderUrl;
             script.onload = () => {
-                unityInstance = createUnityInstance(document.querySelector("#unity-canvas"), config, (progress) => {
+                createUnityInstance(document.querySelector("#unity-canvas"), config, (progress) => {
                     var pct = parseInt(100 * progress);
                     progressIndicator.style.backgroundImage = "-webkit-linear-gradient(left, #999 " + pct + "%, #4e4e4e " + pct + "%)";
                 })
-                    .then(function(unityInstance) {
+                    .then(function(_unityInstance) {
+                      unityInstance = _unityInstance;
                         loadingPanel.classList.add('fade');
-                        // unityInstance.SetFullscreen(1);
                     })
             };
             document.body.appendChild(script);
