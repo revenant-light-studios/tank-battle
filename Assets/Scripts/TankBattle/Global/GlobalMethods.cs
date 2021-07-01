@@ -5,6 +5,8 @@ namespace TankBattle.Global
 {
     public static class GlobalMethods
     {
+        private const string _settingsPath = "Settings/GameSettings";
+        
         private const string _tutorialAlreadyPlayedKey = "tutorial-already-played";
         public static int TutorialAlreadyPlayed
         {
@@ -24,6 +26,13 @@ namespace TankBattle.Global
         {
             get => PlayerPrefs.GetInt(_numberOfDummies, 0);
             set => PlayerPrefs.SetInt(_numberOfDummies, value);
+        }
+
+        private const string _keyboardBindings = "keyboard-bindings";
+        public static string KeyboardBindings
+        {
+            get => PlayerPrefs.GetString(_keyboardBindings, string.Empty);
+            set => PlayerPrefs.SetString(_keyboardBindings, value);
         }
 
         private const string _generalVolume = "general-volume";
@@ -47,6 +56,13 @@ namespace TankBattle.Global
             set => PlayerPrefs.SetFloat(_effectsVolume, value);
         }
 
+        private const string _nickName = "nick-name";
+        public static string NickName
+        {
+            get => PlayerPrefs.GetString(_nickName, string.Empty);
+            set => PlayerPrefs.SetString(_nickName, value);
+        }
+
 #if !UNITY_EDITOR && UNITY_WEBGL
         [System.Runtime.InteropServices.DllImport("__Internal")]
         private static extern bool IsMobile();
@@ -54,7 +70,7 @@ namespace TankBattle.Global
 
         public static bool IsDesktop()
         {
-            GameSettings settings = Resources.Load<GameSettings>("Settings/GameSettings");
+            GameSettings settings = GameSettings;
             
 #if !UNITY_EDITOR && UNITY_WEBGL
             return !IsMobile();
@@ -65,8 +81,23 @@ namespace TankBattle.Global
 
         public static bool IsForceMobile()
         {
-            GameSettings settings = Resources.Load<GameSettings>("Settings/GameSettings");
+            GameSettings settings = GameSettings;
             return settings.forceMobile;
+        }
+
+        private static GameSettings _gameSettings;
+
+        public static GameSettings GameSettings
+        {
+            get
+            {
+                if (_gameSettings == null)
+                {
+                    _gameSettings = Resources.Load<GameSettings>(_settingsPath);
+                }
+
+                return _gameSettings;
+            }
         }
     }
 }

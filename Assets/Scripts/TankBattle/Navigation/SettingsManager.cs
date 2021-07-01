@@ -1,4 +1,5 @@
-﻿using ExtensionMethods;
+﻿using System;
+using ExtensionMethods;
 using UnityEngine;
 using UnityEngine.UI;
 using TankBattle.Global;
@@ -7,7 +8,6 @@ namespace TankBattle.Navigation
 {
     public class SettingsManager : MonoBehaviour
     {
-        protected CustomSettings _customSettings;
         protected NavigationsButtons _navBtns;
         public Slider _globalSound { get; private set; }
         public Slider _musicSound { get; private set; }
@@ -22,8 +22,6 @@ namespace TankBattle.Navigation
 
         public virtual void Awake()
         {
-            _customSettings = FindObjectOfType<CustomSettings>();
-            
             _navBtns = transform.FirstOrDefault(t => t.name == "NavigationBtns").GetComponent<NavigationsButtons>();
 
             Transform soundTransform = transform.FirstOrDefault(t => t.name == "Sound").transform;
@@ -40,27 +38,30 @@ namespace TankBattle.Navigation
             _globalSound.onValueChanged.AddListener(GlobalVolumeChange);
             _musicSound.onValueChanged.AddListener(MusicVolumeChange);
             _effectsSound.onValueChanged.AddListener(EffectsVolumeChange);
+        }
 
+        private void Start()
+        {
             _navBtns.SelectNavButton(NavigationsButtons.navWindows.Settings);
-        }     
+        }
 
         private void GlobalVolumeChange(float volume)
         {
-            Debug.Log($"G: {volume}");
+            // Debug.Log($"G: {volume}");
             GlobalMethods.GeneralVolume = volume;
         }
 
         private void MusicVolumeChange(float volume)
         {
             GlobalMethods.MusicVolume = volume;
-            Debug.Log($"M: {GlobalMethods.MusicVolume}");
+            // Debug.Log($"M: {GlobalMethods.MusicVolume}");
             
         }
 
         private void EffectsVolumeChange(float volume)
         {
             GlobalMethods.EffectsVolume = volume;
-            Debug.Log($"E: {volume}");
+            // Debug.Log($"E: {volume}");
         }
         
     }

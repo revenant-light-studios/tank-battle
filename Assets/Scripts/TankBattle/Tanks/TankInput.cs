@@ -50,6 +50,7 @@ namespace TankBattle.Tanks
             
             _playerInput = GetComponent<PlayerInput>();
             _playerInput.enabled = true;
+            _playerInput.actions.LoadOverridesFromJSON(GlobalMethods.KeyboardBindings);
             SwitchActionMap(TankInputMaps.Player);
             
             #if UNITY_EDITOR

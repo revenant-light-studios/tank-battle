@@ -96,7 +96,7 @@ namespace TankBattle.Tanks
             }
             else
             {
-                Debug.LogWarning($"{gameObject.name} TankFollowManager: No more alive tanks to follow");
+                // Debug.LogWarning($"{gameObject.name} TankFollowManager: No more alive tanks to follow");
             }
         }
 

@@ -1,6 +1,8 @@
 using ExtensionMethods;
 using System.Collections;
 using System.Collections.Generic;
+using TankBattle.Global;
+using TankBattle.InputManagers;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -26,14 +28,13 @@ namespace TankBattle.Navigation
             _startRebindingButton.GetComponentInChildren<Text>().text = InputControlPath.ToHumanReadableString(
             _action.action.bindings[bindIndex].effectivePath,
             InputControlPath.HumanReadableStringOptions.OmitDevice);
-            
             _startRebindingButton.onClick.AddListener(StartRebinding);
         }
 
 
         public void StartRebinding()
         {
-            Debug.Log("Rebind");
+            // Debug.Log("Rebind");
             _startRebindingButton.interactable = false;
 
             _rebindingOperation = _action.action.PerformInteractiveRebinding(bindIndex)
@@ -49,10 +50,11 @@ namespace TankBattle.Navigation
             _startRebindingButton.GetComponentInChildren<Text>().text = InputControlPath.ToHumanReadableString(
             _action.action.bindings[bindIndex].effectivePath,
             InputControlPath.HumanReadableStringOptions.OmitDevice);
-
-
             _rebindingOperation.Dispose();
 
+            string bindingsJSON = _action.asset.SaveOverridesToJSON(); 
+            // Debug.Log(bindingsJSON);
+            GlobalMethods.KeyboardBindings = bindingsJSON;
         }
     }
 }

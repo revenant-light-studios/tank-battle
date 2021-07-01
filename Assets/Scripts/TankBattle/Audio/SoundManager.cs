@@ -27,7 +27,7 @@ namespace TankBattle.Audio
             {
                 _volume = GlobalMethods.MusicVolume;
             }
-            Debug.Log($"V: {_volume} G: {GlobalMethods.GeneralVolume}");
+            // Debug.Log($"V: {_volume} G: {GlobalMethods.GeneralVolume}");
             var audioSource = transform.GetComponent<AudioSource>();
             audioSource.volume = _volume * GlobalMethods.GeneralVolume;
         }

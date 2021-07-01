@@ -271,31 +271,31 @@ namespace TankBattle.Navigation
             if (numberOfDummys > 0)
             {
                 yield return SendLoadingMessage(_loadingProgess, "Generando tanques dummy");
-            }
-            
-            Debug.Log($"Start spawning Dummy tanks");
-            for (int i = 0; i < numberOfDummys; i++)
-            {
-                int mySectorStart = sectorDegrees * (i + startSector);
-                int mySectorEnd = mySectorStart + sectorDegrees;
-                Vector3 spawnPosition = GenerateSpawnPoint(mySectorStart, mySectorEnd);
-                string name = $"Dummy{i}";
-                Debug.Log($"Spawning dummy[{i}] {name} in sector ({mySectorStart},{mySectorEnd}) position {spawnPosition}");
-                
-                GameObject dummyTank = PhotonNetwork.InstantiateRoomObject(Path.Combine("Tanks", _tankPrefab.name), spawnPosition, Quaternion.identity);
-                dummyTank.name = name;
-                dummyTank.GetComponent<TankManager>().IsDummy = true;
-                
-                _loadingProgess += 1;
-                yield return SendLoadingMessage(_loadingProgess, $"Generado dummy {name}");
-            }
 
-            yield return new WaitForSeconds(1);
+                // Debug.Log($"Start spawning Dummy tanks");
+                for (int i = 0; i < numberOfDummys; i++)
+                {
+                    int mySectorStart = sectorDegrees * (i + startSector);
+                    int mySectorEnd = mySectorStart + sectorDegrees;
+                    Vector3 spawnPosition = GenerateSpawnPoint(mySectorStart, mySectorEnd);
+                    string name = $"Dummy{i}";
+                    // Debug.Log($"Spawning dummy[{i}] {name} in sector ({mySectorStart},{mySectorEnd}) position {spawnPosition}");
+
+                    GameObject dummyTank = PhotonNetwork.InstantiateRoomObject(Path.Combine("Tanks", _tankPrefab.name), spawnPosition, Quaternion.identity);
+                    dummyTank.name = name;
+                    dummyTank.GetComponent<TankManager>().IsDummy = true;
+
+                    _loadingProgess += 1;
+                    yield return SendLoadingMessage(_loadingProgess, $"Generado dummy {name}");
+                }
+                
+                yield return new WaitForSeconds(1);
+            }
         }
 
         private IEnumerator SpawnPlayerTanks(int sectorDegrees, int startSector = 0)
         {
-            Debug.Log($"Start spawning Player tanks");
+            // Debug.Log($"Start spawning Player tanks");
             yield return SendLoadingMessage(_loadingProgess, "Generando tanques de los jugadores");
             
             int i = startSector;
@@ -306,7 +306,7 @@ namespace TankBattle.Navigation
                 int mySectorStart = sectorDegrees * i;
                 int mySectorEnd = mySectorStart + sectorDegrees;
                 Vector3 spawnPosition = GenerateSpawnPoint(mySectorStart, mySectorEnd);
-                Debug.Log($"Spawning player {player.NickName} tank in sector ({mySectorStart},{mySectorEnd}) position {spawnPosition}");
+                // Debug.Log($"Spawning player {player.NickName} tank in sector ({mySectorStart},{mySectorEnd}) position {spawnPosition}");
                 
                 object[] content = new object[] { spawnPosition };
                 RaiseEventOptions raiseEventOptions = new RaiseEventOptions
@@ -387,31 +387,31 @@ namespace TankBattle.Navigation
             if (numberOfSecondaryWeapons > 0)
             {
                 yield return SendLoadingMessage(_loadingProgess, "Generando armas secundarias");
-            }
             
-            Random generator = RandomGenerator;
-            GameSettings settings = Resources.Load<GameSettings>("Settings/GameSettings");
-            PickableItem[] items = settings.secondaryWeapons;
+                Random generator = RandomGenerator;
+                GameSettings settings = Resources.Load<GameSettings>("Settings/GameSettings");
+                PickableItem[] items = settings.secondaryWeapons;
 
-            int sectorDegrees = 360 / numberOfSecondaryWeapons;
-            
-            for (int i = 0; i < numberOfSecondaryWeapons; i++)
-            {
-                int mySectorStart = sectorDegrees * i;
-                int mySectorEnd = mySectorStart + sectorDegrees;
-                Vector3 spawnPosition = GenerateSpawnPoint(mySectorStart, mySectorEnd, 1000, 25f, 25f);
-                spawnPosition.y = 0.1f;
+                int sectorDegrees = 360 / numberOfSecondaryWeapons;
                 
-                int weaponType = generator.Next(0, _secondaryWeaponTypes.Length);
-                SpawnSecondaryWeapon(_secondaryWeaponTypes[weaponType], spawnPosition);
+                for (int i = 0; i < numberOfSecondaryWeapons; i++)
+                {
+                    int mySectorStart = sectorDegrees * i;
+                    int mySectorEnd = mySectorStart + sectorDegrees;
+                    Vector3 spawnPosition = GenerateSpawnPoint(mySectorStart, mySectorEnd, 1000, 25f, 25f);
+                    spawnPosition.y = 0.1f;
+                    
+                    int weaponType = generator.Next(0, _secondaryWeaponTypes.Length);
+                    SpawnSecondaryWeapon(_secondaryWeaponTypes[weaponType], spawnPosition);
+                    
+                    // Debug.Log($"Spawning weapon {_secondaryWeaponTypes[weaponType].ToString()} tank in sector ({mySectorStart},{mySectorEnd}) position {spawnPosition}");
+                    
+                    _loadingProgess++;
+                    yield return SendLoadingMessage(_loadingProgess, $"Generando {_secondaryWeaponTypes[weaponType].name}");
+                }
                 
-                Debug.Log($"Spawning weapon {_secondaryWeaponTypes[weaponType].ToString()} tank in sector ({mySectorStart},{mySectorEnd}) position {spawnPosition}");
-                
-                _loadingProgess++;
-                yield return SendLoadingMessage(_loadingProgess, $"Generando {_secondaryWeaponTypes[weaponType].name}");
+                yield return new WaitForSeconds(1);
             }
-            
-            yield return new WaitForSeconds(1);
         }
 
         private void SpawnSecondaryWeapon(PickableItem item, Vector3 position)

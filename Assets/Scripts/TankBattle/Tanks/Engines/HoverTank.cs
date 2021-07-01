@@ -1,5 +1,6 @@
 using System;
 using ExtensionMethods;
+using TankBattle.Global;
 using TankBattle.Tanks.Turrets;
 using UnityEngine;
 
@@ -16,6 +17,13 @@ namespace TankBattle.Tanks.Engines
         public float ForwardAccel = 10000.0f;
         public float BackwardAccel = 2500.0f;
         public float TurnRate = 500f;
+
+        private float _speedMultiplier = 1.0f;
+        public float SpeedMultiplier
+        {
+            get => _speedMultiplier;
+            set => _speedMultiplier = value < 0.1f ? 0.1f : value;
+        }
 
         private float _thrust = 0;
         private float _turn;
@@ -37,6 +45,8 @@ namespace TankBattle.Tanks.Engines
             _turret = transform.FirstOrDefault(t => t.name == "Turret").GetComponent<Turret>();
             _extraFuelTank = transform.FirstOrDefault(t => t.name == "ExtraFuelTank").gameObject;
             _rocketLauncher = transform.FirstOrDefault(t => t.name == "MissileLauncher").gameObject;
+
+            _speedMultiplier = GlobalMethods.GameSettings.TankSpeedMultiplier;
         }
 
         private void Start()
@@ -82,6 +92,7 @@ namespace TankBattle.Tanks.Engines
             {
                 // Debug.Log($"Thrust {_thrust}");
                 float accel = _thrust > 0f ? ForwardAccel : BackwardAccel;
+                accel *= _speedMultiplier;
                 _rigidbody.AddForce(transform.forward * (_thrust * accel), ForceMode.Acceleration);
             }
             // float accel = _thrust > 0f ? ForwardAccel : BackwardAccel;
@@ -92,7 +103,7 @@ namespace TankBattle.Tanks.Engines
             // {
             //     _rigidbody.AddTorque(Vector3.up * (_turn * TurnRate));
             // }
-            _rigidbody.angularVelocity = Vector3.up * (_turn * TurnRate);
+            _rigidbody.angularVelocity = Vector3.up * (_turn * TurnRate * _speedMultiplier);
 
             // Hovering
             for(int i=0; i < _antyGravityEngines.Length; i++)

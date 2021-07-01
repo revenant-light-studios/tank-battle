@@ -91,12 +91,12 @@ namespace TankBattle.InGameGUI
                     (bool)playerAlive ? PhotonNetwork.Time : (double)deadTimestamp,
                     totalDamage != null ? (float)totalDamage : 0f);
                 
-                Debug.Log($"Adding player {stats.PlayerName} stats:\n" +
-                    $"TotalHits: {stats.TotalHits}\n" +
-                    $"TotalBulletsFired: {stats.TotalBulletsFired}\n" +
-                    $"EnemiesKilled: {stats.EnemiesKilled}\n" +
-                    $"PlayerAlive: {playerAlive}\n" +
-                    $"DeadTimestamp: {stats.DeadTimestamp}");
+                // Debug.Log($"Adding player {stats.PlayerName} stats:\n" +
+                //     $"TotalHits: {stats.TotalHits}\n" +
+                //     $"TotalBulletsFired: {stats.TotalBulletsFired}\n" +
+                //     $"EnemiesKilled: {stats.EnemiesKilled}\n" +
+                //     $"PlayerAlive: {playerAlive}\n" +
+                //     $"DeadTimestamp: {stats.DeadTimestamp}");
                 
                 _endGameStatsList.Add(stats);
             }
