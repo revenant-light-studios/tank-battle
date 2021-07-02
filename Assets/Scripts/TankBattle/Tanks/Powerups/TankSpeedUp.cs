@@ -15,15 +15,29 @@ namespace TankBattle.Tanks.Powerups
         private float _startTime = Single.NaN;
         private float _prevSpeedMultiplier;
         
-        public override void ApplyPowerup(TankManager tankManager)
+        public override bool ApplyPowerup(TankManager tankManager)
         {
             _tankManager = tankManager;
+            
+            APowerUp[] currentPowerUps = tankManager.GetComponentsInChildren<APowerUp>();
+            for (int i = 0; i < currentPowerUps.Length; i++)
+            {
+                Debug.Log($"Checking if {currentPowerUps[i].GetType().ToString()} is a {GetType()}");
+                if (currentPowerUps[i].GetType() == GetType())
+                {
+                    Destroy(gameObject);
+                    return false;
+                }
+            }
+            
             _tankEngine = tankManager.GetComponent<HoverTank>();
             transform.SetParent(_tankManager.transform);
             
             _prevSpeedMultiplier = _tankEngine.SpeedMultiplier;
             _tankEngine.SpeedMultiplier = SpeedMultiplier;
             _startTime = _time;
+
+            return true;
         }
 
         private void RemovePowerup()

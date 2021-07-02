@@ -1,9 +1,7 @@
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
-using TankBattle.Navigation;
 using TankBattle.Tanks;
-using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace Networking.Utilities

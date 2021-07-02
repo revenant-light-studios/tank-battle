@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using ExtensionMethods;
 using Networking.Utilities;
 using Photon.Pun;
-using Photon.Realtime;
 using TankBattle.Global;
 using TankBattle.InGameGUI.Hud;
 using TankBattle.InGameGUI.LockedTank;
@@ -524,6 +523,20 @@ namespace TankBattle.Tanks
             {
                 _tankFollowerManager.InitTankFollower(this);
             }
+        }
+        #endregion
+
+        #region Force field management
+        public void ResetForceField()
+        {
+            _photonView.RPC("NetworkResetForceField", RpcTarget.All);
+        }
+
+        [PunRPC]
+        public void NetworkResetForceField()
+        {
+            _forceField.gameObject.SetActive(true);
+            _tankValues.ShieldAmount = _tankValues.TotalShield;
         }
         #endregion
 
