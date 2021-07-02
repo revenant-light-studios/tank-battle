@@ -6,14 +6,13 @@ using Photon.Realtime;
 using TankBattle.InGameGUI.Hud;
 using TankBattle.Navigation;
 using TankBattle.Tanks;
-using UnityEngine;
 using UnityEngine.UI;
 
 namespace TankBattle.InGameGUI
 {
     public class FinishGamePanel : MonoBehaviourPunCallbacks
     {
-        class EndGameStats
+        public class EndGameStats
         {
             public string PlayerName;
             public float TotalHits;
@@ -51,18 +50,18 @@ namespace TankBattle.InGameGUI
         }
 
         private List<EndGameStats> _endGameStatsList = new List<EndGameStats>();
-        
-        private Text _winnerName;
-        private Text _winnerHits;
-        private Button _exitRoomBtn;
 
+        private PlayerStats _winnerStats;
+        private PlayerStats _ownStats;
+        
+        private Button _exitRoomBtn;
         private ATankHud _tankHud;
         private TankInput _tankInput;
 
         private void Awake()
         {
-            _winnerName = transform.FirstOrDefault(t => t.name == "WinnerNameText").GetComponent<Text>();
-            _winnerHits = transform.FirstOrDefault(t => t.name == "WinnerHitsText").GetComponent<Text>();
+            _winnerStats = transform.FirstOrDefault(t => t.name == "WinnerStats").GetComponent<PlayerStats>();
+            _ownStats = transform.FirstOrDefault(t => t.name == "OwnStats").GetComponent<PlayerStats>();
             _exitRoomBtn = transform.FirstOrDefault(t => t.name == "ExitBtn").GetComponent<Button>();
             _exitRoomBtn.onClick.AddListener(LeaveRoom);
         }
@@ -71,6 +70,8 @@ namespace TankBattle.InGameGUI
         {
             gameObject.SetActive(true);
 
+            EndGameStats ownPlayerStats = null;
+            
             foreach (KeyValuePair<int,Player> keyValuePair in PhotonNetwork.CurrentRoom.Players)
             {
                 Player player = keyValuePair.Value;
@@ -90,6 +91,11 @@ namespace TankBattle.InGameGUI
                     enemiesKilled != null ? (float)enemiesKilled : 0f,
                     (bool)playerAlive ? PhotonNetwork.Time : (double)deadTimestamp,
                     totalDamage != null ? (float)totalDamage : 0f);
+
+                if (PhotonNetwork.LocalPlayer == player)
+                {
+                    ownPlayerStats = stats;
+                }
                 
                 // Debug.Log($"Adding player {stats.PlayerName} stats:\n" +
                 //     $"TotalHits: {stats.TotalHits}\n" +
@@ -104,11 +110,19 @@ namespace TankBattle.InGameGUI
             if (_endGameStatsList.Count > 0)
             {
                 _endGameStatsList.Sort(EndGameStats.StatsComparer);
-                _winnerName.text = _endGameStatsList[0].PlayerName;
-                _winnerHits.text = 
-                    $"{_endGameStatsList[0].EnemiesKilled} enemigos abatidos\n" + 
-                    $"{_endGameStatsList[0].TotalHits} hits\n" +
-                    $"{_endGameStatsList[0].TotalBulletsFired} disparos";
+                EndGameStats winnerStats = _endGameStatsList[0];
+                _winnerStats.SetPlayerStats(winnerStats);
+
+                if (winnerStats != ownPlayerStats)
+                {
+                    ownPlayerStats.PlayerName = "Tus datos";
+                    _ownStats.SetPlayerStats(ownPlayerStats);
+                    _ownStats.gameObject.SetActive(true);
+                }
+                else
+                {
+                    _ownStats.gameObject.SetActive(false);
+                }
             }
         }
         

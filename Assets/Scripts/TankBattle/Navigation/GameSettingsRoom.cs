@@ -24,8 +24,14 @@ namespace TankBattle.Navigation
         private Button _sumDummies;
         private Button _subtractDummies;
 
+        private GameObject _dummiesBlock;
+        private GameObject _numberOfSGBlock;
+
         private void Awake()
         {
+            _dummiesBlock = transform.FirstOrDefault(t => t.name == "Dummies").gameObject;
+            _numberOfSGBlock = transform.FirstOrDefault(t => t.name == "NumberOfSG").gameObject;
+            
             _numSecondaryGunsText = transform.FirstOrDefault(t => t.name == "SGNumPanel").GetComponentInChildren<Text>();
             _sumSecondaryGuns = transform.FirstOrDefault(t => t.name == "PlusSGNumButton").GetComponent<Button>();
             _subtractSecondaryGuns = transform.FirstOrDefault(t => t.name == "SubtractSGNumButton").GetComponent<Button>();
@@ -44,14 +50,26 @@ namespace TankBattle.Navigation
 
             _numDummiesText.text = $"{_numDummies}";
             _numSecondaryGunsText.text = $"{_numSecondaryGuns}";
+        }
 
+        public override void OnEnable()
+        {
+            base.OnEnable();
 
             if (GlobalMethods.IsDesktop())
             {
-                if (!PhotonNetwork.IsConnected || !PhotonNetwork.IsMasterClient)
+                if (!PhotonNetwork.CurrentRoom.IsVisible && PhotonNetwork.IsMasterClient)
+                {
+                    SetSettingsVisible(true);
+                }
+                else
                 {
                     SetSettingsVisible(false);
                 }
+            }
+            else
+            {
+                SetSettingsVisible(true);
             }
         }
 
@@ -73,10 +91,9 @@ namespace TankBattle.Navigation
         
         public void SetSettingsVisible(bool active)
         {
-            _sumDummies.gameObject.SetActive(active);
-            _sumSecondaryGuns.gameObject.SetActive(active);
-            _subtractDummies.gameObject.SetActive(active);
-            _subtractSecondaryGuns.gameObject.SetActive(active);
+            Debug.Log($"Setting gameplay settings to {active}");
+            _dummiesBlock.SetActive(active);
+            _numberOfSGBlock.SetActive(active);
         }
 
         public override void OnMasterClientSwitched(Player newMasterClient)

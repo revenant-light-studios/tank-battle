@@ -38,21 +38,21 @@ namespace TankBattle.Global
         private const string _generalVolume = "general-volume";
         public static float GeneralVolume
         {
-            get => PlayerPrefs.GetFloat(_generalVolume, 1);
+            get => PlayerPrefs.GetFloat(_generalVolume, 0.5f);
             set => PlayerPrefs.SetFloat(_generalVolume, value);
         }
 
         private const string _musicVolume = "music-volume";
         public static float MusicVolume
         {
-            get => PlayerPrefs.GetFloat(_musicVolume, 1);
+            get => PlayerPrefs.GetFloat(_musicVolume, 0.5f);
             set => PlayerPrefs.SetFloat(_musicVolume, value);
         }
 
         private const string _effectsVolume = "effects-volume";
         public static float EffectsVolume
         {
-            get => PlayerPrefs.GetFloat(_effectsVolume, 1);
+            get => PlayerPrefs.GetFloat(_effectsVolume, 0.5f);
             set => PlayerPrefs.SetFloat(_effectsVolume, value);
         }
 

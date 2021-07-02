@@ -8,6 +8,6 @@ namespace TankBattle.Tanks.Powerups
         [SerializeField, FormerlySerializedAs("PowerupTime"), Tooltip("Time in seconds, -1 infinite")]
         protected float _time;
         
-        public abstract void ApplyPowerup(TankManager tankManager);
+        public abstract bool ApplyPowerup(TankManager tankManager);
     }
 }

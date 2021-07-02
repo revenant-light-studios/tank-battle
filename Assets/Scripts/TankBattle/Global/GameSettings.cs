@@ -36,6 +36,17 @@ namespace TankBattle.Global
         public PickableItem[] secondaryWeapons;
 
         [Header("Tank settings")]
+        /*
+        [FormerlySerializedAs("TankDefaultForwardSpeed"), InspectorName("Tank default forward speed")]
+        public float tankDefaultForwardSpeed;
+
+        [FormerlySerializedAs("TankDefaultBackwardsSpeed"), InspectorName("Tank default backwards speed")]
+        public float tankDefaultBackwardsSpeed;
+
+        [FormerlySerializedAs("TankDefaultTurnRate"), InspectorName("Tank default turn rate")]
+        public float tankDefaultTurnRate;
+        */
+
         [FormerlySerializedAs("TankSpeedMultiplier"), InspectorName("Tank speed multiplier"), Tooltip("Tank speed multiplier"), Range(1.0f, 2.0f)]
         public float TankSpeedMultiplier;
         

@@ -60,21 +60,16 @@ namespace TankBattle.Items
         {
             // powerups are only applied to MY tank
             if (!tankManager.IsMine) return;
-
-            APowerUp[] currentPowerUps = tankManager.GetComponentsInChildren<APowerUp>();
-            for (int i = 0; i < currentPowerUps.Length; i++)
-            {
-                Debug.Log($"Checking if {currentPowerUps[i].GetType().ToString()} is a {_itemPrefab.GetComponent<APowerUp>().GetType()}");
-                if (currentPowerUps[i].GetType() == _itemPrefab.GetComponent<APowerUp>().GetType()) return;
-            }
-
+            
             GameObject powerUpGO = Instantiate(_itemPrefab);
             APowerUp powerUp = powerUpGO.GetComponent<APowerUp>();
 
             if (powerUp)
             {
-                powerUp.ApplyPowerup(tankManager);
-                Destroy(gameObject);
+                if (powerUp.ApplyPowerup(tankManager))
+                {
+                    Destroy(gameObject);
+                }
             }
         }
         private void ApplySecondaryWeapon(TankManager tankManager)

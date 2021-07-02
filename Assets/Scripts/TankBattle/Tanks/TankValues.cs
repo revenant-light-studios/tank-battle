@@ -1,11 +1,8 @@
-using System;
 using ExtensionMethods;
 using Networking.Utilities;
 using Photon.Pun;
 using Photon.Realtime;
-using TankBattle.Tanks.Bullets;
 using TankBattle.Tanks.ForceFields;
-using TankBattle.Tanks.Guns;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,8 +14,16 @@ namespace TankBattle.Tanks
         public float TotalArmor;
             
         private float _shieldAmount;
-        public float ShieldAmount { get => _shieldAmount; }
-        
+        public float ShieldAmount
+        {
+            get => _shieldAmount;
+            set
+            {
+                _shieldAmount = value;
+                OnValuesChanged.Invoke(this);
+            }
+        }
+
         private float _armorAmount;
         public float ArmorAmount { get => _armorAmount; }
         

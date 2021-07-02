@@ -23,5 +23,6 @@ MonoBehaviour:
   - {fileID: 1162825868874876437, guid: 67303218b007d4c998255c5124cd829e, type: 3}
   - {fileID: 1162825868874876437, guid: ac0a9ed5c328845cbb56c9cb5d4f8267, type: 3}
   - {fileID: 1162825868874876437, guid: 73b2cd0ff576546c492916f8c276d818, type: 3}
-  TankSpeedMultiplier: 1.2
+  - {fileID: 1162825868874876437, guid: 3664b52caa2564d329cf6d6806ccbae0, type: 3}
+  TankSpeedMultiplier: 1
   forceMobile: 0

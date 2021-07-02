@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!181963792 &2655988077585873504
+Preset:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: DefaultGameSettings
+  m_TargetType:
+    m_NativeTypeID: 114
+    m_ManagedTypePPtr: {fileID: 11500000, guid: e745f0eae0d64fa4b4447b25d54b74f5,
+      type: 3}
+    m_ManagedTypeFallback: 
+  m_Properties:
+  - target: {fileID: 0}
+    propertyPath: m_Enabled
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorHideFlags
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorClassIdentifier
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: minimumNumberOfPlayers
+    value: 2
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: maximumNumberOfPlayers
+    value: 20
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: startWaitTime
+    value: 10
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: spawnDummyTanks
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: numberOfDummies
+    value: 10
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: spawnSecondaryWeapons
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: numberOfSecondaryWeapons
+    value: 5
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: secondaryWeapons.Array.size
+    value: 4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: secondaryWeapons.Array.data[0]
+    value: 
+    objectReference: {fileID: 1162825868874876437, guid: 67303218b007d4c998255c5124cd829e,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: secondaryWeapons.Array.data[1]
+    value: 
+    objectReference: {fileID: 1162825868874876437, guid: ac0a9ed5c328845cbb56c9cb5d4f8267,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: secondaryWeapons.Array.data[2]
+    value: 
+    objectReference: {fileID: 1162825868874876437, guid: 73b2cd0ff576546c492916f8c276d818,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: secondaryWeapons.Array.data[3]
+    value: 
+    objectReference: {fileID: 1162825868874876437, guid: 3664b52caa2564d329cf6d6806ccbae0,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: TankSpeedMultiplier
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: forceMobile
+    value: 0
+    objectReference: {fileID: 0}
+  m_ExcludedProperties: []
