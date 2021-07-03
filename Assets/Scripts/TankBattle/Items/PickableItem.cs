@@ -68,7 +68,15 @@ namespace TankBattle.Items
             {
                 if (powerUp.ApplyPowerup(tankManager))
                 {
-                    Destroy(gameObject);
+                    if (PhotonNetwork.IsConnected)
+                    {
+                        PhotonView view = GetComponent<PhotonView>();
+                        view.RPC("NetworkDestroyObject", RpcTarget.All, view.ViewID);
+                    }
+                    else
+                    {
+                        DestroyObject(gameObject);    
+                    }
                 }
             }
         }

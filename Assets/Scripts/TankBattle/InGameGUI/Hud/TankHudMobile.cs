@@ -47,6 +47,7 @@ namespace TankBattle.InGameGUI.Hud
                     _secondaryShootButton.gameObject.SetActive(true);
                     _lockButton.gameObject.SetActive(gun.CanTrack);
                     _secondaryShootButton.Text = $"{gun.CurrentNumberOfBullets}";
+                    _secondaryShootButton.Icon = gun.Icon;
                     // gun.OnNumberOfBulletsChange += bullets => _secondaryShootButton.Text = $"{bullets}";
                 }
                 else

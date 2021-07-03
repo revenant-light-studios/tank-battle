@@ -5,31 +5,46 @@ using TankBattle.Global;
 
 namespace TankBattle.Audio
 {
+    [RequireComponent(typeof(AudioSource))]
     public class SoundManager : MonoBehaviour
     {
         public enum SoundTypes
         {
-            effect,
-            music
+            Effects,
+            Music,
+            Global
         }
 
-        public SoundTypes SoundType = SoundTypes.effect;
+        public SoundTypes SoundType = SoundTypes.Effects;
+        private AudioSource _audioSource;
 
         private float _volume;
 
         private void Awake()
         {
-            if (SoundType == SoundTypes.effect)
+            _audioSource = transform.GetComponent<AudioSource>();
+            SetVolume();
+            
+            GlobalMethods.OnVolumeChanged -= OnVolumeChanged;
+            GlobalMethods.OnVolumeChanged += OnVolumeChanged;
+        }
+        
+        private void OnDestroy()
+        {
+            GlobalMethods.OnVolumeChanged -= OnVolumeChanged;
+        }
+        private void OnVolumeChanged(SoundTypes type)
+        {
+            if (type == SoundType || type == SoundTypes.Global)
             {
-                _volume = GlobalMethods.EffectsVolume;
+                SetVolume();
             }
-            else
-            {
-                _volume = GlobalMethods.MusicVolume;
-            }
-            // Debug.Log($"V: {_volume} G: {GlobalMethods.GeneralVolume}");
-            var audioSource = transform.GetComponent<AudioSource>();
-            audioSource.volume = _volume * GlobalMethods.GeneralVolume;
+        }
+
+        private void SetVolume()
+        {
+            float volume = SoundType == SoundTypes.Effects ? GlobalMethods.EffectsVolume : GlobalMethods.MusicVolume;
+            _audioSource.volume = volume * GlobalMethods.GeneralVolume;
         }
     }   
 }

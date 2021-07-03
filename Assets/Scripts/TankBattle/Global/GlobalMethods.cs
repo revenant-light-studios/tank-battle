@@ -1,3 +1,4 @@
+using TankBattle.Audio;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -35,25 +36,42 @@ namespace TankBattle.Global
             set => PlayerPrefs.SetString(_keyboardBindings, value);
         }
 
+        public delegate void OnVolumeChangedDelegate(SoundManager.SoundTypes type);
+        public static event OnVolumeChangedDelegate OnVolumeChanged;
+
         private const string _generalVolume = "general-volume";
         public static float GeneralVolume
         {
             get => PlayerPrefs.GetFloat(_generalVolume, 0.5f);
-            set => PlayerPrefs.SetFloat(_generalVolume, value);
+            set
+            {
+                PlayerPrefs.SetFloat(_generalVolume, value);
+                OnVolumeChanged?.Invoke(SoundManager.SoundTypes.Global);
+            }
         }
+
+        public static event OnVolumeChangedDelegate OnMusicVolumeChanged;
 
         private const string _musicVolume = "music-volume";
         public static float MusicVolume
         {
-            get => PlayerPrefs.GetFloat(_musicVolume, 0.5f);
-            set => PlayerPrefs.SetFloat(_musicVolume, value);
+            get => PlayerPrefs.GetFloat(_musicVolume, 0.15f);
+            set
+            {
+                PlayerPrefs.SetFloat(_musicVolume, value);
+                OnVolumeChanged.Invoke(SoundManager.SoundTypes.Music);
+            }
         }
 
         private const string _effectsVolume = "effects-volume";
         public static float EffectsVolume
         {
             get => PlayerPrefs.GetFloat(_effectsVolume, 0.5f);
-            set => PlayerPrefs.SetFloat(_effectsVolume, value);
+            set
+            {
+                PlayerPrefs.SetFloat(_effectsVolume, value);
+                OnVolumeChanged.Invoke(SoundManager.SoundTypes.Effects);
+            }
         }
 
         private const string _nickName = "nick-name";
