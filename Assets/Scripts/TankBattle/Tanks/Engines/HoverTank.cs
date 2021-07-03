@@ -12,10 +12,14 @@ namespace TankBattle.Tanks.Engines
         public bool RocketLauncher;
         public float FlightDistance = 0.6f;
         public float HoverForce = 80000;
+        public ForceMode hoverForceMode = ForceMode.Force;
+        
         private float _deadZone = 0.1f;
         
         public float ForwardAccel = 10000.0f;
         public float BackwardAccel = 2500.0f;
+        public ForceMode forwardForceMode = ForceMode.Force;
+        
         public float TurnRate = 500f;
 
         private float _speedMultiplier = 1.0f;
@@ -28,7 +32,8 @@ namespace TankBattle.Tanks.Engines
         private float _thrust = 0;
         private float _turn;
 
-        RaycastHit _raycastHit;
+        private RaycastHit _raycastHit;
+        public RaycastHit RaycastHit => _raycastHit;
         
         private Rigidbody _rigidbody;
         private GameObject _tankBase;
@@ -37,6 +42,8 @@ namespace TankBattle.Tanks.Engines
         private GameObject _rocketLauncher;
 
         private readonly GameObject[] _antyGravityEngines = new GameObject[4];
+
+        private LayerMask _groundLayerMask;
         
         private void Awake()
         {
@@ -45,8 +52,12 @@ namespace TankBattle.Tanks.Engines
             _turret = transform.FirstOrDefault(t => t.name == "Turret").GetComponent<Turret>();
             _extraFuelTank = transform.FirstOrDefault(t => t.name == "ExtraFuelTank").gameObject;
             _rocketLauncher = transform.FirstOrDefault(t => t.name == "MissileLauncher").gameObject;
-
             _speedMultiplier = GlobalMethods.GameSettings.TankSpeedMultiplier;
+            
+            _groundLayerMask = LayerMask.GetMask(new string[]
+            {
+                "Ground"
+            });
         }
 
         private void Start()
@@ -57,12 +68,7 @@ namespace TankBattle.Tanks.Engines
             
             UpdateAntiGravityEngines();
         }
-
-        private void FixedUpdate()
-        {
-            UpdateTank();
-        }
-
+        
         private void UpdateAntiGravityEngines()
         {
             float tankWidth = _tankBase.GetComponent<MeshFilter>().mesh.bounds.size.x;
@@ -90,45 +96,40 @@ namespace TankBattle.Tanks.Engines
             // Forward movement
             if (Mathf.Abs(_thrust) > 0f)
             {
+                Vector3 forward = transform.forward;
+                forward.y = 0f;
+                forward.Normalize();
+                
                 // Debug.Log($"Thrust {_thrust}");
                 float accel = _thrust > 0f ? ForwardAccel : BackwardAccel;
                 accel *= _speedMultiplier;
-                _rigidbody.AddForce(transform.forward * (_thrust * accel), ForceMode.Acceleration);
+                _rigidbody.AddForce(forward * (_thrust * accel), forwardForceMode);
             }
-            // float accel = _thrust > 0f ? ForwardAccel : BackwardAccel;
-            // _rigidbody.velocity = transform.forward * (_thrust * accel);
 
-            // Rotation
-            // if (Mathf.Abs(_turn) > 0f)
-            // {
-            //     _rigidbody.AddTorque(Vector3.up * (_turn * TurnRate));
-            // }
             _rigidbody.angularVelocity = Vector3.up * (_turn * TurnRate * _speedMultiplier);
-
+            
             // Hovering
             for(int i=0; i < _antyGravityEngines.Length; i++)
             {
                 GameObject engine = _antyGravityEngines[i];
+                float _flightDistance = 0f;
                 
-                if (Physics.Raycast(engine.transform.position, -transform.up, out _raycastHit, FlightDistance))
+                if (Physics.Raycast(engine.transform.position, Vector3.down, out _raycastHit, Mathf.Infinity))
                 {
-                    _rigidbody.AddForceAtPosition(Vector3.up 
-                        * (HoverForce
-                        * (1.0f - (_raycastHit.distance / FlightDistance))),
-                        engine.transform.position);
+                    _flightDistance = _raycastHit.point.y + FlightDistance;
+                    float distance = _flightDistance - engine.transform.position.y;
+                    
+
+                    _rigidbody.AddForceAtPosition(Vector3.up * ( 
+                        HoverForce
+                        * Mathf.Clamp(distance / 4.0f, -1f, 1f)
+                        ), engine.transform.position, hoverForceMode);
+                    
+                    // Debug.Log($"Raycast hit point {_raycastHit.point} distance {_raycastHit.distance}, distance {distance}");
                 }
                 else
                 {
-                    if (transform.position.y > engine.transform.position.y)
-                    {
-                        _rigidbody.AddForceAtPosition(Vector3.up * HoverForce,
-                            engine.transform.position);
-                    }
-                    else
-                    {
-                        _rigidbody.AddForceAtPosition(Vector3.up * -HoverForce,
-                            engine.transform.position);
-                    }
+                    _rigidbody.AddForceAtPosition(Vector3.up * HoverForce, engine.transform.position, hoverForceMode);
                 }
             }
         }

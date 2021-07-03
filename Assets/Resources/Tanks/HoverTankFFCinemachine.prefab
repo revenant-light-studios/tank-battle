@@ -134,7 +134,7 @@ MonoBehaviour:
   _axisStateY:
     Value: 0
     m_SpeedMode: 0
-    m_MaxSpeed: 30
+    m_MaxSpeed: 50
     m_AccelTime: 0.02
     m_DecelTime: 0.02
     m_InputAxisName: 
@@ -163,10 +163,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ExtraFuelTank: 0
   RocketLauncher: 1
-  FlightDistance: 2
+  FlightDistance: 1.6
   HoverForce: 200
-  ForwardAccel: 120
-  BackwardAccel: 96
+  hoverForceMode: 0
+  ForwardAccel: 1300
+  BackwardAccel: 960
+  forwardForceMode: 0
   TurnRate: 0.85
 --- !u!114 &8380127123188987194
 MonoBehaviour:
