@@ -7,6 +7,7 @@ using TankBattle.InGameGUI.Hud;
 using TankBattle.InGameGUI.LockedTank;
 using TankBattle.Navigation;
 using TankBattle.Tanks.Camera;
+using TankBattle.Tanks.Engines;
 using TankBattle.Tanks.ForceFields;
 using TankBattle.Tanks.Guns;
 using TankBattle.Tanks.Turrets;
@@ -31,6 +32,7 @@ namespace TankBattle.Tanks
         private TankValues _tankValues;
         private TankFollowerManager _tankFollowerManager;
         private DetectableObject _detectableObject;
+        private HoverTank _engine;
         
         [SerializeField, FormerlySerializedAs("ForceField")] private ForceField _forceFieldPrefab;
         private ForceField _forceField;
@@ -68,6 +70,7 @@ namespace TankBattle.Tanks
 
         private void Awake()
         {
+            _engine = GetComponent<HoverTank>();
             _tankValues = GetComponent<TankValues>();
             _photonView = GetComponent<PhotonView>();
             _cameraFollow = GetComponent<ATankCamera>();
@@ -92,6 +95,12 @@ namespace TankBattle.Tanks
                 _forceField = Instantiate(_forceFieldPrefab);
                 _forceField.ParentTank = this;
                 _tankValues.ForceField = _forceField.GetComponent<ForceField>();
+
+                Collider _forceFieldCollider = _forceField.GetComponentInChildren<Collider>();
+                foreach (Collider collider in GetComponentsInChildren<Collider>())
+                {
+                    Physics.IgnoreCollision(_forceFieldCollider, collider);
+                }
             }
             
             // All network tanks
@@ -140,8 +149,19 @@ namespace TankBattle.Tanks
         private void FixedUpdate()
         {
             Vector3 position = transform.position;
-            position.y = 0f;
+            Quaternion rotation = transform.rotation;
+            
+            // if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, Mathf.Infinity, 
+            //     LayerMask.GetMask(new string[] {"Ground"})))
+            // {
+            //     position.y = position.y - hit.distance;
+            // }
+            
+            // position.y = 0f;
+
+            position.y -= _engine.FlightDistance;
             _forceField.transform.position = position;
+            _forceField.transform.rotation = rotation;
         }
 
         public void OnPhotonInstantiate(PhotonMessageInfo info)

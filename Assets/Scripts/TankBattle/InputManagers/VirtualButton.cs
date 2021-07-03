@@ -31,6 +31,12 @@ namespace TankBattle.InputManagers
             set => _text.text = value;
         }
 
+        public Sprite Icon
+        {
+            get => GetComponent<Image>()?.sprite;
+            set => GetComponent<Image>().sprite = value;
+        }
+
         private void Awake()
         {
             _text = transform.FirstOrDefault(t => t.name == "Text")?.GetComponent<Text>();
